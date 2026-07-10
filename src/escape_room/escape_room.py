@@ -1,7 +1,8 @@
 
-import convert_3d_to_2d
-import globals
 import tkinter
+
+from . import convert_3d_to_2d
+from . import globals
 
 # define the room layout
 room_width = 8 # 8m
