@@ -14,6 +14,7 @@ if current_dir not in sys.path:
 # Jetzt findet Python die Datei "graphics.py" problemlos
 import graphics
 import globals
+from .door import Door
 
 class EscapeApp(tkinter.Frame):
 
@@ -48,11 +49,47 @@ class EscapeApp(tkinter.Frame):
                      (8,3,4), # wall right: corner right top
                      (8,0,4)] # wall right: corner right bottom                    
                      ]
+        self.doors = self.create_doors()
         
         # create the canvas area and draw the room
         self.canvas_area.pack()
         self.draw_room()
 
+    def create_doors(self):
+        return [
+            Door(
+                corners=[
+                    (3.2, 2, 4),
+                    (4.8, 2, 4),
+                    (4.8, 0, 4),
+                    (3.2, 0, 4),
+                ],
+                color = "red",
+                tag="back_door",
+            ),
+            Door(
+                corners=[
+                    (0, 2, 2),
+                    (0, 2, 3.2),
+                    (0, 0, 3.2),
+                    (0, 0, 2),
+                ],
+                tag="left_door",
+            ),
+            Door(
+                corners=[
+                    (8, 2, 3.2),
+                    (8, 2, 2),
+                    (8, 0, 2),
+                    (8, 0, 3.2),
+                ],
+                color = "blue",
+                tag="right_door",
+            ),
+        ]
+
     # draw the room using world coordinates
     def draw_room(self):        
         graphics.draw(self.canvas_area,self.room_coordinates)
+        for door in self.doors:
+            door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
