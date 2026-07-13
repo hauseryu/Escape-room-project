@@ -33,11 +33,9 @@ class EscapeRoomTest(unittest.TestCase):
 
         app.draw_room()
 
-        self.assertEqual(len(app.coordinates), 4)
-        for polygon in app.coordinates:
-            self.assertIsInstance(polygon[0], str)
-            self.assertEqual(len(polygon[1:]), 8)
         self.assertEqual(len(app.canvas_area.polygons), 4)
+        for polygon in app.canvas_area.polygons:
+            self.assertEqual(len(polygon["points"]), 8)
         self.assertEqual(app.canvas_area.polygons[0]["fill"], "#8B4513")
         self.assertEqual(app.canvas_area.polygons[0]["outline"], "black")
 

@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.escape_room.convert_3d_to_2d import compute_2d_coordinates, convert_polygon_coordinates
+from src.escape_room.graphics import compute_2d_coordinates, convert_polygon_coordinates
 
 
 class Convert3dTo2dTest(unittest.TestCase):
