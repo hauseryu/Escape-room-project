@@ -1,4 +1,4 @@
-from .convert_3d_to_2d import compute_2d_coordinates
+from .graphics import compute_2d_coordinates
 
 _DEFAULT_DOOR_RGB = (111, 63, 32)
 

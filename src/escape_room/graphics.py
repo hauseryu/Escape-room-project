@@ -1,4 +1,15 @@
-from . import globals
+import tkinter
+import os
+import sys
+
+# Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Fügt diesen Ordner zu den Python-Suchpfaden hinzu, falls er noch nicht drin ist
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+import globals
 
 # convert 3D coordinates to 2D coordinates
 def compute_2d_coordinates(x, y, z, win_width,win_height):
@@ -28,3 +39,10 @@ def convert_polygon_coordinates(world_coordinates):
 
     # return list of polygons with 2D coordinates
     return coordinates
+
+    # draw an object using world coordinates
+def draw(canvas,world_coordinates): #tkinter.Canvas
+    coordinates = convert_polygon_coordinates(world_coordinates)
+    # draw the polygons on the canvas
+    for polygon in coordinates:
+        canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black")

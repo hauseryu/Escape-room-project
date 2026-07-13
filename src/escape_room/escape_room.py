@@ -1,8 +1,19 @@
 
 import tkinter
 
-from . import convert_3d_to_2d
-from . import globals
+import os
+import sys
+
+# Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Fügt diesen Ordner zu den Python-Suchpfaden hinzu, falls er noch nicht drin ist
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+# Jetzt findet Python die Datei "graphics.py" problemlos
+import graphics
+import globals
 from .door import Door
 
 class EscapeApp(tkinter.Frame):
@@ -78,10 +89,7 @@ class EscapeApp(tkinter.Frame):
         ]
 
     # draw the room using world coordinates
-    def draw_room(self):
-        self.coordinates = convert_3d_to_2d.convert_polygon_coordinates(self.room_coordinates)
-        # draw the polygons on the canvas
-        for polygon in self.coordinates:
-            self.canvas_area.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black")
+    def draw_room(self):        
+        graphics.draw(self.canvas_area,self.room_coordinates)
         for door in self.doors:
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
