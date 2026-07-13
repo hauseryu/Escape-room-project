@@ -1,6 +1,8 @@
 from .convert_3d_to_2d import compute_2d_coordinates
 
 _DEFAULT_DOOR_RGB = (111, 63, 32)
+
+# Tkinter can draw named colors directly, but our color mixing needs RGB values.
 _NAMED_COLORS = {
     "black": (0, 0, 0),
     "blue": (0, 0, 255),
@@ -40,6 +42,7 @@ def _rgb_to_hex(rgb):
 
 
 def _mix_color(color, target, amount):
+    # Move the door color a little toward black or white for shadows and highlights.
     amount = max(0, min(1, amount))
     start = _color_to_rgb(color)
     rgb = tuple(int(start[index] + (target[index] - start[index]) * amount) for index in range(3))
@@ -70,10 +73,12 @@ class Door:
         self._draw_door_leaf(canvas, win_width, win_height, knob_u=0.82)
 
     def _project(self, u, v, win_width, win_height):
+        # First pick a point on the 3D door, then project it onto the 2D canvas.
         x, y, z = self._point_in_3d_quad(u, v)
         return compute_2d_coordinates(x, y, z, win_width, win_height)
 
     def _point_in_3d_quad(self, u, v):
+        # Corners are always ordered: top-left, top-right, bottom-right, bottom-left.
         top_left, top_right, bottom_right, bottom_left = self.corners
         top = self._point_between_3d(top_left, top_right, u)
         bottom = self._point_between_3d(bottom_left, bottom_right, u)
@@ -144,6 +149,7 @@ class Door:
 
     def _draw_planks(self, canvas, corners):
         for index in range(1, 5):
+            # u moves from left to right across the door; these values split it into planks.
             u = index / 5
             top = self._point_in_quad(corners, u, 0.03)
             bottom = self._point_in_quad(corners, u, 0.97)
@@ -156,6 +162,7 @@ class Door:
                 width=2,
                 tags=self._tags(),
             )
+            # A thin bright line beside the dark line gives each plank a small edge.
             light_top = self._point_in_quad(corners, u + 0.01, 0.035)
             light_bottom = self._point_in_quad(corners, u + 0.01, 0.965)
             canvas.create_line(
@@ -279,12 +286,14 @@ class Door:
         )
 
     def _point_in_quad(self, corners, u, v):
+        # u is left-to-right and v is top-to-bottom inside the given 2D quadrilateral.
         top_left, top_right, bottom_right, bottom_left = corners
         top = self._point_between(top_left, top_right, u)
         bottom = self._point_between(bottom_left, bottom_right, u)
         return self._point_between(top, bottom, v)
 
     def _flatten(self, points):
+        # Tkinter polygons need [x1, y1, x2, y2, ...] instead of [(x1, y1), ...].
         coordinates = []
         for x, y in points:
             coordinates.extend((x, y))
