@@ -46,3 +46,8 @@ def draw(canvas,world_coordinates): #tkinter.Canvas
     # draw the polygons on the canvas
     for polygon in coordinates:
         canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black")
+
+def draw_arc(canvas, x, y, z, radius, color, start, extent):
+    (x0, y0) = compute_2d_coordinates(x - radius, y + radius, z, globals.canvas_width, globals.canvas_height)
+    (x1, y1) = compute_2d_coordinates(x + radius, y - radius, z, globals.canvas_width, globals.canvas_height)
+    canvas.create_arc(x0, y0, x1, y1, start=start, extent=extent, fill=color, outline="black")
