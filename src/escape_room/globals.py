@@ -1,7 +1,7 @@
 
 # define the canvas size
-canvas_width = 800
-canvas_height = 600
+canvas_width = 1600
+canvas_height = 1200
 
 # define the room layout
 room_width = 8 # 8m

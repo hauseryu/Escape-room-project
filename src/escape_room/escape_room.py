@@ -16,6 +16,7 @@ import graphics
 import globals
 from .door import Door
 import light
+import table
 
 class EscapeApp(tkinter.Frame):
 
@@ -52,12 +53,11 @@ class EscapeApp(tkinter.Frame):
                      ]
         self.doors = self.create_doors()
         self.light = light.Light()
+        self.table = table.Table()
         
         # create the canvas area and draw the room
         self.canvas_area.pack()
         self.draw_room()
-        graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
-        graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
 
     def create_doors(self):
         return [
@@ -97,3 +97,6 @@ class EscapeApp(tkinter.Frame):
         graphics.draw(self.canvas_area,self.room_coordinates)
         for door in self.doors:
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
+        graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
+        graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
+        graphics.draw(self.canvas_area,self.table.coordinates_table)
