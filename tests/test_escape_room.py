@@ -5,6 +5,8 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.escape_room.escape_room import EscapeApp
+from src.escape_room.light import Light
+from src.escape_room.table import Table
 
 
 class FakeCanvas:
@@ -12,6 +14,7 @@ class FakeCanvas:
         self.polygons = []
         self.lines = []
         self.ovals = []
+        self.arcs = []
 
     def create_polygon(self, points, **kwargs):
         self.polygons.append({
@@ -31,12 +34,20 @@ class FakeCanvas:
             **kwargs,
         })
 
+    def create_arc(self, *points, **kwargs):
+        self.arcs.append({
+            "points": points,
+            **kwargs,
+        })
+
 
 class EscapeRoomTest(unittest.TestCase):
     def test_draw_room_creates_drawable_polygons(self):
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
+        app.light = Light()
+        app.table = Table()
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
@@ -46,8 +57,9 @@ class EscapeRoomTest(unittest.TestCase):
 
         app.draw_room()
 
-        self.assertEqual(len(app.canvas_area.polygons), 4)
-        for polygon in app.canvas_area.polygons:
+        self.assertEqual(len(app.canvas_area.polygons), 27)
+        self.assertEqual(len(app.canvas_area.arcs), 1)
+        for polygon in app.canvas_area.polygons[:4]:
             self.assertEqual(len(polygon["points"]), 8)
         self.assertEqual(app.canvas_area.polygons[0]["fill"], "#8B4513")
         self.assertEqual(app.canvas_area.polygons[0]["outline"], "black")

@@ -99,4 +99,4 @@ class EscapeApp(tkinter.Frame):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
         graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
-        graphics.draw(self.canvas_area,self.table.coordinates_table)            
+        graphics.draw(self.canvas_area,self.table.coordinates_table)
