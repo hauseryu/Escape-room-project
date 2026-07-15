@@ -18,6 +18,8 @@ from .door import Door
 from .chair import Chair
 import light
 import table
+import smallkey as smallkey
+import inventory
 
 class EscapeApp(tkinter.Frame):
 
@@ -52,10 +54,12 @@ class EscapeApp(tkinter.Frame):
                      (8,3,4), # wall right: corner right top
                      (8,0,4)] # wall right: corner right bottom                    
                      ]
+        self.inventory = inventory.Inventory()
         self.doors = self.create_doors()
         self.light = light.Light()
         self.table = table.Table()
         self.chair = Chair(5.00, 2.35, "right")
+        self.key = smallkey.Key(self.inventory)
         
         # create the canvas area and draw the room
         self.canvas_area.pack()
@@ -103,3 +107,5 @@ class EscapeApp(tkinter.Frame):
         graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
         graphics.draw(self.canvas_area,self.table.coordinates_table)
         graphics.draw(self.canvas_area,self.chair.coordinates_chair)
+        self.key.draw(self.canvas_area)
+        self.inventory.draw(self.canvas_area)
