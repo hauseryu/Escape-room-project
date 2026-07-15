@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.escape_room.escape_room import EscapeApp
+from src.escape_room.chair import Chair
 from src.escape_room.light import Light
 from src.escape_room.table import Table
 
@@ -48,6 +49,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.doors = []
         app.light = Light()
         app.table = Table()
+        app.chair = Chair(4.85, 2.35, "right")
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
@@ -57,7 +59,7 @@ class EscapeRoomTest(unittest.TestCase):
 
         app.draw_room()
 
-        self.assertEqual(len(app.canvas_area.polygons), 27)
+        self.assertEqual(len(app.canvas_area.polygons), 67)
         self.assertEqual(len(app.canvas_area.arcs), 1)
         for polygon in app.canvas_area.polygons[:4]:
             self.assertEqual(len(polygon["points"]), 8)
@@ -85,6 +87,84 @@ class EscapeRoomTest(unittest.TestCase):
                 (8, 0, 3.2),
             ],
         )
+
+    def test_chair_can_face_different_directions(self):
+        right_chair = Chair(4, 2, "right")
+        left_chair = Chair(4, 2, "left")
+        front_chair = Chair(4, 2, "front")
+        back_chair = Chair(4, 2, "back")
+
+        self.assertEqual(right_chair.coordinates_seat[0][2], (4.45, 0.55, 2))
+        self.assertEqual(left_chair.coordinates_seat[0][2], (3.55, 0.55, 2))
+        self.assertEqual(front_chair.coordinates_seat[0][2], (4, 0.55, 1.55))
+        self.assertEqual(back_chair.coordinates_seat[0][2], (4, 0.55, 2.45))
+        self.assertEqual(left_chair.coordinates_seat[0][3], (3.55, 0.55, 2.45))
+        self.assertEqual(back_chair.coordinates_seat[0][3], (3.55, 0.55, 2.45))
+
+    def test_right_and_back_chair_draw_backrest_after_seat(self):
+        right_chair = Chair(4, 2, "right")
+        back_chair = Chair(4, 2, "back")
+
+        self.assertEqual(
+            right_chair.coordinates_chair[-15:],
+            right_chair._sorted_surfaces(right_chair.coordinates_backrest),
+        )
+        self.assertEqual(
+            back_chair.coordinates_chair[-15:],
+            back_chair._sorted_surfaces(back_chair.coordinates_backrest),
+        )
+
+    def test_front_chair_draws_seat_after_backrest(self):
+        chair = Chair(4, 2, "front")
+
+        self.assertEqual(chair.coordinates_chair[-5:], chair._sorted_surfaces(chair.coordinates_seat))
+
+    def test_chair_legs_are_drawn_like_table_legs(self):
+        chair = Chair(4, 2, "right")
+
+        self.assertEqual(len(chair.coordinates_legs), 20)
+        for leg_surface in chair.coordinates_legs:
+            self.assertEqual(len(leg_surface), 5)
+
+    def test_chair_legs_fit_under_seat(self):
+        chair = Chair(4, 2, "front")
+        leg_points = [
+            point
+            for polygon in chair.coordinates_legs
+            for point in polygon[1:]
+        ]
+
+        self.assertEqual(min(point[0] for point in leg_points), 4)
+        self.assertEqual(max(point[0] for point in leg_points), 4.45)
+        self.assertEqual(max(point[1] for point in leg_points), 0.45)
+
+    def test_back_legs_align_with_backrest_posts(self):
+        chair = Chair(4, 2, "right")
+        right_back_leg_points = [
+            point
+            for polygon in chair.coordinates_legs[:5]
+            for point in polygon[1:]
+        ]
+        left_back_leg_points = [
+            point
+            for polygon in chair.coordinates_legs[5:10]
+            for point in polygon[1:]
+        ]
+
+        self.assertEqual(min(point[2] for point in left_back_leg_points), 2)
+        self.assertEqual(max(point[2] for point in left_back_leg_points), 2.1)
+        self.assertEqual(min(point[2] for point in right_back_leg_points), 2.35)
+        self.assertEqual(max(point[2] for point in right_back_leg_points), 2.45)
+
+    def test_chair_parts_include_top_and_four_sides(self):
+        chair = Chair(4, 2, "left")
+
+        self.assertEqual(len(chair.coordinates_seat), 5)
+        self.assertEqual(len(chair.coordinates_backrest), 15)
+
+    def test_chair_rejects_unknown_direction(self):
+        with self.assertRaises(ValueError):
+            Chair(4, 2, "diagonal")
 
 
 if __name__ == "__main__":
