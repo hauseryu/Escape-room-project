@@ -10,6 +10,14 @@ from src.escape_room.light import Light
 from src.escape_room.table import Table
 
 
+class FakeDrawable:
+    def __init__(self):
+        self.drawn_on = None
+
+    def draw(self, canvas):
+        self.drawn_on = canvas
+
+
 class FakeCanvas:
     def __init__(self):
         self.polygons = []
@@ -50,6 +58,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.light = Light()
         app.table = Table()
         app.chair = Chair(4.85, 2.35, "right")
+        app.key = FakeDrawable()
+        app.inventory = FakeDrawable()
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
@@ -65,6 +75,8 @@ class EscapeRoomTest(unittest.TestCase):
             self.assertEqual(len(polygon["points"]), 8)
         self.assertEqual(app.canvas_area.polygons[0]["fill"], "#8B4513")
         self.assertEqual(app.canvas_area.polygons[0]["outline"], "black")
+        self.assertIs(app.key.drawn_on, app.canvas_area)
+        self.assertIs(app.inventory.drawn_on, app.canvas_area)
 
     def test_create_doors_creates_three_doors(self):
         app = EscapeApp.__new__(EscapeApp)
