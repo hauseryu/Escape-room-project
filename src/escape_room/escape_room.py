@@ -15,6 +15,7 @@ if current_dir not in sys.path:
 import graphics
 import globals
 from .door import Door
+from .chair import Chair
 import light
 import table
 
@@ -54,6 +55,7 @@ class EscapeApp(tkinter.Frame):
         self.doors = self.create_doors()
         self.light = light.Light()
         self.table = table.Table()
+        self.chair = Chair(5.00, 2.35, "right")
         
         # create the canvas area and draw the room
         self.canvas_area.pack()
@@ -100,3 +102,4 @@ class EscapeApp(tkinter.Frame):
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
         graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
         graphics.draw(self.canvas_area,self.table.coordinates_table)
+        graphics.draw(self.canvas_area,self.chair.coordinates_chair)
