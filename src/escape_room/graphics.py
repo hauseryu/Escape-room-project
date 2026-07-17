@@ -1,15 +1,9 @@
-import tkinter
-import os
-import sys
+from escape_room import globals
 
 # Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Fügt diesen Ordner zu den Python-Suchpfaden hinzu, falls er noch nicht drin ist
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
 
-import globals
 
 # convert 3D coordinates to 2D coordinates
 def compute_2d_coordinates(x, y, z, win_width,win_height):

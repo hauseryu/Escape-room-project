@@ -1,4 +1,4 @@
-from .graphics import compute_2d_coordinates
+from escape_room.graphics import compute_2d_coordinates
 
 _DEFAULT_DOOR_RGB = (111, 63, 32)
 

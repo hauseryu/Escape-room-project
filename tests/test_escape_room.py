@@ -2,12 +2,12 @@ import unittest
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.escape_room import EscapeApp
-from src.escape_room.chair import Chair
-from src.escape_room.light import Light
-from src.escape_room.table import Table
+from escape_room.escape_room import EscapeApp
+from escape_room.objects.chair import Chair
+from escape_room.objects.light import Light
+from escape_room.objects.table import Table
 
 
 class FakeDrawable:
@@ -18,12 +18,25 @@ class FakeDrawable:
         self.drawn_on = canvas
 
 
+class FakeStartScreen:
+    def __init__(self):
+        self.was_drawn = False
+
+    def draw(self):
+        self.was_drawn = True
+
+
 class FakeCanvas:
     def __init__(self):
         self.polygons = []
         self.lines = []
         self.ovals = []
         self.arcs = []
+        self.images = []
+        self.rectangles = []
+        self.texts = []
+        self.bindings = []
+        self.deleted = []
 
     def create_polygon(self, points, **kwargs):
         self.polygons.append({
@@ -48,6 +61,32 @@ class FakeCanvas:
             "points": points,
             **kwargs,
         })
+
+    def create_image(self, *points, **kwargs):
+        self.images.append({
+            "points": points,
+            **kwargs,
+        })
+
+    def create_rectangle(self, *points, **kwargs):
+        self.rectangles.append({
+            "points": points,
+            **kwargs,
+        })
+
+    def create_text(self, *points, **kwargs):
+        if len(points) != 2:
+            raise ValueError("create_text expects x and y coordinates")
+        self.texts.append({
+            "points": points,
+            **kwargs,
+        })
+
+    def tag_bind(self, tag, event, callback):
+        self.bindings.append((tag, event, callback))
+
+    def delete(self, target):
+        self.deleted.append(target)
 
 
 class EscapeRoomTest(unittest.TestCase):
@@ -99,6 +138,36 @@ class EscapeRoomTest(unittest.TestCase):
                 (8, 0, 3.2),
             ],
         )
+
+    def test_show_start_screen_delegates_to_start_screen(self):
+        app = EscapeApp.__new__(EscapeApp)
+        app.start_screen = FakeStartScreen()
+
+        app.show_start_screen()
+
+        self.assertTrue(app.start_screen.was_drawn)
+
+    def test_start_game_clears_start_screen_and_draws_room(self):
+        app = EscapeApp.__new__(EscapeApp)
+        app.canvas_area = FakeCanvas()
+        app.doors = []
+        app.light = Light()
+        app.table = Table()
+        app.chair = Chair(4.85, 2.35, "right")
+        app.key = FakeDrawable()
+        app.inventory = FakeDrawable()
+        app.room_coordinates = [
+            ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
+            ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
+            ["white", (0, 0, 0), (0, 3, 0), (0, 3, 4), (0, 0, 4)],
+            ["white", (8, 0, 0), (8, 3, 0), (8, 3, 4), (8, 0, 4)],
+        ]
+
+        app.start_game()
+
+        self.assertIn("all", app.canvas_area.deleted)
+        self.assertGreater(len(app.canvas_area.polygons), 0)
+        self.assertIs(app.key.drawn_on, app.canvas_area)
 
     def test_chair_can_face_different_directions(self):
         right_chair = Chair(4, 2, "right")
