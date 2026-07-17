@@ -1,25 +1,21 @@
 
 import tkinter
 
-import os
-import sys
 
 # Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Fügt diesen Ordner zu den Python-Suchpfaden hinzu, falls er noch nicht drin ist
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
 
 # Jetzt findet Python die Datei "graphics.py" problemlos
-import graphics
-import globals
-from .door import Door
-from .chair import Chair
-import light
-import table
-import smallkey as smallkey
-import inventory
+from escape_room import globals
+from escape_room import graphics
+from escape_room import inventory
+from escape_room.objects.chair import Chair
+from escape_room.objects.door import Door
+from escape_room.objects.light import Light
+from escape_room.objects.smallkey import Key
+from escape_room.objects.table import Table
+from escape_room.start_screen import StartScreen
 
 class EscapeApp(tkinter.Frame):
 
@@ -31,6 +27,7 @@ class EscapeApp(tkinter.Frame):
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
+        self.start_screen = StartScreen(self.canvas_area, self.start_game)
         
         # room coordinates in 3D space (x, y, z)
         self.room_coordinates = [["#8B4513",
@@ -56,14 +53,14 @@ class EscapeApp(tkinter.Frame):
                      ]
         self.inventory = inventory.Inventory()
         self.doors = self.create_doors()
-        self.light = light.Light()
-        self.table = table.Table()
+        self.light = Light()
+        self.table = Table()
         self.chair = Chair(5.00, 2.35, "right")
-        self.key = smallkey.Key(self.inventory)
+        self.key = Key(self.inventory)
         
-        # create the canvas area and draw the room
+        # create the canvas area and draw the start screen
         self.canvas_area.pack()
-        self.draw_room()
+        self.show_start_screen()
 
     def create_doors(self):
         return [
@@ -97,6 +94,13 @@ class EscapeApp(tkinter.Frame):
                 tag="right_door",
             ),
         ]
+
+    def show_start_screen(self):
+        self.start_screen.draw()
+
+    def start_game(self, event=None):
+        self.canvas_area.delete("all")
+        self.draw_room()
 
     # draw the room using world coordinates
     def draw_room(self):        

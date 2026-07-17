@@ -2,9 +2,9 @@ import unittest
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.door import Door, _mix_color
+from escape_room.objects.door import Door, _mix_color
 
 
 class FakeCanvas:

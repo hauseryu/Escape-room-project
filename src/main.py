@@ -5,6 +5,8 @@ from escape_room.escape_room import EscapeApp
 
 def main():
     root = tkinter.Tk()
+    
+    root.title("Escape Room Game")
 
     EscapeApp(root)
     
