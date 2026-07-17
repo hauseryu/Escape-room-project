@@ -52,7 +52,7 @@ class StartScreenTest(unittest.TestCase):
 
         self.assertIn("all", canvas.deleted)
         self.assertEqual(canvas.texts[1]["text"], "ESCAPE ROOM")
-        self.assertEqual(canvas.texts[-1]["text"], "SPIEL STARTEN")
+        self.assertEqual(canvas.texts[-1]["text"], "START GAME")
         self.assertEqual(canvas.bindings[0], ("start_button", "<Button-1>", callback))
 
 
