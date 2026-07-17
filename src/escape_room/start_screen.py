@@ -83,7 +83,7 @@ class StartScreen:
         self.canvas.create_text(
             800,
             842,
-            text="SPIEL STARTEN",
+            text="START GAME",
             fill="#090a0d",
             font=("Arial", 31, "bold"),
             tags=("start_button",),
@@ -91,7 +91,7 @@ class StartScreen:
         self.canvas.create_text(
             800,
             838,
-            text="SPIEL STARTEN",
+            text="START GAME",
             fill="#f3e8c4",
             font=("Arial", 31, "bold"),
             tags=("start_button",),
