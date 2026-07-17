@@ -18,8 +18,8 @@ class Key:
         self.canvas = canvas
         self.img = tkinter.PhotoImage(file=self.image_path)
         if self.inventory.objectInInventory("key"):
-            x1 = 50
-            y1 = 100
+            x1 = 28
+            y1 = 80
         else:
             (x1, y1) = graphics.compute_2d_coordinates(
                 6.5,

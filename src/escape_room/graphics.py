@@ -1,4 +1,5 @@
 from escape_room import globals
+from PIL import Image, ImageDraw, ImageTk
 
 # Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
 
@@ -40,6 +41,47 @@ def draw(canvas,world_coordinates): #tkinter.Canvas
     # draw the polygons on the canvas
     for polygon in coordinates:
         canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black")
+
+def draw_textured_polygon(canvas, polygon, texture_path, fallback_fill="#8B4513"):
+    coordinates = convert_polygon_coordinates([polygon])[0]
+    points = _flatten_points(coordinates[1:])
+
+    canvas.create_polygon(points, width=1, fill=fallback_fill, outline="black")
+
+    texture = Image.open(texture_path).convert("RGBA")
+    tiled_texture = _tile_texture(texture, globals.canvas_width, globals.canvas_height)
+
+    mask = Image.new("L", (globals.canvas_width, globals.canvas_height), 0)
+    draw_mask = ImageDraw.Draw(mask)
+    draw_mask.polygon(points, fill=255)
+
+    textured_polygon = Image.new("RGBA", (globals.canvas_width, globals.canvas_height), (0, 0, 0, 0))
+    textured_polygon.paste(tiled_texture, (0, 0), mask)
+
+    try:
+        image = ImageTk.PhotoImage(textured_polygon, master=canvas)
+    except (RuntimeError, AttributeError):
+        return
+
+    canvas.create_image(0, 0, anchor="nw", image=image)
+    canvas.create_polygon(points, width=1, fill="", outline="black")
+
+    if not hasattr(canvas, "_texture_images"):
+        canvas._texture_images = []
+    canvas._texture_images.append(image)
+
+def _flatten_points(points):
+    flattened_points = []
+    for point in points:
+        flattened_points.append(point[0])
+    return flattened_points
+
+def _tile_texture(texture, width, height):
+    tiled_texture = Image.new("RGBA", (width, height))
+    for x in range(0, width, texture.width):
+        for y in range(0, height, texture.height):
+            tiled_texture.paste(texture, (x, y))
+    return tiled_texture
 
 def draw_arc(canvas, x, y, z, radius, color, start, extent):
     (x0, y0) = compute_2d_coordinates(x - radius, y + radius, z, globals.canvas_width, globals.canvas_height)
