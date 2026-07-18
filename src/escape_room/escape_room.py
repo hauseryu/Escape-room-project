@@ -16,6 +16,7 @@ from escape_room.objects.door import Door
 from escape_room.objects.light import Light
 from escape_room.objects.smallkey import Key
 from escape_room.objects.table import Table
+from escape_room.objects.wardrobe import Wardrobe
 from escape_room.start_screen import StartScreen
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
@@ -62,6 +63,7 @@ class EscapeApp(tkinter.Frame):
         self.table = Table()
         self.chair = Chair(5.00, 2.35, "right")
         self.key = Key(self.inventory)
+        self.wardrobe = Wardrobe()
         
         # create the canvas area and draw the start screen
         self.canvas_area.pack()
@@ -123,5 +125,8 @@ class EscapeApp(tkinter.Frame):
         graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
         graphics.draw(self.canvas_area,self.table.coordinates_table)
         graphics.draw(self.canvas_area,self.chair.coordinates_chair)
+        graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
+        graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
+        graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
         self.key.draw(self.canvas_area)
         self.inventory.draw(self.canvas_area)
