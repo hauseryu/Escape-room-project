@@ -1,5 +1,6 @@
 
 import tkinter
+from pathlib import Path
 
 
 # Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
@@ -17,6 +18,10 @@ from escape_room.objects.smallkey import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.start_screen import StartScreen
+
+IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
+WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 
 class EscapeApp(tkinter.Frame):
 
@@ -105,8 +110,15 @@ class EscapeApp(tkinter.Frame):
         self.draw_room()
 
     # draw the room using world coordinates
-    def draw_room(self):        
-        graphics.draw(self.canvas_area,self.room_coordinates)
+    def draw_room(self):
+        back_wall_coordinates = ["white", (0, 0, 4), (8, 0, 4), (8, 3, 4), (0, 3, 4)]
+
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[0], FLOOR_TEXTURE)
+        if hasattr(self.canvas_area, "tk"):
+            graphics.draw_textured_polygon(self.canvas_area, back_wall_coordinates, WALL_TEXTURE, "white")
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[1], WALL_TEXTURE, "white")
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white")
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white")
         for door in self.doors:
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
