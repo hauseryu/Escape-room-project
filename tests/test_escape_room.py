@@ -8,6 +8,7 @@ from escape_room.escape_room import EscapeApp
 from escape_room.objects.chair import Chair
 from escape_room.objects.light import Light
 from escape_room.objects.table import Table
+from escape_room.objects.wardrobe import Wardrobe
 
 
 class FakeDrawable:
@@ -97,6 +98,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.light = Light()
         app.table = Table()
         app.chair = Chair(4.85, 2.35, "right")
+        app.wardrobe = Wardrobe()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
         app.room_coordinates = [
@@ -108,8 +110,8 @@ class EscapeRoomTest(unittest.TestCase):
 
         app.draw_room()
 
-        self.assertEqual(len(app.canvas_area.polygons), 67)
-        self.assertEqual(len(app.canvas_area.arcs), 1)
+        self.assertEqual(len(app.canvas_area.polygons), 74)
+        self.assertEqual(len(app.canvas_area.arcs), 3)
         for polygon in app.canvas_area.polygons[:4]:
             self.assertEqual(len(polygon["points"]), 8)
         self.assertEqual(app.canvas_area.polygons[0]["fill"], "#8B4513")
@@ -154,6 +156,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.light = Light()
         app.table = Table()
         app.chair = Chair(4.85, 2.35, "right")
+        app.wardrobe = Wardrobe()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
         app.room_coordinates = [
