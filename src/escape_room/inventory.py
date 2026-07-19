@@ -75,9 +75,26 @@ class Inventory():
             canvas.create_line(self.GRID_X, y, self.GRID_X + self.GRID_WIDTH, y, fill="black", width=2)
         
     def addObject(self,object):
-        self.inventory.append(object)
+        self.inventory.append((object,"not_selected"))
 
     def objectInInventory(self,object):
-        return (object in self.inventory)
+        return (((object,"selected") in self.inventory) or 
+               ((object,"not_selected") in self.inventory))
     
-
+    def objectIsSelected(self,object):
+        if not self.objectInInventory(object):
+            return False
+        if (object,"selected") in self.inventory:
+            return True
+        else:
+            return False
+        
+    def selectObject(self,object):
+        if not self.objectInInventory(object):
+            return
+        try:
+            index_object = self.inventory.index((object,"not_selected"))
+        except:
+            return
+        self.inventory[index_object] = (object,"selected")
+        

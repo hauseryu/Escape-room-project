@@ -126,7 +126,7 @@ class EscapeApp(tkinter.Frame):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
         
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
-        graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",
+        graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",object=self.light,
                       world_coordinates_changed=self.light.coordinates_light_switch_off,arc_coordinates=self.light.arc_coordinates)
         graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[0], tag="light_bulb")
         

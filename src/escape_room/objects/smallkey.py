@@ -28,6 +28,13 @@ class Key:
                 globals.canvas_width,
                 globals.canvas_height,
             )
+        if self.inventory.objectIsSelected("key"):
+            select_rect = (23,75,
+                           80,75,
+                           80,125,
+                           23,125
+                           )
+            self.canvas.create_polygon(*select_rect,fill="blue",width=3)
         self.key_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
         self.canvas.tag_bind(self.key_id, "<Button-1>", self.on_key_click)
 
@@ -40,5 +47,8 @@ class Key:
             )
         except Exception as e:
             print(f"Sound konnte nicht abgespielt werden: {e}")
-        self.inventory.addObject("key")
+        if not self.inventory.objectInInventory("key"):
+            self.inventory.addObject("key")
+        else:
+            self.inventory.selectObject("key")
         self.draw(self.canvas)

@@ -1,3 +1,5 @@
+from escape_room import graphics
+
 class Light():
     def __init__(self):
         self.coordinates_lampshade = [
@@ -85,7 +87,22 @@ class Light():
              (2.00, 0.97, 3.97)]
         ]
 
-
+    def clicked(self,event,tag,object,canvas,world_coordinates,world_coordinates_changed,arc_coordinates):
+        if tag == "light_switch":
+            if not hasattr(Light.clicked, "count_light"):
+                Light.clicked.count_light = 0
+            canvas.delete("light_switch")
+            canvas.delete("light_bulb")
+            if canvas.find_withtag("light_shine"):
+                canvas.delete("light_shine")
+            graphics.draw(canvas, world_coordinates_changed,tag=tag,object=object,
+                          world_coordinates_changed=world_coordinates,arc_coordinates=arc_coordinates)
+            if Light.clicked.count_light % 2 == 0:
+                graphics.draw_arc(canvas, *arc_coordinates[1],tag="light_bulb")
+                graphics.draw_arc(canvas, *arc_coordinates[2],tag="light_shine")
+            else:
+                graphics.draw_arc(canvas, *arc_coordinates[0],tag="light_bulb")
+            Light.clicked.count_light += 1
 
 
 
