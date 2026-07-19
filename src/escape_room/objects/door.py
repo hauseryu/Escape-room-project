@@ -59,6 +59,7 @@ class Door:
         self.corners = self._create_corners(corners)
         self.color = color
         self.tag = tag
+        self.is_open = False
 
     def _create_corners(self, corners):
         if len(corners) != 4:
@@ -67,11 +68,51 @@ class Door:
 
     def _tags(self):
         return (self.tag, "door")
+    
+    def open_door(self):
+        self.is_open = True
 
+
+    def close_door(self):
+        self.is_open = False
+
+
+    def toggle(self):
+        self.is_open = not self.is_open
+    
+    def clicked(self, canvas, event):
+        items = canvas.find_overlapping(
+            event.x,
+            event.y,
+            event.x,
+            event.y
+        )
+
+        for item in items:
+            if self.tag in canvas.gettags(item):
+                return True
+
+        return False
+    
+    def handle_click(self, canvas, event):
+        if self.clicked(canvas, event):
+            self.toggle()
+            return True
+
+        return False
+    
     def draw(self, canvas, win_width, win_height):
-        self._draw_frame(canvas, win_width, win_height)
-        self._draw_door_leaf(canvas, win_width, win_height, knob_u=0.82)
+        if self.is_open:
+            self._draw_opening(canvas, win_width, win_height)
 
+        self._draw_frame(canvas, win_width, win_height)
+
+        if self.is_open:
+            self._draw_open_door(canvas, win_width, win_height)
+        else:
+            self._draw_door_leaf(canvas, win_width, win_height, knob_u=0.82)
+
+            
     def _project(self, u, v, win_width, win_height):
         # First pick a point on the 3D door, then project it onto the 2D canvas.
         x, y, z = self._point_in_3d_quad(u, v)
@@ -85,45 +126,67 @@ class Door:
         return self._point_between_3d(top, bottom, v)
 
     def _draw_frame(self, canvas, win_width, win_height):
-        frame = 0.08
+        frame = 0.033
+
         fill = _mix_color(self.color, (0, 0, 0), 0.24)
         outline = _mix_color(self.color, (0, 0, 0), 0.44)
-        highlight = _mix_color(self.color, (255, 255, 255), 0.22)
-
+        
+        # linker Pfosten
         self._draw_projected_rect(
             canvas,
             win_width,
             win_height,
             0,
+            0,
+            frame,
+            1,
+            fill=fill,
+            outline=outline,
+            width=1,
+        )
+
+        # rechter Pfosten
+        self._draw_projected_rect(
+            canvas,
+            win_width,
+            win_height,
+            1-frame,
             0,
             1,
             1,
             fill=fill,
             outline=outline,
-            width=2,
+            width=1,
         )
+
+        # oberer Balken
         self._draw_projected_rect(
             canvas,
             win_width,
             win_height,
-            frame * 0.55,
-            frame * 0.55,
-            1 - frame * 0.55,
-            1 - frame * 0.55,
-            outline=highlight,
-            width=2,
+            0,
+            0,
+            1,
+            0.02,
+            fill=fill,
+            outline=outline,
+            width=1,
         )
 
     def _draw_door_leaf(self, canvas, win_width, win_height, knob_u):
-        inset = 0.035
-        corners = [
-            self._project(inset, inset, win_width, win_height),
-            self._project(1 - inset, inset, win_width, win_height),
-            self._project(1 - inset, 1 - inset, win_width, win_height),
-            self._project(inset, 1 - inset, win_width, win_height),
-        ]
-        self._draw_leaf_in_quad(canvas, corners, knob_u)
+        top_inset = 0.02
+        bottom_inset = 0.0
 
+        corners = [
+            self._project(top_inset, top_inset, win_width, win_height),
+            self._project(1 - top_inset, top_inset, win_width, win_height),
+            self._project(1 - top_inset, 1 - bottom_inset, win_width, win_height),
+            self._project(top_inset, 1 - bottom_inset, win_width, win_height),
+        ]
+
+        
+        self._draw_leaf_in_quad(canvas, corners, knob_u)
+        
     def _draw_leaf_in_quad(self, canvas, corners, knob_u):
         frame = 0.08
         panel_gap = 0.05
@@ -144,7 +207,6 @@ class Door:
 
         self._draw_planks(canvas, corners)
         self._draw_panels(canvas, corners, frame, panel_gap, panel_width, panel_height)
-        self._draw_rails(canvas, corners, frame)
         self._draw_knob(canvas, corners, knob_u)
 
     def _draw_planks(self, canvas, corners):
@@ -187,7 +249,7 @@ class Door:
                     panel_y,
                     panel_x + panel_width,
                     panel_y + panel_height,
-                    fill=_mix_color(self.color, (0, 0, 0), 0.22),
+                    fill=_mix_color(self.color, (120, 120, 120), 0.45),
                     outline=_mix_color(self.color, (255, 255, 255), 0.28),
                     width=2,
                 )
@@ -199,36 +261,10 @@ class Door:
                     panel_y + inset,
                     panel_x + panel_width - inset,
                     panel_y + panel_height - inset,
+                    fill="#222222",
                     outline=_mix_color(self.color, (0, 0, 0), 0.6),
                     width=1,
                 )
-
-    def _draw_rails(self, canvas, corners, frame):
-        rail_fill = _mix_color(self.color, (0, 0, 0), 0.08)
-        rail_outline = _mix_color(self.color, (0, 0, 0), 0.45)
-
-        self._draw_quad_rect(
-            canvas,
-            corners,
-            0,
-            0,
-            1,
-            frame * 0.9,
-            fill=rail_fill,
-            outline=rail_outline,
-            width=1,
-        )
-        self._draw_quad_rect(
-            canvas,
-            corners,
-            0,
-            1 - frame * 0.9,
-            1,
-            1,
-            fill=rail_fill,
-            outline=rail_outline,
-            width=1,
-        )
 
     def _draw_knob(self, canvas, corners, knob_u):
         knob = self._point_in_quad(corners, knob_u, 0.52)
@@ -298,3 +334,37 @@ class Door:
         for x, y in points:
             coordinates.extend((x, y))
         return coordinates
+    
+    def _draw_open_door(self, canvas, win_width, win_height):
+
+        hinge = 0.02
+
+        corners = [
+            self._project(hinge, 0.02, win_width, win_height),
+            self._project(0.35, 0.15, win_width, win_height),
+            self._project(0.35, 0.85, win_width, win_height),
+            self._project(hinge, 1.002, win_width, win_height),
+        ]
+
+        self._draw_leaf_in_quad(
+            canvas,
+            corners,
+            knob_u=0.82,
+        )
+        
+    def _draw_opening(self, canvas, win_width, win_height):
+        frame = 0.0
+
+        points = [
+            self._project(frame, frame, win_width, win_height),
+            self._project(1-frame, frame, win_width, win_height),
+            self._project(1-frame, 1-frame, win_width, win_height),
+            self._project(frame, 1-frame, win_width, win_height),
+        ]
+
+        canvas.create_polygon(
+            self._flatten(points),
+            fill="#222222",
+            outline="",
+            tags=self._tags(),
+        )
