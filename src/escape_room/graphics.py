@@ -36,11 +36,13 @@ def convert_polygon_coordinates(world_coordinates):
     return coordinates
 
     # draw an object using world coordinates
-def draw(canvas,world_coordinates): #tkinter.Canvas
+def draw(canvas,world_coordinates,tag=None,world_coordinates_changed=None,arc_coordinates=None): #tkinter.Canvas
     coordinates = convert_polygon_coordinates(world_coordinates)
     # draw the polygons on the canvas
     for polygon in coordinates:
-        canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black")
+        canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black",tags=tag)
+        if tag != None:
+            canvas.tag_bind(tag,"<Button-1>",lambda event: clicked(event, tag, canvas, world_coordinates,world_coordinates_changed,arc_coordinates))
 
 def draw_textured_polygon(canvas, polygon, texture_path, fallback_fill="#8B4513"):
     coordinates = convert_polygon_coordinates([polygon])[0]
@@ -83,7 +85,29 @@ def _tile_texture(texture, width, height):
             tiled_texture.paste(texture, (x, y))
     return tiled_texture
 
-def draw_arc(canvas, x, y, z, radius, color, start, extent):
-    (x0, y0) = compute_2d_coordinates(x - radius, y + radius, z, globals.canvas_width, globals.canvas_height)
-    (x1, y1) = compute_2d_coordinates(x + radius, y - radius, z, globals.canvas_width, globals.canvas_height)
-    canvas.create_arc(x0, y0, x1, y1, start=start, extent=extent, fill=color, outline="black")
+def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None):
+    x_center, y_center = compute_2d_coordinates(x, y, z, globals.canvas_width, globals.canvas_height)
+    radius = radius*165
+    (x0, y0) = x_center - radius, y_center + radius
+    (x1, y1) = x_center + radius, y_center - radius
+    if start == 0 and extent == 360:
+        canvas.create_oval(x0, y0, x1, y1, fill=color, outline="black", tags=tag)
+    else:
+        canvas.create_arc(x0, y0, x1, y1, start=start, extent=extent, fill=color, outline="black", tags=tag)
+
+def clicked(event,tag,canvas,world_coordinates,world_coordinates_changed,arc_coordinates):
+    if tag == "light_switch":
+        if not hasattr(clicked, "count_light"):
+            clicked.count_light = 0
+        canvas.delete("light_switch")
+        canvas.delete("light_bulb")
+        if canvas.find_withtag("light_shine"):
+            canvas.delete("light_shine")
+        draw(canvas, world_coordinates_changed,tag=tag,world_coordinates_changed=world_coordinates,arc_coordinates=arc_coordinates)
+        if clicked.count_light % 2 == 0:
+            draw_arc(canvas, *arc_coordinates[1],tag="light_bulb")
+            draw_arc(canvas, *arc_coordinates[2],tag="light_shine")
+        else:
+            draw_arc(canvas, *arc_coordinates[0],tag="light_bulb")
+        clicked.count_light += 1
+

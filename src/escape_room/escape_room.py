@@ -119,14 +119,21 @@ class EscapeApp(tkinter.Frame):
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[1], WALL_TEXTURE, "white")
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white")
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white")
+        
         for door in self.doors:
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
+        
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
-        graphics.draw_arc(self.canvas_area, 4, 2.5, 2, 0.1, "#FFF263", 180, 180)
+        graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",
+                      world_coordinates_changed=self.light.coordinates_light_switch_off,arc_coordinates=self.light.arc_coordinates)
+        graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[0], tag="light_bulb")
+        
         graphics.draw(self.canvas_area,self.table.coordinates_table)
         graphics.draw(self.canvas_area,self.chair.coordinates_chair)
+        
         graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
         graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
         graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
+        
         self.key.draw(self.canvas_area)
         self.inventory.draw(self.canvas_area)
