@@ -35,7 +35,7 @@ class StartScreen:
     def _draw_bitmap(self):
         try:
             self.image = tkinter.PhotoImage(file=self.image_path)
-            self.display_image = self.image.zoom(2, 2)
+            self.display_image = self.image.zoom(1, 1)
             self.canvas.create_image(
                 0,
                 0,
@@ -54,15 +54,16 @@ class StartScreen:
             )
 
     def _draw_title(self):
+        center_x = globals.canvas_width / 2
         self.canvas.create_text(
-            804,
+            center_x + 4,
             284,
             text="ESCAPE ROOM",
             fill="#05070b",
             font=("Georgia", 68, "bold"),
         )
         self.canvas.create_text(
-            800,
+            center_x,
             280,
             text="ESCAPE ROOM",
             fill="#f1ead7",
@@ -70,10 +71,12 @@ class StartScreen:
         )
 
     def _draw_start_button(self):
+        center_x = globals.canvas_width / 2
+        button_half_width = 210
         self.canvas.create_rectangle(
-            590,
+            center_x - button_half_width,
             795,
-            1010,
+            center_x + button_half_width,
             890,
             fill="#171a20",
             outline="#d6c28a",
@@ -81,7 +84,7 @@ class StartScreen:
             tags=("start_button",),
         )
         self.canvas.create_text(
-            800,
+            center_x,
             842,
             text="START GAME",
             fill="#090a0d",
@@ -89,7 +92,7 @@ class StartScreen:
             tags=("start_button",),
         )
         self.canvas.create_text(
-            800,
+            center_x,
             838,
             text="START GAME",
             fill="#f3e8c4",
