@@ -1,5 +1,6 @@
 import os
 import tkinter
+from PIL import Image, ImageTk
 
 from escape_room import globals
 
@@ -34,8 +35,12 @@ class StartScreen:
 
     def _draw_bitmap(self):
         try:
-            self.image = tkinter.PhotoImage(file=self.image_path)
-            self.display_image = self.image.zoom(1, 1)
+            imagePil = Image.open(self.image_path)
+            imagePilResized = imagePil.resize((globals.canvas_width,globals.canvas_height),Image.LANCZOS)
+            self.image = ImageTk.PhotoImage(imagePilResized)
+            # self.image = tkinter.PhotoImage(file=self.image_path)
+            # self.display_image = self.image.zoom(1, 1)
+            self.display_image = self.image
             self.canvas.create_image(
                 0,
                 0,
