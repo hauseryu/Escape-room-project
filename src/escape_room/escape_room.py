@@ -67,6 +67,8 @@ class EscapeApp(tkinter.Frame):
         
         # create the canvas area and draw the start screen
         self.canvas_area.pack()
+        
+        self.canvas_area.bind("<Button-1>", self.handle_door_click)
         self.show_start_screen()
 
     def create_doors(self):
@@ -137,3 +139,9 @@ class EscapeApp(tkinter.Frame):
         
         self.key.draw(self.canvas_area)
         self.inventory.draw(self.canvas_area)
+
+    def handle_door_click(self, event):
+        for door in self.doors:
+            if door.handle_click(self.canvas_area, event):
+                self.draw_room()
+                break
