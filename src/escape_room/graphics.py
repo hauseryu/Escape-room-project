@@ -9,8 +9,8 @@ from PIL import Image, ImageDraw, ImageTk
 # convert 3D coordinates to 2D coordinates
 def compute_2d_coordinates(x, y, z, win_width,win_height):
     y = -2*y+3
-    x_2d = (450*(x-4))/(z+1)+(win_width/2)
-    y_2d = (450*(y))/(z+1)+(win_height/2)
+    x_2d = 1.6*((360*(x-4))/(z+1))+(win_width/2)
+    y_2d = 0.953*((360*(y))/(z+1))+(win_height/2)+98
     
     return (x_2d, y_2d)
 

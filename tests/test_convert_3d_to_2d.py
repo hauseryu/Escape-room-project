@@ -11,14 +11,14 @@ class Convert3dTo2dTest(unittest.TestCase):
     def test_projects_point_with_world_offset_and_perspective(self):
         x, y = compute_2d_coordinates(0, 0, 10, 800, 600)
 
-        self.assertAlmostEqual(x, 236.36363636363637)
-        self.assertAlmostEqual(y, 422.72727272727275)
+        self.assertAlmostEqual(x, 190.54545454545453) # 236.36363636363637) # 190.545454
+        self.assertAlmostEqual(y, 491.5672727272727) # 422.72727272727275)
 
     def test_projects_point_with_perspective(self):
         x, y = compute_2d_coordinates(2, 1, 10, 800, 600)
 
-        self.assertAlmostEqual(x, 318.1818181818182)
-        self.assertAlmostEqual(y, 340.90909090909093)
+        self.assertAlmostEqual(x, 295.27272727272725)
+        self.assertAlmostEqual(y, 429.1890909090909)
 
     def test_convert_polygon_coordinates_keeps_color_and_converts_four_points(self):
         coordinates = convert_polygon_coordinates([
