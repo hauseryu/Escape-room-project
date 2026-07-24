@@ -115,6 +115,7 @@ class EscapeApp(tkinter.Frame):
     def draw_room(self):
         back_wall_coordinates = ["white", (0, 0, 4), (8, 0, 4), (8, 3, 4), (0, 3, 4)]
 
+        # draw the floor and walls with textures
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[0], FLOOR_TEXTURE)
         if hasattr(self.canvas_area, "tk"):
             graphics.draw_textured_polygon(self.canvas_area, back_wall_coordinates, WALL_TEXTURE, "white")
@@ -122,21 +123,32 @@ class EscapeApp(tkinter.Frame):
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white")
         graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white")
         
+        # draw the doors
         for door in self.doors:
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
         
+        # draw the light
         graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
-        graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",object=self.light,
-                      world_coordinates_changed=self.light.coordinates_light_switch_off,arc_coordinates=self.light.arc_coordinates)
-        graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[0], tag="light_bulb")
+        if self.light.state == 0 or self.light.state == -1:
+            graphics.draw(self.canvas_area,self.light.coordinates_light_switch_off,tag="light_switch",object=self.light,
+                          world_coordinates_changed=self.light.coordinates_light_switch_on,arc_coordinates=self.light.arc_coordinates)
+            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[0], tag="light_bulb")
+        elif self.light.state == 1:
+            graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",object=self.light,
+                          world_coordinates_changed=self.light.coordinates_light_switch_off,arc_coordinates=self.light.arc_coordinates)
+            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[1], tag="light_bulb")
+            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[2], tag="light_shine")
         
+        # draw the table and chair
         graphics.draw(self.canvas_area,self.table.coordinates_table)
         graphics.draw(self.canvas_area,self.chair.coordinates_chair)
         
+        # draw the wardrobe
         graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
         graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
         graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
         
+        # draw the key and inventory
         self.key.draw(self.canvas_area)
         self.inventory.draw(self.canvas_area)
 
