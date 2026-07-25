@@ -18,6 +18,8 @@ from escape_room.objects.smallkey import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.start_screen import StartScreen
+from escape_room.objects.picture import Picture
+from escape_room.objects.bookshelf import Bookshelf
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
@@ -64,7 +66,9 @@ class EscapeApp(tkinter.Frame):
         self.chair = Chair(5.00, 2.35, "right")
         self.key = Key(self.inventory)
         self.wardrobe = Wardrobe()
-        
+        self.picture = Picture(IMAGE_DIR / "image_riddle.jpeg")
+        self.bookshelf = Bookshelf()
+
         # create the canvas area and draw the start screen
         self.canvas_area.pack()
         
@@ -139,18 +143,29 @@ class EscapeApp(tkinter.Frame):
             graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[1], tag="light_bulb")
             graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[2], tag="light_shine")
         
+        # draw the picture
+        graphics.draw(self.canvas_area,self.picture.coordinates_frame)
+        graphics.draw(self.canvas_area,self.picture.coordinates_image,tag="picture")
+        self.picture.draw_image(self.canvas_area, tag="picture")
+
         # draw the table and chair
         graphics.draw(self.canvas_area,self.table.coordinates_table)
         graphics.draw(self.canvas_area,self.chair.coordinates_chair)
         
-        # draw the wardrobe
-        graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
-        graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
-        graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
-        
+        # draw the wardrobe or bookshelf
+        draw_choice = 1 # 0 = wardrobe, 1 = bookshelf
+        if draw_choice == 0:
+            graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
+            graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
+            graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
+        elif draw_choice == 1:
+            graphics.draw(self.canvas_area,self.bookshelf.coordinates_shelf)
+            graphics.draw(self.canvas_area,self.bookshelf.coordinates_books)
+            self.bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
+
         # draw the key and inventory
-        self.key.draw(self.canvas_area)
         self.inventory.draw(self.canvas_area)
+        self.key.draw(self.canvas_area)
 
     def handle_door_click(self, event):
         for door in self.doors:
