@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 import sys
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -9,7 +10,10 @@ from escape_room.objects.chair import Chair
 from escape_room.objects.light import Light
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
+from escape_room.objects.picture import Picture
+from escape_room.objects.bookshelf import Bookshelf
 
+IMAGE_DIR = Path(__file__).resolve().parent 
 
 class FakeDrawable:
     def __init__(self):
@@ -83,6 +87,9 @@ class FakeCanvas:
             **kwargs,
         })
 
+    def bbox(self, tag):
+        return (10, 10, 140, 180)
+
     def tag_bind(self, tag, event, callback):
         self.bindings.append((tag, event, callback))
 
@@ -91,7 +98,8 @@ class FakeCanvas:
 
 
 class EscapeRoomTest(unittest.TestCase):
-    def test_draw_room_creates_drawable_polygons(self):
+    @patch("escape_room.objects.picture.ImageTk.PhotoImage")
+    def test_draw_room_creates_drawable_polygons(self, mock_photo):
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
@@ -99,6 +107,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.table = Table()
         app.chair = Chair(4.85, 2.35, "right")
         app.wardrobe = Wardrobe()
+        app.picture = Picture(IMAGE_DIR / "../src/escape_room/assets/images/image_riddle.jpeg")
+        app.bookshelf = Bookshelf()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
         app.room_coordinates = [
@@ -144,7 +154,8 @@ class EscapeRoomTest(unittest.TestCase):
 
         self.assertTrue(app.start_screen.was_drawn)
 
-    def test_start_game_clears_start_screen_and_draws_room(self):
+    @patch("escape_room.objects.picture.ImageTk.PhotoImage")
+    def test_start_game_clears_start_screen_and_draws_room(self, mock_photo):
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
@@ -152,6 +163,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.table = Table()
         app.chair = Chair(4.85, 2.35, "right")
         app.wardrobe = Wardrobe()
+        app.picture = Picture(IMAGE_DIR / "../src/escape_room/assets/images/image_riddle.jpeg")
+        app.bookshelf = Bookshelf()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
         app.room_coordinates = [
