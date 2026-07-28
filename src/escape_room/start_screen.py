@@ -6,7 +6,7 @@ from escape_room import globals
 
 
 class StartScreen:
-    def __init__(self, canvas, start_callback):
+    def __init__(self, canvas, start_callback, server):
         self.canvas = canvas
         self.start_callback = start_callback
         self.image_path = os.path.join(
@@ -17,6 +17,10 @@ class StartScreen:
         )
         self.image = None
         self.display_image = None
+        self.server_var = tkinter.IntVar() # 0 = off, 1 = on
+        self.player_name = tkinter.StringVar()
+        self.server = server
+        self.server_use_var = tkinter.IntVar() # 0 = off, 1 = on
 
     def draw(self):
         self.canvas.delete("all")
@@ -30,6 +34,8 @@ class StartScreen:
         )
         self._draw_bitmap()
         self._draw_title()
+        self._draw_server_checkbox()
+        self._draw_server_playername()
         self._draw_start_button()
         self.canvas.tag_bind("start_button", "<Button-1>", self.start_callback)
 
@@ -74,6 +80,46 @@ class StartScreen:
             fill="#f1ead7",
             font=("Georgia", 68, "bold"),
         )
+
+    def _draw_server_checkbox(self):
+        server_start_checkbox = tkinter.Checkbutton(
+            self.canvas.master,
+            text="Start Server (Host)", 
+            variable=self.server_var, 
+            font=("Arial", 20),
+            background = "#171a20",
+            foreground= "#17b976"
+        )
+        self.canvas.create_window(795, 650, window=server_start_checkbox, anchor="nw")
+        server_checkbox = tkinter.Checkbutton(
+            self.canvas.master,
+            text="Use Server (Host)" + self.server, 
+            variable=self.server_use_var, 
+            font=("Arial", 20),
+            background = "#171a20",
+            foreground= "#17b976"
+        )
+        if self.server == "":
+            server_checkbox.config(state="disabled")
+        self.canvas.create_window(795, 700, window=server_checkbox, anchor="nw")
+
+    def _draw_server_playername(self):
+        name_label = tkinter.Label(
+            self.canvas.master,
+            text="Enter player name:", 
+            font=("Arial", 20),
+            background = "#171a20",
+            foreground= "#17b976"
+            )
+        self.canvas.create_window(795, 750, window=name_label, anchor="nw")
+        name_entry = tkinter.Entry(
+            self.canvas.master, 
+            textvariable=self.player_name,
+            font=("Arial", 20), 
+            background = "#798191",
+            foreground= "#17b976",            
+            width=10)
+        self.canvas.create_window(1050, 750, window=name_entry, anchor="nw")
 
     def _draw_start_button(self):
         center_x = globals.canvas_width / 2

@@ -7,3 +7,6 @@ canvas_height = 1100
 room_width = 8 # 8m
 room_height = 3 # 3m
 room_depth = 4 # 4m
+
+# multiplayer mode
+SERVER_PORT = 50000
