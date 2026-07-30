@@ -1,11 +1,11 @@
 import unittest
 from pathlib import Path
 import sys
+import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from escape_room.start_screen import StartScreen
-
 
 class FakeCanvas:
     def __init__(self):
@@ -41,12 +41,15 @@ class FakeCanvas:
     def delete(self, target):
         self.deleted.append(target)
 
-
+    def create_window(self, x, y, *args, **kwargs):
+        return 1
+    
 class StartScreenTest(unittest.TestCase):
     def test_draw_creates_title_and_start_button(self):
         canvas = FakeCanvas()
         callback = object()
-        start_screen = StartScreen(canvas, callback)
+        canvas.master = tkinter.Tk() 
+        start_screen = StartScreen(canvas, callback,"")
 
         start_screen.draw()
 

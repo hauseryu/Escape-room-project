@@ -24,6 +24,17 @@ python src/main.py
 python -m unittest discover -s tests
 ```
 
+## Multiplayer mode
+
+preconditions:
+1) install scapy
+pip install scapy
+2) install npcap
+if npcap is not installed, scapy will show following message:
+WARNING: No libpcap provider available ! pcap won't be used
+=> download link: 
+https://npcap.com/#download
+
 ## Project Structure
 
 ```text

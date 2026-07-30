@@ -1,16 +1,18 @@
 
 import tkinter
 from pathlib import Path
-
-
-# Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
-
-# Fügt diesen Ordner zu den Python-Suchpfaden hinzu, falls er noch nicht drin ist
+import queue
+import threading
+import time
+from tkinter import messagebox
 
 # Jetzt findet Python die Datei "graphics.py" problemlos
 from escape_room import globals
 from escape_room import graphics
 from escape_room import inventory
+from escape_room.escape_server import EscapeServer
+from escape_room.escape_client import EscapeClient
+
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
 from escape_room.objects.light import Light
@@ -30,12 +32,36 @@ class EscapeApp(tkinter.Frame):
     # create frame Objekt and drawing area (canvas)
     def __init__(self,master):
         super().__init__(master)
+
+        # multiplayer and data transfer related coding
+        self.gui_queue = queue.Queue() # communication for server events
+        self.start_server = None
+        self.player_name = None
+        self.escape_server = EscapeServer()
+
+        # create client network object and configure it
+        # we pass the GUI queue so it can be written to by the network object
+        self.game_client = EscapeClient(
+            server_ip="127.0.0.1", 
+            port=globals.SERVER_PORT, 
+            player_name="", 
+            gui_queue=self.gui_queue
+        )
+        # now retrieve list of local devices
+        found_devices = self.game_client.get_devices_local_network()
+        self.server = self.game_client.check_server_port(found_devices,globals.SERVER_PORT)
+        if self.server == None:
+            print("no game server running.")
+        else:
+            print("server running on device: ",self.server)
+
+        # UI-related coding
         self.coordinates = []
         self.pack()
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
-        self.start_screen = StartScreen(self.canvas_area, self.start_game)
+        self.start_screen = StartScreen(self.canvas_area, self.start_game,self.server)
         
         # room coordinates in 3D space (x, y, z)
         self.room_coordinates = [["#8B4513",
@@ -113,6 +139,27 @@ class EscapeApp(tkinter.Frame):
 
     def start_game(self, event=None):
         self.canvas_area.delete("all")
+        # get values from start screen fields
+        self.player_name = self.start_screen.player_name.get()
+        self.start_server = self.start_screen.server_var.get()
+        # check if we have to start the server
+        if self.start_server == 1:
+            threading.Thread(target=self.escape_server.start_server, daemon=True).start()
+        time.sleep(0.2) # give server object some time to start up....
+
+        # start client connection
+        if self.start_screen.server_use_var.get() == 1:
+            self.game_client.server_ip = self.server    
+        else:
+            self.game_client.server_ip = "127.0.0.1"
+        self.game_client.player_name = self.player_name
+        if self.game_client.connect_and_start():
+            print("client network connection started successfully.")
+        else:
+            print("Game could not be started due to failing connection.")
+            messagebox.showerror("error", "connection to server failed.")
+            raise RuntimeError("server connection failed")
+        # create and show room 
         self.draw_room()
 
     # draw the room using world coordinates

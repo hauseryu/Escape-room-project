@@ -2,10 +2,14 @@ import unittest
 from pathlib import Path
 import sys
 from unittest.mock import patch
+from unittest.mock import MagicMock
+import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from escape_room.escape_room import EscapeApp
+from escape_room.escape_room import StartScreen
+from escape_room.escape_room import EscapeClient
 from escape_room.objects.chair import Chair
 from escape_room.objects.light import Light
 from escape_room.objects.table import Table
@@ -167,6 +171,11 @@ class EscapeRoomTest(unittest.TestCase):
         app.bookshelf = Bookshelf()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
+        canvas = FakeCanvas()
+        canvas.master = tkinter.Tk() 
+        callback = object()
+        app.start_screen = StartScreen(canvas, callback,"")        
+        app.game_client = MagicMock() 
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
