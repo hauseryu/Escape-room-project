@@ -64,6 +64,7 @@ class EscapeServer():
                 message = outgoing_queue.get()
                 if message == "SHUTDOWN":
                     break
+                print("[CLIENT]: send message: " + message)
                 client_socket.sendall(message.encode("utf-8"))
             except Exception:
                 break
@@ -72,8 +73,10 @@ class EscapeServer():
         """ ask once for name and start threads."""
         try:
             # client must identify him/herself during first connection (e.g. "maria")
-            client_socket.sendall("WELCOME: please send first your player name.".encode("utf-8"))
-            player_name = client_socket.recv(1024).decode("utf-8").strip()
+            client_socket.sendall("WELCOME: please send your registration data.".encode("utf-8"))
+            reg_data = json.loads(client_socket.recv(1024).decode("utf-8"))
+            player_name = reg_data.get("name", "").strip()
+            icon_num = reg_data.get("icon", 1) # Standard-Icon 1, if nothing is passed
             
             player_queue = queue.Queue()
             
@@ -83,7 +86,13 @@ class EscapeServer():
                     client_socket.sendall("ERROR: name invalid or used already.".encode("utf-8"))
                     client_socket.close()
                     return
-                active_players[player_name] = player_queue
+                # store player data in dictionary
+                active_players[player_name] = {
+                    "queue": player_queue,
+                    "icon": icon_num
+                }
+            # send player list to all players (incl. new player)
+            self.broadcast_player_list() 
 
             # start thread for the specific player
             t_recv = threading.Thread(target=EscapeServer.client_receive_loop, args=(self,client_socket, player_name, player_queue))
@@ -99,6 +108,23 @@ class EscapeServer():
         except Exception as e:
             print(f"error during connection setup: {e}")
             client_socket.close()
+
+    def broadcast_player_list(self):
+        """send current player list to all clients."""
+        with players_lock:
+            player_info_list = [
+                {"name": name, "icon": data["icon"]} 
+                for name, data in active_players.items()
+            ]            
+        payload = {
+            "action": "player_list",
+            "players": player_info_list
+        }
+        json_string = json.dumps(payload)
+        
+        with players_lock:
+            for data in active_players.values():
+                data["queue"].put(json_string)
 
     def start_server(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
