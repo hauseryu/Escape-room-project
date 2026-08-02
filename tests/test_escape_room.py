@@ -46,6 +46,7 @@ class FakeCanvas:
         self.texts = []
         self.bindings = []
         self.deleted = []
+        self.windows = []
 
     def create_polygon(self, points, **kwargs):
         self.polygons.append({
@@ -73,6 +74,12 @@ class FakeCanvas:
 
     def create_image(self, *points, **kwargs):
         self.images.append({
+            "points": points,
+            **kwargs,
+        })
+
+    def create_window(self, *points, **kwargs):
+        self.windows.append({
             "points": points,
             **kwargs,
         })
@@ -115,6 +122,9 @@ class EscapeRoomTest(unittest.TestCase):
         app.bookshelf = Bookshelf()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
+        app.player_panel = MagicMock() 
+        app.player_name = ""
+        app.player_icon_number = 1
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
@@ -171,10 +181,14 @@ class EscapeRoomTest(unittest.TestCase):
         app.bookshelf = Bookshelf()
         app.key = FakeDrawable()
         app.inventory = FakeDrawable()
+        app.player_panel = MagicMock() 
+        app.player_name = ""
+        app.player_icon_number = 1
         canvas = FakeCanvas()
         canvas.master = tkinter.Tk() 
         callback = object()
-        app.start_screen = StartScreen(canvas, callback,"")        
+        app.start_screen = StartScreen(canvas, callback,"")    
+        app.start_screen.player_icon_number = 1
         app.game_client = MagicMock() 
         app.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],

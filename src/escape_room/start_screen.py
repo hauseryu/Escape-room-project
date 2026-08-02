@@ -24,7 +24,7 @@ class StartScreen:
         self.display_image = None
         self.server_var = tkinter.IntVar() # 0 = off, 1 = on
         self.player_name = tkinter.StringVar()
-        self.player_icon_number = tkinter.IntVar()
+        self.player_icon_number = 0 
         self.server = server
         self.server_use_var = tkinter.IntVar() # 0 = off, 1 = on
 
