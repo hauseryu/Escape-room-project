@@ -10,3 +10,13 @@ room_depth = 4 # 4m
 
 # multiplayer mode
 SERVER_PORT = 50000
+
+# UI
+icon_mapping = {
+    0: "playerpic_wonder_woman.png",
+    1: "playerpic_woman_thinking.png",
+    2: "playerpic_woman_happy.png",
+    3: "playerpic_spider_man.png",
+    4: "playerpic_running_man.png",
+    5: "playerpic_businessman.png",
+}

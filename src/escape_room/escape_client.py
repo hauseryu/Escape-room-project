@@ -4,12 +4,14 @@ import json
 import scapy.all as scapy
 
 class EscapeClient:
-    def __init__(self, server_ip, port, player_name, gui_queue):
+    def __init__(self, server_ip, port, player_name, player_icon_number, gui_queue,gui_master):
         self.server_ip = server_ip
         self.port = port
         self.player_name = player_name
+        self.player_icon_number = player_icon_number
         self.gui_queue = gui_queue  # Waiting queue in main app
         self.client_socket = None
+        self.gui_master = gui_master
 
     def connect_and_start(self):
         """build up connection & start background reception thread."""
@@ -23,10 +25,14 @@ class EscapeClient:
             welcome_msg = self.client_socket.recv(1024).decode("utf-8")
             print(f"[CLIENT] Server answers: {welcome_msg}")
             
-            # 3. register own player name
-            self.client_socket.sendall(self.player_name.encode("utf-8"))
+            # 3. register own player name & get player list
+            reg_payload = {
+                "name": self.player_name,
+                "icon": self.player_icon_number
+            }
+            self.client_socket.sendall(json.dumps(reg_payload).encode("utf-8"))
             print(f"[CLIENT] Registered successfully as '{self.player_name}'.")
-            
+
             # 4. create background thread for permanent reception thread 
             recv_thread = threading.Thread(target=self._receive_loop, daemon=True)
             recv_thread.start()
@@ -37,6 +43,21 @@ class EscapeClient:
             if self.client_socket:
                 self.client_socket.close()
             return False
+
+    def receive_action(self, action_data):
+        """process incoming initial actions like player list."""
+        action_type = action_data.get("action")
+        
+        if action_type == "player_list":
+            players = action_data.get("players", [])
+            print(f"[NETWORK] player list updated: {players}")
+            
+            # transfer player list to GUI
+            payload = {
+                "event": "player_list", 
+                "players": players
+            }
+            self.gui_queue.put(payload)
 
     def _receive_loop(self):
         """runs asynchronously in background. Receives data and puts it into the GUI queue."""
@@ -54,6 +75,8 @@ class EscapeClient:
                 
                 # transmit event to GUI
                 self.gui_queue.put(game_event)
+                # fire event for the canvas master window
+                self.gui_master.event_generate("<<NetworkEvent>>", when="tail")
                 
             except Exception:
                 break
