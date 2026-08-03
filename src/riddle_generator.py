@@ -19,7 +19,22 @@ config = types.GenerateContentConfig(
 
 response = client.models.generate_content(
     model="gemini-3.5-flash-lite", 
-    contents="Hallo Gemini! Erstelle mir ein kurzes Rätsel mit den Antworten und der richtigen Antwort.",
+    contents="""
+            Erstelle ein kurzes Rätsel.
+
+            Antworte exakt in diesem Format:
+
+            Rätsel:
+            ...
+
+            A)
+            B)
+            C)
+            D)
+
+            Richtige Antwort:
+            ...
+            """,
     config=config              
 )
 
