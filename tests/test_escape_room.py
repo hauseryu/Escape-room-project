@@ -102,8 +102,13 @@ class FakeCanvas:
 
 
 class EscapeRoomTest(unittest.TestCase):
+    @patch("escape_room.objects.picture.generate_riddle")
     @patch("escape_room.objects.picture.ImageTk.PhotoImage")
-    def test_draw_room_creates_drawable_polygons(self, mock_photo):
+    def test_draw_room_creates_drawable_polygons(
+        self, mock_photo, mock_generate_riddle
+    ):
+        mock_generate_riddle.return_value = "Test riddle"
+
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
@@ -161,6 +166,8 @@ class EscapeRoomTest(unittest.TestCase):
     @patch("escape_room.objects.picture.generate_riddle")
     @patch("escape_room.objects.picture.ImageTk.PhotoImage")
     def test_start_game_clears_start_screen_and_draws_room(self, mock_photo, mock_generate_riddle):
+        mock_generate_riddle.return_value = "Test riddle"
+
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
