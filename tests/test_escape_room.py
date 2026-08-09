@@ -158,8 +158,9 @@ class EscapeRoomTest(unittest.TestCase):
 
         self.assertTrue(app.start_screen.was_drawn)
 
+    @patch("escape_room.objects.picture.generate_riddle")
     @patch("escape_room.objects.picture.ImageTk.PhotoImage")
-    def test_start_game_clears_start_screen_and_draws_room(self, mock_photo):
+    def test_start_game_clears_start_screen_and_draws_room(self, mock_photo, mock_generate_riddle):
         app = EscapeApp.__new__(EscapeApp)
         app.canvas_area = FakeCanvas()
         app.doors = []
