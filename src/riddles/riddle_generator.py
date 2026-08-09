@@ -17,11 +17,7 @@ load_dotenv()
 
 api_key = os.getenv("API_KEY")
 
-if not api_key:
-    raise ValueError("API_KEY is not set. Please add it to your .env file.")
-
-client = genai.Client(api_key=api_key)
-
+client = genai.Client(api_key=api_key) if api_key else None
 
 def generate_riddle():
     selected_themes = random.sample(THEMES, 3)
