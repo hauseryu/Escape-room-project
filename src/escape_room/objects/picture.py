@@ -1,6 +1,6 @@
 from PIL import Image, ImageTk
 from tkinter import Toplevel, Label
-from escape_room.riddle_generator import generate_riddle
+from riddles.riddle_generator import generate_riddle
 
 class Picture:
     """A picture frame on the back wall (``z = 4``).
