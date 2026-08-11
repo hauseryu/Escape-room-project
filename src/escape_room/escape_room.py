@@ -36,9 +36,11 @@ class EscapeApp(tkinter.Frame):
         super().__init__(master)
 
         # multiplayer and data transfer related coding
-        self.gui_queue = queue.Queue() # communication for server events
+        self.network_queue = queue.Queue() # communication for server events
+        self.icon_queue = queue.Queue() # communication for icon events
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
+        master.bind("<<IconEvent>>", self.on_icon_event)
         self.start_server = None
         self.player_name = None
         self.player_icon_number = None
@@ -51,7 +53,7 @@ class EscapeApp(tkinter.Frame):
             port=globals.SERVER_PORT, 
             player_name="", 
             player_icon_number=1, # set some default icon number
-            gui_queue=self.gui_queue,
+            network_queue=self.network_queue,
             gui_master=master
         )
         # now retrieve list of local devices
@@ -98,7 +100,9 @@ class EscapeApp(tkinter.Frame):
             "images",
         )
         self.inventory = inventory.Inventory()
-        self.player_panel = player_panel.PlayerPanel(master, self.image_path)
+        self.player_panel = player_panel.PlayerPanel(master, self.image_path,
+                                                     icon_queue=self.icon_queue,
+                                                     gui_master=master)
         # self.load_mock_game_state()
         self.doors = self.create_doors()
         self.light = Light()
@@ -187,6 +191,8 @@ class EscapeApp(tkinter.Frame):
             print("Game could not be started due to failing connection.")
             messagebox.showerror("error", "connection to server failed.")
             raise RuntimeError("server connection failed")
+        # update of inventory 
+        self.key.object_owner = self.player_name
         # create and show room 
         self.draw_room()
 
@@ -261,10 +267,18 @@ class EscapeApp(tkinter.Frame):
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
+
+        # in case of normal GUI events, leave immediately
+        if str(event.type) != "VirtualEvent" and str(event.type) != "35":
+            return
+        
         try:
             # as an event was triggered, there should be something in the queue
             while True:
-                event_data = self.gui_queue.get_nowait()
+                event_data = self.network_queue.get_nowait()
+                if not isinstance(event_data, dict):
+                    print(f"[WARNING] Alien objekt in network queue was ignored: {type(event_data)}")
+                    continue  # jump to next element in queue       
                 event_type = event_data.get("action")
                 
                 if event_type == "player_list":
@@ -281,8 +295,47 @@ class EscapeApp(tkinter.Frame):
                     ]
                     self.player_panel.update_players_list(connected_players)
                     
-                # Hier können später weitere Aktionen abgefangen werden
-                # elif event_type == "give_item": ...
+                elif event_type == "inventory_received": 
+                    inventory = event_data.get("inventory")
+                    player = event_data.get("from")
+                    owner = event_data.get("owner")
+                    print(f"[GUI Event] event-based passing of inventory {inventory},",
+                           f"owner {owner} from player {player}")
+                    key = Key(self.inventory)
+                    key.object_owner = owner
+                    self.inventory.addObject("key",key.object_owner,key)
+                    # draw the key and inventory
+                    # self.inventory.draw(self.canvas_area)
+                    key.draw(self.canvas_area) # draw key into inventory
 
         except queue.Empty:
             pass
+
+    def on_icon_event(self, event):
+        """is called when a player icon is clicked."""
+        # as an event was triggered, there should be something in the queue
+        event_data = self.icon_queue.get_nowait()
+        event_type = event_data.get("action")
+        (object,object_owner) = self.inventory.getSelectedObject()
+        if object == None: # if nothing is selected, we quit
+            return
+        if event_type == "send_inventory":
+            inventory = event_data.get("inventory")
+            player = event_data.get("player_name")
+            print(f"[GUI Event] received send_inventory event for inventory {inventory},",
+                   f"owner {object_owner} for player {player}")
+            self.game_client.send_action(event_type,player,inventory,object_owner)
+            # remove from inventory
+            self.inventory.delObject(object,object_owner)
+            # remove key image from canvas
+            if object == "key" and object_owner == self.key.object_owner:
+                self.canvas_area.delete(self.key.object_id)
+                self.canvas_area.delete(self.key.selection)
+            else:
+                obj = self.inventory.getObject(object,object_owner)
+                if obj != None:
+                    self.canvas_area.delete(obj.object_id)
+                    self.canvas_area.delete(obj.selection)
+
+
+
