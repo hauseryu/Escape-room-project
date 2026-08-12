@@ -93,3 +93,4 @@ class PlayerPanel(tk.Frame):
         self.icon_queue.put(event_send_inventory)
         # fire event for the canvas master window
         self.gui_master.event_generate("<<IconEvent>>", when="tail")
+

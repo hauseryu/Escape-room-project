@@ -336,6 +336,7 @@ class EscapeApp(tkinter.Frame):
                 if obj != None:
                     self.canvas_area.delete(obj.object_id)
                     self.canvas_area.delete(obj.selection)
+            self.inventory.refresh_inventory()
 
 
 

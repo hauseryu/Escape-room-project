@@ -23,7 +23,7 @@ class Inventory():
 
     def __init__(self):
         self.canvas = None
-        self.inventory = []
+        self.inventory = [] # list of inventory objects (type,object owner, selection status)
         self.objects = [] # list of inventory objects (GUI images)
         pass
 
@@ -124,4 +124,20 @@ class Inventory():
         except:
             return
         self.inventory[index_object] = (object,object_owner,"selected")
+      
+    def refresh_inventory(self):
+        """remove old inventory on canvas
+        # and redraw without any "holes" """
         
+        # 1. Alle alten Inventar-Bilder vom Canvas löschen, damit sie sich nicht stapeln
+        for obj in self.objects:
+            # remove current object images and selection
+            self.canvas.delete(obj.object_id)
+            if obj.selection != None:
+                self.canvas.delete(obj.selection)
+            # redraw objects
+            obj.draw(self.canvas)
+        
+       
+        # self.canvas_area.delete("inventory_items")
+

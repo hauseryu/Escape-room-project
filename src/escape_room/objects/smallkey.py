@@ -11,6 +11,8 @@ class Key:
         self.canvas = None
         self.object_owner = ""
         self.inventory = inventory
+        self.object_id = None
+        self.selection = None
         package_dir = os.path.dirname(os.path.dirname(__file__))
         self.image_path = os.path.join(package_dir, "assets", "images", "key_transparent.png")
         self.sound_path = os.path.join(package_dir, "assets", "sounds", "grab_key.wav")
