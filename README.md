@@ -2,38 +2,40 @@
 
 A Python/Tkinter project for drawing an escape room in a simple 3D perspective.
 
-The room is built from 3D world coordinates and rendered onto a 2D canvas. The current version includes a basic room layout, perspective projection.
+The room is built from 3D world coordinates and rendered onto a 2D canvas.
 
-## Current State
+## Requirements
 
-- Room rendering with floor, ceiling, and side walls
-- 3D-to-2D coordinate projection
-- Unit tests with `unittest`
+- Python 3.x
+
+Install all required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Multiplayer mode
+
+precondition:
+install npcap
+if npcap is not installed, scapy will show following message:
+WARNING: No libpcap provider available ! pcap won't be used
+=> download link: 
+https://npcap.com/#download
 
 ## Run the Application
 
 Requirement: Python 3.
 
-```powershell
+```bash
 python src/main.py
 ```
 
 ## Run the Tests
 
-```powershell
+```bash
 python -m unittest discover -s tests
 ```
-
-## Multiplayer mode
-
-preconditions:
-1) install scapy
-pip install scapy
-2) install npcap
-if npcap is not installed, scapy will show following message:
-WARNING: No libpcap provider available ! pcap won't be used
-=> download link: 
-https://npcap.com/#download
 
 ## Project Structure
 

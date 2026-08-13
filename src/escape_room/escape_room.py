@@ -106,7 +106,7 @@ class EscapeApp(tkinter.Frame):
         self.chair = Chair(5.00, 2.35, "right")
         self.key = Key(self.inventory)
         self.wardrobe = Wardrobe()
-        self.picture = Picture(IMAGE_DIR / "image_riddle.jpeg")
+        self.picture = Picture(IMAGE_DIR / "riddle_not_readable.png")
         self.bookshelf = Bookshelf()
 
         # create the canvas area and draw the start screen
