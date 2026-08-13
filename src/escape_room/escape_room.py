@@ -4,12 +4,14 @@ from pathlib import Path
 import queue
 import threading
 import time
+import os
 from tkinter import messagebox
 
 # Jetzt findet Python die Datei "graphics.py" problemlos
 from escape_room import globals
 from escape_room import graphics
 from escape_room import inventory
+from escape_room import player_panel
 from escape_room.escape_server import EscapeServer
 from escape_room.escape_client import EscapeClient
 
@@ -35,8 +37,11 @@ class EscapeApp(tkinter.Frame):
 
         # multiplayer and data transfer related coding
         self.gui_queue = queue.Queue() # communication for server events
+        # bind network events to a processing event handler
+        master.bind("<<NetworkEvent>>", self.on_network_event)
         self.start_server = None
         self.player_name = None
+        self.player_icon_number = None
         self.escape_server = EscapeServer()
 
         # create client network object and configure it
@@ -45,7 +50,9 @@ class EscapeApp(tkinter.Frame):
             server_ip="127.0.0.1", 
             port=globals.SERVER_PORT, 
             player_name="", 
-            gui_queue=self.gui_queue
+            player_icon_number=1, # set some default icon number
+            gui_queue=self.gui_queue,
+            gui_master=master
         )
         # now retrieve list of local devices
         found_devices = self.game_client.get_devices_local_network()
@@ -85,7 +92,14 @@ class EscapeApp(tkinter.Frame):
                      (8,3,4), # wall right: corner right top
                      (8,0,4)] # wall right: corner right bottom                    
                      ]
+        self.image_path = os.path.join(
+            os.path.dirname(__file__),
+            "assets",
+            "images",
+        )
         self.inventory = inventory.Inventory()
+        self.player_panel = player_panel.PlayerPanel(master, self.image_path)
+        # self.load_mock_game_state()
         self.doors = self.create_doors()
         self.light = Light()
         self.table = Table()
@@ -100,6 +114,18 @@ class EscapeApp(tkinter.Frame):
         
         self.canvas_area.bind("<Button-1>", self.handle_door_click)
         self.show_start_screen()
+
+    def load_mock_game_state(self):
+        # Setup Current Player
+        self.player_panel.update_current_player("Alice (You)", "playerpic_woman_happy.png")
+
+        # Setup List of Other Connected Network Players
+        connected_players = [
+            {"name": "Bob_The_Builder", "icon": "playerpic_running_man.png"},
+            {"name": "Charlie_99", "icon": "playerpic_woman_thinking.png"},
+            {"name": "DragonSlayer", "icon": "playerpic_wonder_woman.png"}
+        ]
+        self.player_panel.update_players_list(connected_players)
 
     def create_doors(self):
         return [
@@ -142,6 +168,7 @@ class EscapeApp(tkinter.Frame):
         # get values from start screen fields
         self.player_name = self.start_screen.player_name.get()
         self.start_server = self.start_screen.server_var.get()
+        self.player_icon_number = self.start_screen.player_icon_number
         # check if we have to start the server
         if self.start_server == 1:
             threading.Thread(target=self.escape_server.start_server, daemon=True).start()
@@ -153,6 +180,7 @@ class EscapeApp(tkinter.Frame):
         else:
             self.game_client.server_ip = "127.0.0.1"
         self.game_client.player_name = self.player_name
+        self.game_client.player_icon_number = self.player_icon_number
         if self.game_client.connect_and_start():
             print("client network connection started successfully.")
         else:
@@ -214,8 +242,47 @@ class EscapeApp(tkinter.Frame):
         self.inventory.draw(self.canvas_area)
         self.key.draw(self.canvas_area)
 
+        # draw player frame
+        self.panel_canvas_id = self.canvas_area.create_window(
+            355, 1,                   # X and Y coordinates inside the canvas
+            window=self.player_panel,  # The frame object to embed
+            anchor="nw",               # Top-left corner alignment
+            width=900,                 # Optional: Explicitly force width
+            height=202                 # Optional: Explicitly force height
+        )        
+        self.player_panel.update_current_player(self.player_name, 
+                                                globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"))
+        
     def handle_door_click(self, event):
         for door in self.doors:
             if door.handle_click(self.canvas_area, event):
                 self.draw_room()
                 break
+
+    def on_network_event(self, event):
+        """is called as soon as the network thread fires a signal."""
+        try:
+            # as an event was triggered, there should be something in the queue
+            while True:
+                event_data = self.gui_queue.get_nowait()
+                event_type = event_data.get("action")
+                
+                if event_type == "player_list":
+                    players = event_data.get("players", [])
+                    print(f"[GUI Event] event-based update of player list: {players}")
+                    connected_players = [
+                        {
+                            "name": player["name"], 
+                            # .get() sorgt für ein Fallback-Bild, falls eine unbekannte Nummer kommt
+                            "icon": globals.icon_mapping.get(player["icon"], "playerpic_running_man.png") 
+                        } 
+                        for player in players
+                        if player["name"] != self.player_name
+                    ]
+                    self.player_panel.update_players_list(connected_players)
+                    
+                # Hier können später weitere Aktionen abgefangen werden
+                # elif event_type == "give_item": ...
+
+        except queue.Empty:
+            pass
