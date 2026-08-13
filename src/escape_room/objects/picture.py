@@ -54,7 +54,7 @@ class Picture:
 
         # Pergament (ca. 60 % der Canvas)
         margin_x = w * 0.2
-        margin_y = h * 0.15
+        margin_y = h * 0.15 + 50
 
         canvas.create_rectangle(
             margin_x,
