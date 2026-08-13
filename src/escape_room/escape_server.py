@@ -26,25 +26,29 @@ class EscapeServer():
                 game_data = json.loads(data.decode("utf-8"))
                 action = game_data.get("action")
                 
-                # SCENARIO: passing over item ("give_item")
-                if action == "give_item":
-                    target = game_data.get("target")       # An wen?
-                    item = game_data.get("item")           # Was?
+                # SCENARIO: passing over item ("send_inventory")
+                if action == "send_inventory":
+                    target = game_data.get("player_name")       # to whom?
+                    inventory = game_data.get("inventory")           # what?
+                    owner =  game_data.get("owner")
                     
                     with players_lock:
                         if target in active_players:
                             # we put the event directly into the send queue of the target player!
-                            payload = {"event": "item_received", "from": player_name, "item": item}
-                            active_players[target].put(json.dumps(payload))
+                            payload = {"action": "inventory_received", 
+                                       "from": player_name, 
+                                       "inventory": inventory,
+                                       "owner": owner}
+                            active_players[target]["queue"].put(json.dumps(payload))
                             
                             # confirmation to the sender
-                            outgoing_queue.put(json.dumps({"event": "system", "msg": f"{item} passed over to {target} ."}))
+                            outgoing_queue.put(json.dumps({"event": "system", "msg": f"{inventory} passed over to {target} ."}))
                         else:
                             outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
                             
             except json.JSONDecodeError:
                 print(f"[FEHLER] invalid data format from {player_name}")
-            except Exception:
+            except Exception as excp:
                 break
 
         # player leaves the game

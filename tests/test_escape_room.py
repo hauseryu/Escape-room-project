@@ -7,15 +7,15 @@ import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from escape_room.escape_room import EscapeApp
-from escape_room.escape_room import StartScreen
-from escape_room.escape_room import EscapeClient
-from escape_room.objects.chair import Chair
-from escape_room.objects.light import Light
-from escape_room.objects.table import Table
-from escape_room.objects.wardrobe import Wardrobe
-from escape_room.objects.picture import Picture
-from escape_room.objects.bookshelf import Bookshelf
+from src.escape_room.escape_room import EscapeApp
+from src.escape_room.escape_room import StartScreen
+from src.escape_room.escape_room import EscapeClient
+from src.escape_room.objects.chair import Chair
+from src.escape_room.objects.light import Light
+from src.escape_room.objects.table import Table
+from src.escape_room.objects.wardrobe import Wardrobe
+from src.escape_room.objects.picture import Picture
+from src.escape_room.objects.bookshelf import Bookshelf
 
 IMAGE_DIR = Path(__file__).resolve().parent 
 

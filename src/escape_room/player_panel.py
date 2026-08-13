@@ -2,12 +2,15 @@ import tkinter as tk
 
 class PlayerPanel(tk.Frame):
     """A subarea container to display game player statuses horizontally."""
-    def __init__(self, parent_widget, image_path):
+    def __init__(self, parent_widget, image_path,icon_queue,gui_master):
         # Initialize as a Tkinter Frame without hardcoded size limits
         super().__init__(parent_widget, bd=2, relief="groove", padx=10, pady=10)
         
         self.image_path = image_path
         self.loaded_icons = {}  # Cache to hold active photo references
+
+        self.icon_queue = icon_queue
+        self.gui_master = gui_master
 
         # --- Section 1: Current Player Profile ---
         # CHANGED: Added side="left" and fill="y", changed pady to padx for side-by-side spacing
@@ -61,7 +64,7 @@ class PlayerPanel(tk.Frame):
             # Keep active unique key reference to prevent Garbage Collection
             cache_key = f"other_{index}_{player['name']}"
             self.loaded_icons[cache_key] = img
-
+            
             # Render player icon and player name stacked vertically or side-by-side
             # Let's stack icon over text for a clean horizontal profile look:
             icon_lbl = tk.Label(player_card_frame, image=img)
@@ -69,3 +72,25 @@ class PlayerPanel(tk.Frame):
 
             name_lbl = tk.Label(player_card_frame, text=player["name"], font=("Arial", 10))
             name_lbl.pack(side="top", pady=(2, 0))
+
+            # 3. CONNECT THE EVENT HANDLER
+            # Bind Left Mouse Click (<Button-1>) to your event handler method
+            # Use lambda to capture the clicked player's information
+            icon_lbl.bind(
+                "<Button-1>", 
+                lambda event, p_name=player['name']: self.on_player_icon_click(event, p_name)
+            )
+
+    def on_player_icon_click(self, event, player_name):
+        """Event handler triggered when any player icon is clicked."""
+        print(f"Game Event: Player icon clicked! Target: {player_name}")       
+        # transfer player list to GUI
+        event_send_inventory = {
+            "action": "send_inventory", 
+            "inventory": "key",
+            "player_name": player_name
+        }
+        self.icon_queue.put(event_send_inventory)
+        # fire event for the canvas master window
+        self.gui_master.event_generate("<<IconEvent>>", when="tail")
+

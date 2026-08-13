@@ -23,7 +23,8 @@ class Inventory():
 
     def __init__(self):
         self.canvas = None
-        self.inventory = []
+        self.inventory = [] # list of inventory objects (type,object owner, selection status)
+        self.objects = [] # list of inventory objects (GUI images)
         pass
 
     def draw(self,canvas):
@@ -74,27 +75,69 @@ class Inventory():
             y = self.GRID_Y + row * cell_height
             canvas.create_line(self.GRID_X, y, self.GRID_X + self.GRID_WIDTH, y, fill="black", width=2)
         
-    def addObject(self,object):
-        self.inventory.append((object,"not_selected"))
+    def addObject(self,object,object_owner,gui_object):
+        self.inventory.append((object,object_owner,"not_selected"))
+        self.objects.append(gui_object)
 
-    def objectInInventory(self,object):
-        return (((object,"selected") in self.inventory) or 
-               ((object,"not_selected") in self.inventory))
+    def getObject(self,object,object_owner):
+        for obj in self.objects:
+            if obj.object_owner == object_owner:
+                return obj
+        return None
     
-    def objectIsSelected(self,object):
-        if not self.objectInInventory(object):
+    def delObject(self,object,object_owner):
+        del self.inventory[self.getObjectIndex(object,object_owner)]
+
+    def getObjectIndex(self,object,object_owner):
+        if self.objectIsSelected(object,object_owner):
+            return self.inventory.index((object,object_owner,"selected"))
+        else:
+            return self.inventory.index((object,object_owner,"not_selected"))
+        
+    def objectInInventory(self,object,object_owner):
+        return (((object,object_owner,"selected") in self.inventory) or 
+               ((object,object_owner,"not_selected") in self.inventory))
+
+    def getObjectCoordinates(self,object_index):
+        return (28 + object_index*60, 80)
+
+    def objectIsSelected(self,object,object_owner):
+        if not self.objectInInventory(object,object_owner):
             return False
-        if (object,"selected") in self.inventory:
+        if (object,object_owner,"selected") in self.inventory:
             return True
         else:
             return False
         
-    def selectObject(self,object):
-        if not self.objectInInventory(object):
+    def getSelectedObject(self):
+        for obj in self.inventory:
+            (object,object_owner,selected) = obj
+            if selected == "selected":
+                return (object,object_owner)
+        return (None,None)
+
+    def selectObject(self,object,object_owner):
+        if not self.objectInInventory(object,object_owner):
             return
         try:
-            index_object = self.inventory.index((object,"not_selected"))
+            index_object = self.inventory.index((object,object_owner,"not_selected"))
         except:
             return
-        self.inventory[index_object] = (object,"selected")
+        self.inventory[index_object] = (object,object_owner,"selected")
+      
+    def refresh_inventory(self):
+        """remove old inventory on canvas
+        # and redraw without any "holes" """
         
+        # 1. Alle alten Inventar-Bilder vom Canvas löschen, damit sie sich nicht stapeln
+        for obj in self.objects:
+            # remove current object images and selection
+            self.canvas.delete(obj.object_id)
+            if obj.selection != None:
+                self.canvas.delete(obj.selection)
+            # redraw objects
+            obj.draw(self.canvas)
+        
+       
+        # self.canvas_area.delete("inventory_items")
+

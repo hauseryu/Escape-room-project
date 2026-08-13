@@ -4,12 +4,12 @@ import json
 import scapy.all as scapy
 
 class EscapeClient:
-    def __init__(self, server_ip, port, player_name, player_icon_number, gui_queue,gui_master):
+    def __init__(self, server_ip, port, player_name, player_icon_number, network_queue,gui_master):
         self.server_ip = server_ip
         self.port = port
         self.player_name = player_name
         self.player_icon_number = player_icon_number
-        self.gui_queue = gui_queue  # Waiting queue in main app
+        self.network_queue = network_queue  # Waiting queue in main app
         self.client_socket = None
         self.gui_master = gui_master
 
@@ -57,7 +57,12 @@ class EscapeClient:
                 "event": "player_list", 
                 "players": players
             }
-            self.gui_queue.put(payload)
+            self.network_queue.put(payload)
+
+        if action_type == "send_inventory":
+            inventory = action_data.get("inventory")
+            print(f"[NETWORK] send_inventory for {inventory}")
+
 
     def _receive_loop(self):
         """runs asynchronously in background. Receives data and puts it into the GUI queue."""
@@ -67,14 +72,13 @@ class EscapeClient:
                 if not data:
                     print("[CLIENT] Verbindung vom Server geschlossen.")
                     # put specific event into queue, so GUI gets knowledge about it
-                    self.gui_queue.put({"event": "system", "msg": "lost connection."})
+                    self.network_queue.put({"event": "system", "msg": "lost connection."})
                     break
                 
                 # decode JSON package
                 game_event = json.loads(data.decode("utf-8"))
-                
                 # transmit event to GUI
-                self.gui_queue.put(game_event)
+                self.network_queue.put(game_event)
                 # fire event for the canvas master window
                 self.gui_master.event_generate("<<NetworkEvent>>", when="tail")
                 
@@ -84,7 +88,7 @@ class EscapeClient:
         if self.client_socket:
             self.client_socket.close()
 
-    def send_action(self, action_type, target=None, item=None):
+    def send_action(self, action_type, player=None, inventory=None, owner=None):
         """ useful method to send actions to the sever via the GUI class."""
         if not self.client_socket:
             print("⚠️ No active server connection.")
@@ -92,8 +96,9 @@ class EscapeClient:
             
         payload = {
             "action": action_type,
-            "target": target,
-            "item": item
+            "player_name": player,
+            "inventory": inventory,
+            "owner": owner
         }
         try:
             json_string = json.dumps(payload)
