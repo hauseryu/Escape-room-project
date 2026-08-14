@@ -50,21 +50,51 @@ def _mix_color(color, target, amount):
 
 
 class Door:
-    def __init__(
-        self,
-        corners,
-        color="#6f3f20",
-        tag="door",
-    ):
-        self.corners = self._create_corners(corners)
+    DOOR_WIDTH = 1.6
+    DOOR_HEIGHT = 2.0
+    
+    def __init__(self, position, color, direction, tag):
+        self.position = tuple(position)
         self.color = color
+        self.direction = direction
         self.tag = tag
         self.is_open = False
 
-    def _create_corners(self, corners):
-        if len(corners) != 4:
-            raise ValueError("corners must contain four 3D points")
-        return [tuple(point) for point in corners]
+        self.corners = self._create_corners()
+
+    def _create_corners(self):
+        x, y, z = self.position
+        width = self.DOOR_WIDTH
+        height = self.DOOR_HEIGHT
+
+        if self.direction == "right":
+            return [
+                (x, y + height, z),
+                (x, y + height, z - width),
+                (x, y, z - width),
+                (x, y, z),
+            ]
+
+        elif self.direction == "left":
+            return [
+                (x, y + height, z),
+                (x, y + height, z + width),
+                (x, y, z + width),
+                (x, y, z),
+            ]
+
+        elif self.direction == "front":
+            return [
+                (x, y + height, z),
+                (x + width, y + height, z),
+                (x + width, y, z),
+                (x, y, z),
+            ]
+
+        else:
+            raise ValueError(
+                f"Unknown door direction: {self.direction}"
+            )
 
     def _tags(self):
         return (self.tag, "door")

@@ -133,35 +133,9 @@ class EscapeApp(tkinter.Frame):
 
     def create_doors(self):
         return [
-            Door(
-                corners=[
-                    (3.2, 2, 4),
-                    (4.8, 2, 4),
-                    (4.8, 0, 4),
-                    (3.2, 0, 4),
-                ],
-                color = "red",
-                tag="back_door",
-            ),
-            Door(
-                corners=[
-                    (0, 2, 2),
-                    (0, 2, 3.2),
-                    (0, 0, 3.2),
-                    (0, 0, 2),
-                ],
-                tag="left_door",
-            ),
-            Door(
-                corners=[
-                    (8, 2, 3.2),
-                    (8, 2, 2),
-                    (8, 0, 2),
-                    (8, 0, 3.2),
-                ],
-                color = "blue",
-                tag="right_door",
-            ),
+            Door((3.2, 0, 4), "brown", "front", "red_door"),
+            Door((0, 0, 1.5), "green", "left", "green_door"),
+            Door((8, 0, 3.1), "blue", "right", "blue_door"),
         ]
 
     def show_start_screen(self):
