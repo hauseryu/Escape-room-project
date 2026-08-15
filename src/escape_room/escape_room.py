@@ -108,7 +108,7 @@ class EscapeApp(tkinter.Frame):
         self.light = Light()
         self.table = Table()
         self.chair = Chair(5.00, 2.35, "right")
-        self.key = Key(self.inventory)
+        self.key = Key(self.inventory,True) # room_placement = True
         self.wardrobe = Wardrobe()
         self.picture = Picture(IMAGE_DIR / "riddle_not_readable.png")
         self.bookshelf = Bookshelf()
@@ -305,7 +305,6 @@ class EscapeApp(tkinter.Frame):
                     key.object_owner = owner
                     self.inventory.addObject("key",key.object_owner,key)
                     # draw the key and inventory
-                    # self.inventory.draw(self.canvas_area)
                     key.draw(self.canvas_area) # draw key into inventory
 
         except queue.Empty:
@@ -325,18 +324,11 @@ class EscapeApp(tkinter.Frame):
             print(f"[GUI Event] received send_inventory event for inventory {inventory},",
                    f"owner {object_owner} for player {player}")
             self.game_client.send_action(event_type,player,inventory,object_owner)
+            # remove key image from canvas
+            self.inventory.remove_inventory_pictures()
             # remove from inventory
             self.inventory.delObject(object,object_owner)
-            # remove key image from canvas
-            if object == "key" and object_owner == self.key.object_owner:
-                self.canvas_area.delete(self.key.object_id)
-                self.canvas_area.delete(self.key.selection)
-            else:
-                obj = self.inventory.getObject(object,object_owner)
-                if obj != None:
-                    self.canvas_area.delete(obj.object_id)
-                    self.canvas_area.delete(obj.selection)
-            self.inventory.refresh_inventory()
+            self.inventory.redraw_inventory()
 
 
 
