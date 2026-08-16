@@ -149,7 +149,7 @@ class EscapeRoomTest(unittest.TestCase):
         doors = app.create_doors()
 
         self.assertEqual(len(doors), 3)
-        self.assertEqual([door.tag for door in doors], ["back_door", "left_door", "right_door"])
+        self.assertEqual([door.tag for door in doors], ["red_door", "green_door", "blue_door"])
         for door in doors:
             self.assertEqual(len(door.corners), 4)
             y_values = [point[1] for point in door.corners]
@@ -158,10 +158,10 @@ class EscapeRoomTest(unittest.TestCase):
         self.assertEqual(
             doors[2].corners,
             [
-                (8, 2, 3.2),
-                (8, 2, 2),
-                (8, 0, 2),
-                (8, 0, 3.2),
+                (8, 2, 3.1),
+                (8, 2, 1.5),
+                (8, 0, 1.5),
+                (8, 0, 3.1),
             ],
         )
 
