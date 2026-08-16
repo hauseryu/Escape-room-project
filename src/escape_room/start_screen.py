@@ -44,6 +44,7 @@ class StartScreen:
         self._draw_server_playername()
         self._draw_start_button()
         self.canvas.tag_bind("start_button", "<Button-1>", self.start_callback)
+        print(f"[DEBUG] children in StartScreen frame: {self.canvas.winfo_children()}")
 
     def _draw_bitmap(self):
         try:

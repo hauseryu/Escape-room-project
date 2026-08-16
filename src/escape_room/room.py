@@ -4,9 +4,10 @@ from pathlib import Path
 import queue
 import os
 
-from src.escape_room.escape_app import graphics
-from src.escape_room.escape_app import inventory
-from src.escape_room.escape_app import player_panel
+from src.escape_room import graphics
+from src.escape_room import inventory
+from src.escape_room import player_panel
+from src.escape_room import globals
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
@@ -14,7 +15,6 @@ from escape_room.objects.light import Light
 from escape_room.objects.smallkey import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
-from escape_room.start_screen import StartScreen
 from escape_room.objects.picture import Picture
 from escape_room.objects.bookshelf import Bookshelf
 
@@ -37,21 +37,21 @@ class Room(tkinter.Frame):
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
         master.bind("<<IconEvent>>", self.on_icon_event)
-
-    # initialize room with all relevant settings
-    def init_room(self,player_name,player_icon_number):
-        self.player_name = player_name
-        self.player_icon_number = player_icon_number
-        # set ownership of key
-        self.key.object_owner = self.player_name
-
         # UI-related coding
-        self.coordinates = []
-        self.pack()
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
-        self.start_screen = StartScreen(self.canvas_area, self.start_game,self.server)
+        self.canvas_area.pack()
+        self.pack()
+
+    # initialize room with all relevant settings
+    def init_room(self,game_client):
+        self.player_name = None
+        self.player_icon_number = None
+        self.game_client = game_client
+
+        # UI-related coding
+        self.coordinates = []
         
         # room coordinates in 3D space (x, y, z)
         self.room_coordinates = [["#8B4513",
@@ -98,39 +98,19 @@ class Room(tkinter.Frame):
         self.canvas_area.pack()
         
         self.canvas_area.bind("<Button-1>", self.handle_door_click)
-        self.show_start_screen()
+
+    def update_player_data(self,player_name,player_icon_number):
+        # player name + icon
+        self.player_name = player_name
+        self.player_icon_number = player_icon_number
+        # set ownership of key
+        self.key.object_owner = self.player_name
 
     def create_doors(self):
         return [
-            Door(
-                corners=[
-                    (3.2, 2, 4),
-                    (4.8, 2, 4),
-                    (4.8, 0, 4),
-                    (3.2, 0, 4),
-                ],
-                color = "red",
-                tag="back_door",
-            ),
-            Door(
-                corners=[
-                    (0, 2, 2),
-                    (0, 2, 3.2),
-                    (0, 0, 3.2),
-                    (0, 0, 2),
-                ],
-                tag="left_door",
-            ),
-            Door(
-                corners=[
-                    (8, 2, 3.2),
-                    (8, 2, 2),
-                    (8, 0, 2),
-                    (8, 0, 3.2),
-                ],
-                color = "blue",
-                tag="right_door",
-            ),
+            Door((3.2, 0, 4), "brown", "front", "red_door"),
+            Door((0, 0, 1.5), "green", "left", "green_door"),
+            Door((8, 0, 3.1), "blue", "right", "blue_door"),
         ]
 
     # draw the room using world coordinates

@@ -7,6 +7,8 @@ from tkinter import messagebox
 from escape_room.escape_server import EscapeServer
 from escape_room.escape_client import EscapeClient
 from escape_room.room import Room
+from src.escape_room import globals
+from escape_room.start_screen import StartScreen
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 
@@ -19,6 +21,8 @@ class EscapeApp():
         self.room = Room(master)
         self.init_network()
         # initialization complete!
+        # create room and inventory bar
+        self.room.init_room(self.game_client)
         # show the start screen => start screen will then call the start_game function
         self.show_start_screen()
         
@@ -49,12 +53,13 @@ class EscapeApp():
 
     # show start screen
     def show_start_screen(self):
+        self.start_screen = StartScreen(self.room.canvas_area, self.start_game,self.server)
         self.start_screen.draw()
 
     # start_game is called from start screen after user
     # has entered name, selected his icon and decided on server startup
     def start_game(self, event=None):
-        self.canvas_area.delete("all")
+        self.room.canvas_area.delete("all")
         # get values from start screen fields
         self.player_name = self.start_screen.player_name.get()
         self.start_server = self.start_screen.server_var.get()
@@ -78,8 +83,8 @@ class EscapeApp():
             messagebox.showerror("error", "connection to server failed.")
             raise RuntimeError("server connection failed")
 
-        # update room with current settings
-        self.room.init_room(self.player_name,self.player_icon_number)
+        # pass over player data to the room object
+        self.room.update_player_data(self.player_name,self.player_icon_number)
         # pass over control to room object => create and show room 
         self.room.draw_room()
 

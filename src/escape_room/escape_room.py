@@ -29,7 +29,7 @@ IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 
-class EscapeApp(tkinter.Frame):
+class EscapeApp2(tkinter.Frame):
 
     # create frame Objekt and drawing area (canvas)
     def __init__(self,master):
