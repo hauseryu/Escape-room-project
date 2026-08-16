@@ -7,12 +7,13 @@ from escape_room import graphics
 
 
 class Key:
-    def __init__(self, inventory):
+    def __init__(self, inventory,room_placement=False):
         self.canvas = None
         self.object_owner = ""
         self.inventory = inventory
         self.object_id = None
-        self.selection = None
+        self.selection_id = None
+        self.room_placement = room_placement
         package_dir = os.path.dirname(os.path.dirname(__file__))
         self.image_path = os.path.join(package_dir, "assets", "images", "key_transparent.png")
         self.sound_path = os.path.join(package_dir, "assets", "sounds", "grab_key.wav")
@@ -23,7 +24,7 @@ class Key:
         if self.inventory.objectInInventory("key",self.object_owner):
             objIndex = self.inventory.getObjectIndex("key",self.object_owner)
             (x1,y1) = self.inventory.getObjectCoordinates(objIndex)
-        else:
+        elif self.room_placement == True:
             (x1, y1) = graphics.compute_2d_coordinates(
                 6.5,
                 0.78,
@@ -39,7 +40,7 @@ class Key:
                            x1+57,y1+45,
                            x1-5,y1+45
                            )
-            self.selection = self.canvas.create_polygon(*select_rect,fill="blue",width=3)
+            self.selection_id = self.canvas.create_polygon(*select_rect,fill="blue",width=3)
         self.object_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
         tooltip_data = {"rect_id": None, "text_id": None}
         # bind event '<Enter>' (mouse moves over icon)
@@ -70,8 +71,10 @@ class Key:
             )
         except Exception as e:
             print(f"Sound konnte nicht abgespielt werden: {e}")
-        if not self.inventory.objectInInventory("key",self.object_owner):
+        if not self.inventory.objectInInventory("key",self.object_owner) and \
+               self.room_placement == True:
             self.inventory.addObject("key",self.object_owner,self)
+            self.room_placement = False
         else:
             self.inventory.selectObject("key",self.object_owner)
         self.draw(self.canvas)

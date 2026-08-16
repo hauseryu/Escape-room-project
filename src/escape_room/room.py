@@ -2,18 +2,12 @@
 import tkinter
 from pathlib import Path
 import queue
-import threading
-import time
 import os
-from tkinter import messagebox
 
-# Jetzt findet Python die Datei "graphics.py" problemlos
-from escape_room import globals
-from escape_room import graphics
-from escape_room import inventory
-from escape_room import player_panel
-from escape_room.escape_server import EscapeServer
-from escape_room.escape_client import EscapeClient
+from src.escape_room import graphics
+from src.escape_room import inventory
+from src.escape_room import player_panel
+from src.escape_room import globals
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
@@ -21,7 +15,6 @@ from escape_room.objects.light import Light
 from escape_room.objects.smallkey import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
-from escape_room.start_screen import StartScreen
 from escape_room.objects.picture import Picture
 from escape_room.objects.bookshelf import Bookshelf
 
@@ -29,48 +22,36 @@ IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 
-class EscapeApp(tkinter.Frame):
-
+class Room(tkinter.Frame):
+    
     # create frame Objekt and drawing area (canvas)
     def __init__(self,master):
         super().__init__(master)
 
+        # set GUI master
+        self.master = master
+
         # multiplayer and data transfer related coding
         self.network_queue = queue.Queue() # communication for server events
-        self.icon_queue = queue.Queue() # communication for icon events
+        self.icon_queue = queue.Queue() # communication for icon events        
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
         master.bind("<<IconEvent>>", self.on_icon_event)
-        self.start_server = None
-        self.player_name = None
-        self.player_icon_number = None
-        self.escape_server = EscapeServer()
-
-        # create client network object and configure it
-        # we pass the GUI queue so it can be written to by the network object
-        self.game_client = EscapeClient(
-            server_ip="127.0.0.1", 
-            port=globals.SERVER_PORT, 
-            player_name="", 
-            player_icon_number=1, # set some default icon number
-            network_queue=self.network_queue,
-            gui_master=master
-        )
-        # now retrieve list of local devices
-        found_devices = self.game_client.get_devices_local_network()
-        self.server = self.game_client.check_server_port(found_devices,globals.SERVER_PORT)
-        if self.server == None:
-            print("no game server running.")
-        else:
-            print("server running on device: ",self.server)
-
         # UI-related coding
-        self.coordinates = []
-        self.pack()
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
-        self.start_screen = StartScreen(self.canvas_area, self.start_game,self.server)
+        self.canvas_area.pack()
+        self.pack()
+
+    # initialize room with all relevant settings
+    def init_room(self,game_client):
+        self.player_name = None
+        self.player_icon_number = None
+        self.game_client = game_client
+
+        # UI-related coding
+        self.coordinates = []
         
         # room coordinates in 3D space (x, y, z)
         self.room_coordinates = [["#8B4513",
@@ -100,15 +81,15 @@ class EscapeApp(tkinter.Frame):
             "images",
         )
         self.inventory = inventory.Inventory()
-        self.player_panel = player_panel.PlayerPanel(master, self.image_path,
+        self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                      icon_queue=self.icon_queue,
-                                                     gui_master=master)
+                                                     gui_master=self.master)
         # self.load_mock_game_state()
         self.doors = self.create_doors()
         self.light = Light()
         self.table = Table()
         self.chair = Chair(5.00, 2.35, "right")
-        self.key = Key(self.inventory)
+        self.key = Key(self.inventory,True) # room_placement = True
         self.wardrobe = Wardrobe()
         self.picture = Picture(IMAGE_DIR / "riddle_not_readable.png")
         self.bookshelf = Bookshelf()
@@ -117,19 +98,13 @@ class EscapeApp(tkinter.Frame):
         self.canvas_area.pack()
         
         self.canvas_area.bind("<Button-1>", self.handle_door_click)
-        self.show_start_screen()
 
-    def load_mock_game_state(self):
-        # Setup Current Player
-        self.player_panel.update_current_player("Alice (You)", "playerpic_woman_happy.png")
-
-        # Setup List of Other Connected Network Players
-        connected_players = [
-            {"name": "Bob_The_Builder", "icon": "playerpic_running_man.png"},
-            {"name": "Charlie_99", "icon": "playerpic_woman_thinking.png"},
-            {"name": "DragonSlayer", "icon": "playerpic_wonder_woman.png"}
-        ]
-        self.player_panel.update_players_list(connected_players)
+    def update_player_data(self,player_name,player_icon_number):
+        # player name + icon
+        self.player_name = player_name
+        self.player_icon_number = player_icon_number
+        # set ownership of key
+        self.key.object_owner = self.player_name
 
     def create_doors(self):
         return [
@@ -137,38 +112,6 @@ class EscapeApp(tkinter.Frame):
             Door((0, 0, 1.5), "green", "left", "green_door"),
             Door((8, 0, 3.1), "blue", "right", "blue_door"),
         ]
-
-    def show_start_screen(self):
-        self.start_screen.draw()
-
-    def start_game(self, event=None):
-        self.canvas_area.delete("all")
-        # get values from start screen fields
-        self.player_name = self.start_screen.player_name.get()
-        self.start_server = self.start_screen.server_var.get()
-        self.player_icon_number = self.start_screen.player_icon_number
-        # check if we have to start the server
-        if self.start_server == 1:
-            threading.Thread(target=self.escape_server.start_server, daemon=True).start()
-        time.sleep(0.2) # give server object some time to start up....
-
-        # start client connection
-        if self.start_screen.server_use_var.get() == 1:
-            self.game_client.server_ip = self.server    
-        else:
-            self.game_client.server_ip = "127.0.0.1"
-        self.game_client.player_name = self.player_name
-        self.game_client.player_icon_number = self.player_icon_number
-        if self.game_client.connect_and_start():
-            print("client network connection started successfully.")
-        else:
-            print("Game could not be started due to failing connection.")
-            messagebox.showerror("error", "connection to server failed.")
-            raise RuntimeError("server connection failed")
-        # update of inventory 
-        self.key.object_owner = self.player_name
-        # create and show room 
-        self.draw_room()
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -279,7 +222,6 @@ class EscapeApp(tkinter.Frame):
                     key.object_owner = owner
                     self.inventory.addObject("key",key.object_owner,key)
                     # draw the key and inventory
-                    # self.inventory.draw(self.canvas_area)
                     key.draw(self.canvas_area) # draw key into inventory
 
         except queue.Empty:
@@ -299,18 +241,11 @@ class EscapeApp(tkinter.Frame):
             print(f"[GUI Event] received send_inventory event for inventory {inventory},",
                    f"owner {object_owner} for player {player}")
             self.game_client.send_action(event_type,player,inventory,object_owner)
+            # remove key image from canvas
+            self.inventory.remove_inventory_pictures()
             # remove from inventory
             self.inventory.delObject(object,object_owner)
-            # remove key image from canvas
-            if object == "key" and object_owner == self.key.object_owner:
-                self.canvas_area.delete(self.key.object_id)
-                self.canvas_area.delete(self.key.selection)
-            else:
-                obj = self.inventory.getObject(object,object_owner)
-                if obj != None:
-                    self.canvas_area.delete(obj.object_id)
-                    self.canvas_area.delete(obj.selection)
-            self.inventory.refresh_inventory()
+            self.inventory.redraw_inventory()
 
 
 

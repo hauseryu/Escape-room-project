@@ -7,9 +7,11 @@ import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.escape_room import EscapeApp
-from src.escape_room.escape_room import StartScreen
-from src.escape_room.escape_room import EscapeClient
+from src.escape_room.escape_app import EscapeApp
+from src.escape_room.escape_app import StartScreen
+from src.escape_room.escape_app import EscapeClient
+from src.escape_room.escape_app import Room
+
 from src.escape_room.objects.chair import Chair
 from src.escape_room.objects.light import Light
 from src.escape_room.objects.table import Table
@@ -117,36 +119,37 @@ class EscapeRoomTest(unittest.TestCase):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
-        app.canvas_area = FakeCanvas()
-        app.doors = []
-        app.light = Light()
-        app.table = Table()
-        app.chair = Chair(4.85, 2.35, "right")
-        app.wardrobe = Wardrobe()
-        app.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
-        app.bookshelf = Bookshelf()
-        app.key = FakeDrawable()
-        app.inventory = FakeDrawable()
-        app.player_panel = MagicMock() 
-        app.player_name = ""
-        app.player_icon_number = 1
-        app.room_coordinates = [
+        app.room = Room.__new__(Room)
+        app.room.canvas_area = FakeCanvas()
+        app.room.doors = []
+        app.room.light = Light()
+        app.room.table = Table()
+        app.room.chair = Chair(4.85, 2.35, "right")
+        app.room.wardrobe = Wardrobe()
+        app.room.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.bookshelf = Bookshelf()
+        app.room.key = FakeDrawable()
+        app.room.inventory = FakeDrawable()
+        app.room.player_panel = MagicMock() 
+        app.room.player_name = ""
+        app.room.player_icon_number = 1
+        app.room.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
             ["white", (0, 0, 0), (0, 3, 0), (0, 3, 4), (0, 0, 4)],
             ["white", (8, 0, 0), (8, 3, 0), (8, 3, 4), (8, 0, 4)],
         ]
 
-        app.draw_room()
+        app.room.draw_room()
 
       
-        self.assertIs(app.key.drawn_on, app.canvas_area)
-        self.assertIs(app.inventory.drawn_on, app.canvas_area)
+        self.assertIs(app.room.key.drawn_on, app.room.canvas_area)
+        self.assertIs(app.room.inventory.drawn_on, app.room.canvas_area)
 
     def test_create_doors_creates_three_doors(self):
         app = EscapeApp.__new__(EscapeApp)
-
-        doors = app.create_doors()
+        app.room = Room.__new__(Room)
+        doors = app.room.create_doors()
 
         self.assertEqual(len(doors), 3)
         self.assertEqual([door.tag for door in doors], ["red_door", "green_door", "blue_door"])
@@ -166,39 +169,63 @@ class EscapeRoomTest(unittest.TestCase):
         )
 
     def test_show_start_screen_delegates_to_start_screen(self):
+        # 1. Setup the empty app instance
         app = EscapeApp.__new__(EscapeApp)
-        app.start_screen = FakeStartScreen()
+        app.server = "mock_server_data"
+        app.room = MagicMock()
+        app.start_game = MagicMock()
 
-        app.show_start_screen()
+        # 2. Patch the StartScreen class where it is USED (inside escape_app)
+        with patch('src.escape_room.escape_app.StartScreen') as mock_start_screen_class:
+            
+            # Create the mock instance that will be returned when StartScreen() is called
+            mock_instance = MagicMock()
+            mock_start_screen_class.return_value = mock_instance
 
-        self.assertTrue(app.start_screen.was_drawn)
+            # 3. Call the real method 
+            app.show_start_screen()
 
+            # 4. Asserts:
+            # A) Check if the StartScreen was created with the right parameters
+            mock_start_screen_class.assert_called_once_with(
+                app.room.canvas_area, 
+                app.start_game, 
+                app.server
+            )
+            
+            # B) Check if the .draw() method was actually called on the instance!
+            mock_instance.draw.assert_called_once()
+            
+            # C) Check if it was saved as an attribute in your app
+            self.assertEqual(app.start_screen, mock_instance)    
+    
     @patch("escape_room.objects.picture.generate_riddle")
     @patch("escape_room.objects.picture.ImageTk.PhotoImage")
     def test_start_game_clears_start_screen_and_draws_room(self, mock_photo, mock_generate_riddle):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
-        app.canvas_area = FakeCanvas()
-        app.doors = []
-        app.light = Light()
-        app.table = Table()
-        app.chair = Chair(4.85, 2.35, "right")
-        app.wardrobe = Wardrobe()
-        app.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
-        app.bookshelf = Bookshelf()
-        app.key = FakeDrawable()
-        app.inventory = FakeDrawable()
-        app.player_panel = MagicMock() 
-        app.player_name = ""
-        app.player_icon_number = 1
+        app.room = Room.__new__(Room)
+        app.room.canvas_area = FakeCanvas()
+        app.room.doors = []
+        app.room.light = Light()
+        app.room.table = Table()
+        app.room.chair = Chair(4.85, 2.35, "right")
+        app.room.wardrobe = Wardrobe()
+        app.room.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.bookshelf = Bookshelf()
+        app.room.key = FakeDrawable()
+        app.room.inventory = FakeDrawable()
+        app.room.player_panel = MagicMock() 
+        app.room.player_name = ""
+        app.room.player_icon_number = 1
         canvas = FakeCanvas()
         canvas.master = tkinter.Tk() 
         callback = object()
         app.start_screen = StartScreen(canvas, callback,"")    
         app.start_screen.player_icon_number = 1
         app.game_client = MagicMock() 
-        app.room_coordinates = [
+        app.room.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
             ["white", (0, 0, 0), (0, 3, 0), (0, 3, 4), (0, 0, 4)],
@@ -207,9 +234,9 @@ class EscapeRoomTest(unittest.TestCase):
 
         app.start_game()
 
-        self.assertIn("all", app.canvas_area.deleted)
-        self.assertGreater(len(app.canvas_area.polygons), 0)
-        self.assertIs(app.key.drawn_on, app.canvas_area)
+        self.assertIn("all", app.room.canvas_area.deleted)
+        self.assertGreater(len(app.room.canvas_area.polygons), 0)
+        self.assertIs(app.room.key.drawn_on, app.room.canvas_area)
 
     def test_chair_can_face_different_directions(self):
         right_chair = Chair(4, 2, "right")
