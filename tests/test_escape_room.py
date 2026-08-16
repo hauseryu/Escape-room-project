@@ -7,9 +7,9 @@ import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.escape_room import EscapeApp
-from src.escape_room.escape_room import StartScreen
-from src.escape_room.escape_room import EscapeClient
+from src.escape_room.escape_app import EscapeApp
+from src.escape_room.escape_app import StartScreen
+from src.escape_room.escape_app import EscapeClient
 from src.escape_room.objects.chair import Chair
 from src.escape_room.objects.light import Light
 from src.escape_room.objects.table import Table
