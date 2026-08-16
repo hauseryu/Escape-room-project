@@ -35,25 +35,21 @@ class FakeCanvas:
 class DoorTest(unittest.TestCase):
     def setUp(self):
         self.corners = [
-            (3, 3, 4),
-            (5, 3, 4),
-            (5, 0, 4),
-            (3, 0, 4),
+            (0, 2, 0),
+            (0, 2, 1.6),
+            (0, 0, 1.6),
+            (0, 0, 0),
         ]
 
     def test_stores_four_corner_points(self):
-        door = Door(corners=self.corners, tag="test_door")
+        door = Door(position = (0, 0, 0), color="#6f3f20", direction="left", tag="test_door")
 
         self.assertEqual(door.corners, self.corners)
         self.assertEqual(door.tag, "test_door")
 
-    def test_requires_four_corner_points(self):
-        with self.assertRaises(ValueError):
-            Door(corners=[(0, 0, 1), (1, 0, 1), (1, 1, 1)])
-
     def test_draw_door_creates_canvas_shapes(self):
         canvas = FakeCanvas()
-        door = Door(corners=self.corners, tag="test_door")
+        door = Door(position = (0, 0, 0), color="#6f3f20", direction="left", tag="test_door")
 
         door.draw(canvas, 800, 600)
 
