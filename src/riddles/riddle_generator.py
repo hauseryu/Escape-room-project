@@ -48,10 +48,10 @@ def generate_riddle():
             Riddle:
             ...
 
-            A)
-            B)
-            C)
-            D)
+            1)
+            2)
+            3)
+            4)
 
             Correct answer:
             ...
