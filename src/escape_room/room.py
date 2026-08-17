@@ -4,10 +4,10 @@ from pathlib import Path
 import queue
 import os
 
-from src.escape_room import graphics
-from src.escape_room import inventory
-from src.escape_room import player_panel
-from src.escape_room import globals
+from escape_room import graphics
+from escape_room import inventory
+from escape_room import player_panel
+from escape_room import globals
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door

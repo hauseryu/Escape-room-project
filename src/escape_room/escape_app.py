@@ -7,7 +7,7 @@ from tkinter import messagebox
 from escape_room.escape_server import EscapeServer
 from escape_room.escape_client import EscapeClient
 from escape_room.room import Room
-from src.escape_room import globals
+from escape_room import globals
 from escape_room.start_screen import StartScreen
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"

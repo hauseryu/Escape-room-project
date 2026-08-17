@@ -50,7 +50,7 @@ def _mix_color(color, target, amount):
 
 
 class Door:
-    DOOR_WIDTH = 1.6
+    DOOR_WIDTH = 1.0
     DOOR_HEIGHT = 2.0
     
     def __init__(self, position, color, direction, tag):

@@ -20,12 +20,16 @@ class Picture:
         ]
         self.foto_image = None
         self.image_id = None
-        self.riddles = [
-            generate_riddle(),
-            generate_riddle(),
-            generate_riddle()
-        ]
         
+        self.riddles = []
+        self.correct_answers = []
+
+        for _ in range(3):
+            riddle, correct_answer = generate_riddle()
+
+            self.riddles.append(riddle)
+            self.correct_answers.append(correct_answer)
+
         self.current_riddle = 0
 
     def draw_image(self, canvas, tag):
@@ -74,29 +78,40 @@ class Picture:
             tags="riddle"
         )
 
-        # Pergament
+        # pergament
         margin_x = w * 0.2
-        margin_y = h * 0.15 + 50
+
+        top = h * 0.15 + 100
+        bottom = h - 50
 
         canvas.create_rectangle(
             margin_x,
-            margin_y,
+            top,
             w - margin_x,
-            h - margin_y,
+            bottom,
             fill="#d8c3a5",
             outline="#7a5230",
             width=4,
-            tags="riddle"
+            tags="riddle riddle_content"
         )
+        
+        arrow_space = 130
+
+        text_x = margin_x + arrow_space
+        text_y = top + 100
+
+        text_width = w - 2 * margin_x - 2 * arrow_space
 
         # current riddle text
         canvas.create_text(
-            w / 2,
-            h / 2,
+            text_x,
+            text_y,
             text=self.riddles[self.current_riddle],
-            width=(w - 2 * margin_x - 80),
-            font=("Times New Roman", 30),
+            width=text_width,
+            font=("Times New Roman", 27),
             justify="left",
+            anchor="nw",
+            fill="#3b281b",
             tags="riddle riddle_content"
         )
         
@@ -127,17 +142,17 @@ class Picture:
         # Display "1 / 3"
         canvas.create_text(
             w / 2,
-            h - margin_y - 25,
+            bottom - 35,
             text=f"{self.current_riddle + 1} / {len(self.riddles)}",
-            font=("Arial", 14),
-            fill="#5c3b20",
-            tags="riddle"
+            font=("Times New Roman", 18),
+            fill="#3b281b",
+            tags="riddle riddle_content"
         )
 
         # Close
         canvas.create_text(
-            w - margin_x - 20,
-            margin_y + 20,
+            w - margin_x - 30,
+            top + 30,
             text="✕",
             font=("Arial", 20, "bold"),
             fill="#5c3b20",
@@ -167,7 +182,7 @@ class Picture:
 
         # Click on left/right side of the parchment
         canvas.tag_bind(
-            "riddle",
+            "riddle_content",
             "<Button-1>",
             lambda e: self.click_riddle(e, canvas)
         )
