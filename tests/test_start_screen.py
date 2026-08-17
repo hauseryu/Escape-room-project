@@ -43,12 +43,16 @@ class FakeCanvas:
 
     def create_window(self, x, y, *args, **kwargs):
         return 1
+
+def winfo_children():
+    return 0
     
 class StartScreenTest(unittest.TestCase):
     def test_draw_creates_title_and_start_button(self):
         canvas = FakeCanvas()
         callback = object()
         canvas.master = tkinter.Tk() 
+        canvas.winfo_children = winfo_children
         start_screen = StartScreen(canvas, callback,"")
 
         start_screen.draw()

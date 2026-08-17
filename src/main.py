@@ -2,7 +2,7 @@ import tkinter
 import sys
 
 from escape_room import globals
-from escape_room.escape_room import EscapeApp
+from escape_room.escape_app import EscapeApp
 
 def main():
     root = tkinter.Tk()

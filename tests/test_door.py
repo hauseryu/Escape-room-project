@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from escape_room.objects.door import Door, _mix_color
+from src.escape_room.objects.door import Door, _mix_color
 
 
 class FakeCanvas:
