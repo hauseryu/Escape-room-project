@@ -1,3 +1,5 @@
+from urllib import response
+
 from google import genai
 from google.genai import types
 import os
@@ -11,8 +13,6 @@ THEMES_FILE = BASE_DIR / "themes.txt"
 with open(THEMES_FILE, "r", encoding="utf-8") as file:
     THEMES = [line.strip() for line in file if line.strip()]
 
-selected_themes = random.sample(THEMES, 4)
-
 load_dotenv()
 
 api_key = os.getenv("API_KEY")
@@ -21,7 +21,6 @@ client = genai.Client(api_key=api_key) if api_key else None
 
 def generate_riddle():
     selected_themes = random.sample(THEMES, 3)
-
     themes_text = ", ".join(selected_themes)
 
     config = types.GenerateContentConfig(
@@ -41,6 +40,7 @@ def generate_riddle():
             - Use 2 to 3 of the given topics.
             - Maximum 2-3 short sentences.
             - Exactly one answer must be correct.
+            - Do not use * or **.
             - The riddle should have a high difficulty level, but not too complex and specific.
 
             Answer exactly in this format:
@@ -48,10 +48,10 @@ def generate_riddle():
             Riddle:
             ...
 
-            A)
-            B)
-            C)
-            D)
+            1)
+            2)
+            3)
+            4)
 
             Correct answer:
             ...
@@ -59,4 +59,21 @@ def generate_riddle():
         config=config
     )
 
-    return response.text
+    text = response.text.strip()
+
+    if "Correct answer:" not in text:
+        raise ValueError("LLM response does not contain 'Correct answer:'")
+
+    visible_part, answer_part = text.split(
+        "Correct answer:",
+        1
+    )
+
+    # Richtige Antwort
+    correct_answer = answer_part.strip()
+
+    # "Riddle:" entfernen
+    visible_part = visible_part.replace("Riddle:", "", 1).strip()
+
+
+    return visible_part, correct_answer

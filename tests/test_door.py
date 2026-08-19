@@ -36,8 +36,8 @@ class DoorTest(unittest.TestCase):
     def setUp(self):
         self.corners = [
             (0, 2, 0),
-            (0, 2, 1.6),
-            (0, 0, 1.6),
+            (0, 2, 1.0),
+            (0, 0, 1.0),
             (0, 0, 0),
         ]
 

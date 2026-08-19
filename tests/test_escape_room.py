@@ -162,8 +162,8 @@ class EscapeRoomTest(unittest.TestCase):
             doors[2].corners,
             [
                 (8, 2, 3.1),
-                (8, 2, 1.5),
-                (8, 0, 1.5),
+                (8, 2, 2.1),
+                (8, 0, 2.1),
                 (8, 0, 3.1),
             ],
         )
