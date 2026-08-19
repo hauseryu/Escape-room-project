@@ -7,7 +7,10 @@ from PIL import Image, ImageDraw, ImageTk
 
 
 # convert 3D coordinates to 2D coordinates
-def compute_2d_coordinates(x, y, z, win_width,win_height):
+def compute_2d_coordinates(x, y, z, win_width,win_height,shift_coordinates = (0,0,0)):
+    x+=shift_coordinates[0]
+    y+=shift_coordinates[1]
+    z+=shift_coordinates[2]
     y = -2*y+3
     x_2d = 1.6*((300*(x-4))/(z+1))+(win_width/2)
     y_2d = 0.953*((300*(y))/(z+1))+(win_height/2)+98
@@ -16,7 +19,7 @@ def compute_2d_coordinates(x, y, z, win_width,win_height):
 
 # convert from world to pixel coordinates
 # passed argument world_coordinates: list of polygons, each polygon = list of points, each point = (x,y,z)
-def convert_polygon_coordinates(world_coordinates):
+def convert_polygon_coordinates(world_coordinates, shift_coordinates = (0,0,0)):
     coordinates = []
     
     # iterate through the list of polygons and convert each point to 2D coordinates
@@ -27,7 +30,8 @@ def convert_polygon_coordinates(world_coordinates):
                 poly.append(point)
             else:
                 (x,y,z) = point
-                (coord_x,coord_y) = compute_2d_coordinates(x,y,z,globals.canvas_width,globals.canvas_height)
+                (coord_x,coord_y) = compute_2d_coordinates(x,y,z,globals.canvas_width,globals.canvas_height,
+                                                           shift_coordinates)
                 poly.append([coord_x])
                 poly.append([coord_y])
         coordinates.append(poly)
@@ -35,9 +39,16 @@ def convert_polygon_coordinates(world_coordinates):
     # return list of polygons with 2D coordinates
     return coordinates
 
+# determine coordinate shift for each room + objects
+def shift_coordinates(world_coord_source,world_coord_target):
+    (x_source,y_source,z_source) = world_coord_source
+    (x_target,y_target,z_target) = world_coord_target
+    return (x_target-x_source,y_target-y_source,z_source-z_target)
+    
     # draw an object using world coordinates
-def draw(canvas,world_coordinates,tag=None,object=None,world_coordinates_changed=None,arc_coordinates=None): #tkinter.Canvas
-    coordinates = convert_polygon_coordinates(world_coordinates)
+def draw(canvas,world_coordinates,tag=None,object=None,world_coordinates_changed=None,arc_coordinates=None,
+         shift_coordinates = (0,0,0)): 
+    coordinates = convert_polygon_coordinates(world_coordinates,shift_coordinates)
     # draw the polygons on the canvas
     for polygon in coordinates:
         canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black",tags=tag)
@@ -45,8 +56,8 @@ def draw(canvas,world_coordinates,tag=None,object=None,world_coordinates_changed
             canvas.tag_bind(tag,"<Button-1>",
                             lambda event: clicked(event, tag, object, canvas, world_coordinates,world_coordinates_changed,arc_coordinates))
 
-def draw_textured_polygon(canvas, polygon, texture_path, fallback_fill="#8B4513"):
-    coordinates = convert_polygon_coordinates([polygon])[0]
+def draw_textured_polygon(canvas, polygon, texture_path, fallback_fill="#8B4513", shift_coordinates = (0,0,0)):
+    coordinates = convert_polygon_coordinates([polygon],shift_coordinates)[0]
     points = _flatten_points(coordinates[1:])
 
     canvas.create_polygon(points, width=1, fill=fallback_fill, outline="black")
@@ -86,8 +97,9 @@ def _tile_texture(texture, width, height):
             tiled_texture.paste(texture, (x, y))
     return tiled_texture
 
-def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None):
-    x_center, y_center = compute_2d_coordinates(x, y, z, globals.canvas_width, globals.canvas_height)
+def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None, shift_coordinates = (0,0,0)):
+    x_center, y_center = compute_2d_coordinates(x, y, z, globals.canvas_width, globals.canvas_height,
+                                                shift_coordinates)
     radius = radius*165
     (x0, y0) = x_center - radius, y_center + radius
     (x1, y1) = x_center + radius, y_center - radius

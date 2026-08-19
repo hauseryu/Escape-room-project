@@ -9,8 +9,9 @@ class Picture:
     wall was drawn.  The image is perspective-transformed to match the frame.
     """
 
-    def __init__(self, image_path=None):
+    def __init__(self, image_path=None,shift_coordinates = (0,0,0)):
         self.image_path = image_path
+        self.shift_coordinates = shift_coordinates
 
         self.coordinates_frame = [
             ["#4A2B18", (5.05, 2.35, 3.985), (6.45, 2.35, 3.985),

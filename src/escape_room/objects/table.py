@@ -1,5 +1,6 @@
 class Table():
-    def __init__(self):
+    def __init__(self,shift_coordinates=(0,0,0)):
+        self.shift_coordinates = shift_coordinates
         self.coordinates_tabletop = [
             ["#5A3518",
              (7.55, 0.67, 3.75),
