@@ -1,7 +1,7 @@
 from escape_room import graphics
 
 class Light():
-    def __init__(self,shift_coordinates):
+    def __init__(self,shift_coordinates=(0,0,0)):
         self.shift_coordinates = shift_coordinates
         self.coordinates_lampshade = [
             ["#30251F",
