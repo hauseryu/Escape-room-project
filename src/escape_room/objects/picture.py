@@ -1,16 +1,13 @@
 from PIL import Image, ImageTk
-from tkinter import Toplevel, Label
 from riddles.riddle_generator import generate_riddle
 
 class Picture:
     """A picture frame on the back wall (``z = 4``).
-
-    Pass a PNG or JPG path to ``image_path`` and call :meth:`draw` after the
-    wall was drawn.  The image is perspective-transformed to match the frame.
     """
 
-    def __init__(self, image_path=None):
+    def __init__(self, image_path=None,shift_coordinates = (0,0,0)):
         self.image_path = image_path
+        self.shift_coordinates = shift_coordinates
 
         self.coordinates_frame = [
             ["#4A2B18", (5.05, 2.35, 3.985), (6.45, 2.35, 3.985),
@@ -24,7 +21,17 @@ class Picture:
         ]
         self.foto_image = None
         self.image_id = None
-        self.riddle = generate_riddle()
+        
+        self.riddles = []
+        self.correct_answers = []
+
+        for _ in range(3):
+            riddle, correct_answer = generate_riddle()
+
+            self.riddles.append(riddle)
+            self.correct_answers.append(correct_answer)
+
+        self.current_riddle = 0
 
     def draw_image(self, canvas, tag):
         x1, y1, x2, y2 = canvas.bbox(tag)
@@ -32,63 +39,183 @@ class Picture:
         image_heigth = y2 - y1
         image = Image.open(self.image_path)
         image = image.resize((image_width, image_heigth), Image.Resampling.LANCZOS)
+        
         self.foto_image = ImageTk.PhotoImage(image, master=canvas)
+        
         self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
         canvas.tag_bind(
             self.image_id,
             "<Button-1>",
             lambda e: self.show_riddle(canvas)
         )
-
+        
     def show_riddle(self, canvas):
+
+            self.current_riddle = 0
+
+            self.draw_riddle(canvas)
+
+            # keyboard navigation
+            canvas.focus_set()
+            canvas.bind("<Left>", self.previous_riddle)
+            canvas.bind("<Right>", self.next_riddle)
+            canvas.bind("<Escape>", lambda e: self.close_riddle(canvas))
+
+    def draw_riddle(self, canvas):
+        # remove old riddle
+        canvas.delete("riddle")
+
         w = canvas.winfo_width()
         h = canvas.winfo_height()
 
-        # Hintergrund abdunkeln
+        # dark overlay
         canvas.create_rectangle(
-            0, 0, w, h,
+            0,
+            0,
+            w,
+            h,
             fill="black",
             stipple="gray50",
             tags="riddle"
         )
 
-        # Pergament (ca. 60 % der Canvas)
+        # pergament
         margin_x = w * 0.2
-        margin_y = h * 0.15 + 50
+
+        top = h * 0.15 + 100
+        bottom = h - 50
 
         canvas.create_rectangle(
             margin_x,
-            margin_y,
+            top,
             w - margin_x,
-            h - margin_y,
+            bottom,
             fill="#d8c3a5",
             outline="#7a5230",
             width=4,
-            tags="riddle"
+            tags="riddle riddle_content"
         )
+        
+        arrow_space = 130
 
+        text_x = margin_x + arrow_space
+        text_y = top + 100
+
+        text_width = w - 2 * margin_x - 2 * arrow_space
+
+        # current riddle text
+        canvas.create_text(
+            text_x,
+            text_y,
+            text=self.riddles[self.current_riddle],
+            width=text_width,
+            font=("Times New Roman", 27),
+            justify="left",
+            anchor="nw",
+            fill="#3b281b",
+            tags="riddle riddle_content"
+        )
+        
+        arrow_offset = 70
+
+        # left arrow
+        if self.current_riddle > 0:
+            canvas.create_text(
+                margin_x + arrow_offset,
+                h / 2,
+                text="←",
+                font=("Arial", 35, "bold"),
+                fill="#5c3b20",
+                tags="riddle previous"
+            )
+
+        # right arrow
+        if self.current_riddle < len(self.riddles) - 1:
+            canvas.create_text(
+                w - margin_x - arrow_offset,
+                h / 2,
+                text="→",
+                font=("Arial", 35, "bold"),
+                fill="#5c3b20",
+                tags="riddle next"
+            )
+
+        # Display "1 / 3"
         canvas.create_text(
             w / 2,
-            h / 2,
-            text=self.riddle,
-            width=(w - 2 * margin_x - 40),
-            font=("Times New Roman", 30),
-            justify="left",
-            tags="riddle"
+            bottom - 35,
+            text=f"{self.current_riddle + 1} / {len(self.riddles)}",
+            font=("Times New Roman", 18),
+            fill="#3b281b",
+            tags="riddle riddle_content"
         )
 
-        # Schließen-Button
+        # Close
         canvas.create_text(
-            w - margin_x - 20,
-            margin_y + 20,
+            w - margin_x - 30,
+            top + 30,
             text="✕",
             font=("Arial", 20, "bold"),
-            fill="darkred",
+            fill="#5c3b20",
             tags="riddle riddle_close"
         )
 
+        # Click on X
         canvas.tag_bind(
             "riddle_close",
             "<Button-1>",
-            lambda e: canvas.delete("riddle")
+            lambda e: self.close_riddle(canvas)
         )
+
+        # Click on left arrow
+        canvas.tag_bind(
+            "previous",
+            "<Button-1>",
+            lambda e: self.previous_riddle(e, canvas)
+        )
+
+        # Click on right arrow
+        canvas.tag_bind(
+            "next",
+            "<Button-1>",
+            lambda e: self.next_riddle(e, canvas)
+        )
+
+        # Click on left/right side of the parchment
+        canvas.tag_bind(
+            "riddle_content",
+            "<Button-1>",
+            lambda e: self.click_riddle(e, canvas)
+        )
+
+    def next_riddle(self, event, canvas=None):
+        if canvas is None:
+            canvas = event.widget
+
+        if self.current_riddle < len(self.riddles) - 1:
+            self.current_riddle += 1
+            self.draw_riddle(canvas)
+
+    def previous_riddle(self, event, canvas=None):
+        if canvas is None:
+            canvas = event.widget
+
+        if self.current_riddle > 0:
+            self.current_riddle -= 1
+            self.draw_riddle(canvas)
+
+    def click_riddle(self, event, canvas):
+        """Click on the left/right side of the riddle."""
+        w = canvas.winfo_width()
+
+        if event.x < w / 2:
+            self.previous_riddle(event, canvas)
+        else:
+            self.next_riddle(event, canvas)
+
+    def close_riddle(self, canvas):
+        canvas.delete("riddle")
+
+        canvas.unbind("<Left>")
+        canvas.unbind("<Right>")
+        canvas.unbind("<Escape>")

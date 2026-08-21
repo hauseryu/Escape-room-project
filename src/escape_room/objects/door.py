@@ -51,10 +51,10 @@ def _mix_color(color, target, amount):
 
 
 class Door:
-    DOOR_WIDTH = 1.6
+    DOOR_WIDTH = 1.0
     DOOR_HEIGHT = 2.0
     
-    def __init__(self, position, color, direction, tag, key_owner=None, player_name=None, is_player_door=None):
+    def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0), key_owner=None, player_name=None, is_player_door=None):
         self.position = tuple(position)
         self.color = color
         self.direction = direction
@@ -63,6 +63,7 @@ class Door:
         self.player_name = player_name
         self.is_player_door = is_player_door
         self.is_open = False
+        self.shift_coordinates = shift_coordinates
 
         self.corners = self._create_corners()
 
@@ -170,12 +171,11 @@ class Door:
             self._draw_open_door(canvas, win_width, win_height)
         else:
             self._draw_door_leaf(canvas, win_width, win_height, knob_u=0.82)
-
             
     def _project(self, u, v, win_width, win_height):
         # First pick a point on the 3D door, then project it onto the 2D canvas.
         x, y, z = self._point_in_3d_quad(u, v)
-        return compute_2d_coordinates(x, y, z, win_width, win_height)
+        return compute_2d_coordinates(x, y, z, win_width, win_height,self.shift_coordinates)
 
     def _point_in_3d_quad(self, u, v):
         # Corners are always ordered: top-left, top-right, bottom-right, bottom-left.
@@ -201,7 +201,7 @@ class Door:
             1,
             fill=fill,
             outline=outline,
-            width=1,
+            width=1
         )
 
         # rechter Pfosten
@@ -215,7 +215,7 @@ class Door:
             1,
             fill=fill,
             outline=outline,
-            width=1,
+            width=1
         )
 
         # oberer Balken
@@ -229,7 +229,7 @@ class Door:
             0.02,
             fill=fill,
             outline=outline,
-            width=1,
+            width=1
         )
 
     def _draw_door_leaf(self, canvas, win_width, win_height, knob_u):
@@ -242,7 +242,6 @@ class Door:
             self._project(1 - top_inset, 1 - bottom_inset, win_width, win_height),
             self._project(top_inset, 1 - bottom_inset, win_width, win_height),
         ]
-
         
         self._draw_leaf_in_quad(canvas, corners, knob_u)
         

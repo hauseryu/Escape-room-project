@@ -6,187 +6,99 @@ WOOD_MIDTONE = "#6F4520"
 WOOD_HIGHLIGHT = "#7A4A22"
 WOOD_TOP = "#8B5A2B"
 
-
 class Chair():
-    def __init__(self, x, z, direction="left"):
+    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0)):
         self.x = x
+        self.y = y
         self.z = z
         self.direction = direction
+        self.shift_coordinates = shift_coordinates
 
-        seat_height = 0.45
-        seat_thickness = 0.10
-        seat_length = 0.45
-        chair_width = 0.45
-        height_backrest = 1.25
-        back_post_width = 0.10
-        back_rail_height = 0.35
-        leg_width = 0.12
-        seat_top = seat_height + seat_thickness
+        # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
+        self.coordinates_chairseat = self._create_panel_coordinates(back=False)
 
-        # The backrest is built from two vertical posts and one horizontal rail.
-        self.coordinates_backrest = [
-            *self._create_backrest_part(0, back_post_width, seat_height, height_backrest),
-            *self._create_backrest_part(
-                chair_width - back_post_width,
-                chair_width,
-                seat_height,
-                height_backrest,
-            ),
-            *self._create_backrest_part(
-                back_post_width,
-                chair_width - back_post_width,
-                height_backrest - back_rail_height,
-                height_backrest,
-            ),
+        # All 4 lower legs beneath the seat
+        self.coordinates_chairlegs = [
+            *self._create_leg_coordinates(4.45, 3.15),
+            *self._create_leg_coordinates(5.05, 3.15),
+            *self._create_leg_coordinates(4.45, 2.6),
+            *self._create_leg_coordinates(5.05, 2.6),
         ]
 
-        self.coordinates_seat = self._create_box_coordinates(
-            0,
-            seat_length,
-            0,
-            chair_width,
-            seat_height,
-            seat_top,
-            top_color=WOOD_TOP,
-            front_color=WOOD_MIDTONE,
-            back_color=WOOD_SHADOW,
-            left_color=WOOD_SHADOW,
-            right_color=WOOD_HIGHLIGHT,
-        )
-
-        # Back legs line up with the backrest posts so they look connected.
-        self.coordinates_legs = [
-            *self._create_back_leg_coordinates(chair_width - back_post_width, chair_width, seat_height),
-            *self._create_back_leg_coordinates(0, back_post_width, seat_height),
-            *self._create_leg_coordinates(seat_length - leg_width, chair_width - leg_width, seat_height),
-            *self._create_leg_coordinates(seat_length - leg_width, 0, seat_height),
-            
-        ]
-
-        self.coordinates_chair = self._create_chair_coordinates()
-
-    def _point(self, forward, y, side):
-        # Convert chair-local coordinates into room coordinates for each facing direction.
+        # 2. Handle Direction (Determine X-position of the backrest)
         if self.direction == "right":
-            return (self.x + forward, y, self.z + side)
-        if self.direction == "left":
-            return (self.x - forward, y, self.z + side)
-        if self.direction == "back":
-            return (self.x - side, y, self.z + forward)
-        if self.direction == "front":
-            return (self.x + side, y, self.z - forward)
-        raise ValueError("direction must be right, left, front, or back")
+            # Backrest is on the left side of the chair (X = 4.45)
+            # This makes the chair face towards the RIGHT
+            x_backrest = 4.45
+        else: # direction == "left"
+            # Backrest shifts to the right side of the chair (X = 5.05)
+            # This makes the chair face towards the LEFT
+            x_backrest = 5.05
 
-    def _average_depth(self, polygon):
-        return sum(point[2] for point in polygon[1:]) / (len(polygon) - 1)
-
-    def _average_height(self, polygon):
-        return sum(point[1] for point in polygon[1:]) / (len(polygon) - 1)
-
-    def _draw_order(self, polygon):
-        return (self._average_depth(polygon), -self._average_height(polygon))
-
-    def _sorted_surfaces(self, polygons):
-        return sorted(polygons, key=self._draw_order, reverse=True)
-
-    def _create_chair_coordinates(self):
-        legs = self._sorted_surfaces(self.coordinates_legs)
-        seat = self._sorted_surfaces(self.coordinates_seat)
-        backrest = self._sorted_surfaces(self.coordinates_backrest)
-
-        # Some directions need the backrest drawn last so it stays visible.
-        if self.direction in ("right", "back"):
-            return legs + seat + backrest
-        return legs + backrest + seat
-
-    def _create_box_coordinates(
-        self,
-        forward_start,
-        forward_end,
-        side_start,
-        side_end,
-        y_bottom,
-        y_top,
-        top_color,
-        front_color,
-        back_color,
-        left_color,
-        right_color,
-    ):
-        # A box is represented by its top and four vertical side polygons.
-        return [
-            [top_color,
-             self._point(forward_start, y_top, side_start),
-             self._point(forward_end, y_top, side_start),
-             self._point(forward_end, y_top, side_end),
-             self._point(forward_start, y_top, side_end)],
-            [front_color,
-             self._point(forward_start, y_bottom, side_start),
-             self._point(forward_end, y_bottom, side_start),
-             self._point(forward_end, y_top, side_start),
-             self._point(forward_start, y_top, side_start)],
-            [back_color,
-             self._point(forward_end, y_bottom, side_end),
-             self._point(forward_start, y_bottom, side_end),
-             self._point(forward_start, y_top, side_end),
-             self._point(forward_end, y_top, side_end)],
-            [left_color,
-             self._point(forward_start, y_bottom, side_end),
-             self._point(forward_start, y_bottom, side_start),
-             self._point(forward_start, y_top, side_start),
-             self._point(forward_start, y_top, side_end)],
-            [right_color,
-             self._point(forward_end, y_bottom, side_start),
-             self._point(forward_end, y_bottom, side_end),
-             self._point(forward_end, y_top, side_end),
-             self._point(forward_end, y_top, side_start)],
+        # 3. Upper Parts: Mounted dynamically using 'x_backrest'
+        self.coordinates_chairlegs_back = [
+            *self._create_leg_coordinates(x_backrest, 3.15, back=True),
+            *self._create_panel_coordinates(back=True, x_pos=x_backrest),
+            *self._create_leg_coordinates(x_backrest, 2.6, back=True),
         ]
 
-    def _create_backrest_part(self, side_start, side_end, y_bottom, y_top):
-        return self._create_box_coordinates(
-            -0.12,
-            0,
-            side_start,
-            side_end,
-            y_bottom,
-            y_top,
-            top_color=WOOD_HIGHLIGHT,
-            front_color=WOOD_MIDTONE,
-            back_color=WOOD_SHADOW,
-            left_color=WOOD_SHADOW,
-            right_color=WOOD_MIDTONE,
-        )
+        # 4. Master Assembly Sequence
+        self.coordinates_chair = self.coordinates_chairlegs + self.coordinates_chairseat + \
+            self.coordinates_chairlegs_back
 
-    def _create_back_leg_coordinates(self, side_start, side_end, height):
-        return self._create_box_coordinates(
-            -0.12,
-            0,
-            side_start,
-            side_end,
-            0,
-            height,
-            top_color=LEG_HIGHLIGHT,
-            front_color=LEG_HIGHLIGHT,
-            back_color=LEG_SHADOW,
-            left_color=LEG_MIDTONE,
-            right_color=LEG_MIDTONE,
-        )
+    def _create_leg_coordinates(self, x, z, back=False):
+        width = 0.10
+        x2 = x + width
+        z2 = z + width
 
-    def _create_leg_coordinates(self, forward, side, height):
-        width = 0.12
-        forward_end = forward + width
-        side_end = side + width
+        if not back:
+            low = 0
+            high = 0.4
+        else:
+            low = 0.51
+            high = 0.91
 
-        return self._create_box_coordinates(
-            forward,
-            forward_end,
-            side,
-            side_end,
-            0,
-            height,
-            top_color=LEG_HIGHLIGHT,
-            front_color=LEG_HIGHLIGHT,
-            back_color=LEG_SHADOW,
-            left_color=LEG_MIDTONE,
-            right_color=LEG_MIDTONE,
-        )
+        return [
+            ["#4A2C14", (x2, low, z2), (x, low, z2), (x, high, z2), (x2, high, z2)],
+            ["#6F4520", (x, low, z2), (x, low, z), (x, high, z), (x, high, z2)],
+            ["#6F4520", (x2, low, z), (x2, low, z2), (x2, high, z2), (x2, high, z)],
+            ["#7A4A22", (x, low, z), (x2, low, z), (x2, high, z), (x, high, z)],
+        ]
+
+    def _create_panel_coordinates(self, back=False, x_pos=4.45):    
+        if not back:
+            width = 0.7
+            height1 = 0.4
+            height2 = 0.51
+        else:
+            width = 0.1
+            height1 = 0.8
+            height2 = 0.91
+            
+        return [
+            ["#5A3518",
+             (x_pos + width, height1, 3.15),
+             (x_pos, height1, 3.15),
+             (x_pos, height2, 3.15),
+             (x_pos + width, height2, 3.15)],
+            ["#6F4520",
+             (x_pos, height1, 3.15),
+             (x_pos, height1, 2.6),
+             (x_pos, height2, 2.6),
+             (x_pos, height2, 3.15)],
+            ["#6F4520",
+             (x_pos + width, height1, 2.6),
+             (x_pos + width, height1, 3.15),
+             (x_pos + width, height2, 3.15),
+             (x_pos + width, height2, 2.6)],
+            ["#8B5A2B",
+             (x_pos, height2, 2.6),
+             (x_pos + width, height2, 2.6),
+             (x_pos + width, height2, 3.15),
+             (x_pos, height2, 3.15)],
+            ["#7A4A22",
+             (x_pos, height1, 2.6),
+             (x_pos + width, height1, 2.6),
+             (x_pos + width, height2, 2.6),
+             (x_pos, height2, 2.6)],
+        ]

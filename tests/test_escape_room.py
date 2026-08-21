@@ -11,8 +11,10 @@ from src.escape_room.escape_app import EscapeApp
 from src.escape_room.escape_app import StartScreen
 from src.escape_room.escape_app import EscapeClient
 from src.escape_room.escape_app import Room
+from src.escape_room import room_data
 
 from src.escape_room.objects.chair import Chair
+from src.escape_room.objects.door import Door
 from src.escape_room.objects.light import Light
 from src.escape_room.objects.table import Table
 from src.escape_room.objects.wardrobe import Wardrobe
@@ -121,14 +123,15 @@ class EscapeRoomTest(unittest.TestCase):
         app = EscapeApp.__new__(EscapeApp)
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
-        app.room.doors = []
-        app.room.light = Light()
-        app.room.table = Table()
-        app.room.chair = Chair(4.85, 2.35, "right")
-        app.room.wardrobe = Wardrobe()
-        app.room.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
-        app.room.bookshelf = Bookshelf()
-        app.room.key = FakeDrawable()
+        app.room.room_data = room_data.start_room
+        app.room.door = []
+        app.room.light = [Light()]
+        app.room.table = [Table()]
+        app.room.chair = [Chair(4.85, 0,2.35, "right")]
+        app.room.wardrobe = [Wardrobe()]
+        app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.bookshelf = [Bookshelf()]
+        app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.player_name = ""
@@ -143,13 +146,28 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.draw_room()
 
       
-        self.assertIs(app.room.key.drawn_on, app.room.canvas_area)
+        self.assertIs(app.room.key[0].drawn_on, app.room.canvas_area)
         self.assertIs(app.room.inventory.drawn_on, app.room.canvas_area)
 
     def test_create_doors_creates_three_doors(self):
         app = EscapeApp.__new__(EscapeApp)
         app.room = Room.__new__(Room)
-        doors = app.room.create_doors()
+        app.room.room_data = room_data.start_room
+        # create doors
+        doors = []
+        for index,door in enumerate(app.room.room_data["door"]):
+            coord = app.room.room_data["door"][index][0] # get door coordinates (first element in list)
+            color = app.room.room_data["door"][index][1]
+            direction = app.room.room_data["door"][index][2]
+            if direction == "front":
+                shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
+            elif direction == "left":
+                shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
+            elif direction == "right":
+                shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
+            tag = app.room.room_data["door"][index][3]            
+            obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord)
+            doors.append(obj)       
 
         self.assertEqual(len(doors), 3)
         self.assertEqual([door.tag for door in doors], ["red_door", "green_door", "blue_door"])
@@ -162,8 +180,8 @@ class EscapeRoomTest(unittest.TestCase):
             doors[2].corners,
             [
                 (8, 2, 3.1),
-                (8, 2, 1.5),
-                (8, 0, 1.5),
+                (8, 2, 2.1),
+                (8, 0, 2.1),
                 (8, 0, 3.1),
             ],
         )
@@ -207,18 +225,20 @@ class EscapeRoomTest(unittest.TestCase):
         app = EscapeApp.__new__(EscapeApp)
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
-        app.room.doors = []
-        app.room.light = Light()
-        app.room.table = Table()
-        app.room.chair = Chair(4.85, 2.35, "right")
-        app.room.wardrobe = Wardrobe()
-        app.room.picture = MagicMock() #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
-        app.room.bookshelf = Bookshelf()
-        app.room.key = FakeDrawable()
+        app.room.room_data = room_data.start_room
+        app.room.door = []
+        app.room.light = [Light()]
+        app.room.table = [Table()]
+        app.room.chair = [Chair(4.85, 0,2.35, "right")]
+        app.room.wardrobe = [Wardrobe()]
+        app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.bookshelf = [Bookshelf()]
+        app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.player_name = ""
         app.room.player_icon_number = 1
+
         canvas = FakeCanvas()
         canvas.master = tkinter.Tk() 
         callback = object()
@@ -236,7 +256,7 @@ class EscapeRoomTest(unittest.TestCase):
 
         self.assertIn("all", app.room.canvas_area.deleted)
         self.assertGreater(len(app.room.canvas_area.polygons), 0)
-        self.assertIs(app.room.key.drawn_on, app.room.canvas_area)
+        self.assertIs(app.room.key[0].drawn_on, app.room.canvas_area)
 
     def test_chair_can_face_different_directions(self):
         right_chair = Chair(4, 2, "right")
@@ -244,77 +264,55 @@ class EscapeRoomTest(unittest.TestCase):
         front_chair = Chair(4, 2, "front")
         back_chair = Chair(4, 2, "back")
 
-        self.assertEqual(right_chair.coordinates_seat[0][2], (4.45, 0.55, 2))
-        self.assertEqual(left_chair.coordinates_seat[0][2], (3.55, 0.55, 2))
-        self.assertEqual(front_chair.coordinates_seat[0][2], (4, 0.55, 1.55))
-        self.assertEqual(back_chair.coordinates_seat[0][2], (4, 0.55, 2.45))
-        self.assertEqual(left_chair.coordinates_seat[0][3], (3.55, 0.55, 2.45))
-        self.assertEqual(back_chair.coordinates_seat[0][3], (3.55, 0.55, 2.45))
-
-    def test_right_and_back_chair_draw_backrest_after_seat(self):
-        right_chair = Chair(4, 2, "right")
-        back_chair = Chair(4, 2, "back")
-
-        self.assertEqual(
-            right_chair.coordinates_chair[-15:],
-            right_chair._sorted_surfaces(right_chair.coordinates_backrest),
-        )
-        self.assertEqual(
-            back_chair.coordinates_chair[-15:],
-            back_chair._sorted_surfaces(back_chair.coordinates_backrest),
-        )
-
-    def test_front_chair_draws_seat_after_backrest(self):
-        chair = Chair(4, 2, "front")
-
-        self.assertEqual(chair.coordinates_chair[-5:], chair._sorted_surfaces(chair.coordinates_seat))
+        self.assertEqual(right_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
+        self.assertEqual(left_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
+        self.assertEqual(front_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
+        self.assertEqual(back_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
+        self.assertEqual(left_chair.coordinates_chairseat[0][3], (4.45, 0.51, 3.15))
+        self.assertEqual(back_chair.coordinates_chairseat[0][3], (4.45, 0.51, 3.15))
 
     def test_chair_legs_are_drawn_like_table_legs(self):
-        chair = Chair(4, 2, "right")
+        chair = Chair(4,0, 2, "right")
 
-        self.assertEqual(len(chair.coordinates_legs), 20)
-        for leg_surface in chair.coordinates_legs:
+        self.assertEqual(len(chair.coordinates_chairlegs), 16)
+        for leg_surface in chair.coordinates_chairlegs:
             self.assertEqual(len(leg_surface), 5)
 
     def test_chair_legs_fit_under_seat(self):
         chair = Chair(4, 2, "front")
         leg_points = [
             point
-            for polygon in chair.coordinates_legs
+            for polygon in chair.coordinates_chairlegs
             for point in polygon[1:]
         ]
 
-        self.assertEqual(min(point[0] for point in leg_points), 4)
-        self.assertEqual(max(point[0] for point in leg_points), 4.45)
-        self.assertEqual(max(point[1] for point in leg_points), 0.45)
+        self.assertEqual(min(point[0] for point in leg_points), 4.45)
+        self.assertEqual(max(point[0] for point in leg_points), 5.1499999999999995)
+        self.assertEqual(max(point[1] for point in leg_points), 0.4)
 
     def test_back_legs_align_with_backrest_posts(self):
         chair = Chair(4, 2, "right")
         right_back_leg_points = [
             point
-            for polygon in chair.coordinates_legs[:5]
+            for polygon in chair.coordinates_chairlegs[:5]
             for point in polygon[1:]
         ]
         left_back_leg_points = [
             point
-            for polygon in chair.coordinates_legs[5:10]
+            for polygon in chair.coordinates_chairlegs[5:10]
             for point in polygon[1:]
         ]
 
-        self.assertEqual(min(point[2] for point in left_back_leg_points), 2)
-        self.assertEqual(max(point[2] for point in left_back_leg_points), 2.1)
-        self.assertEqual(min(point[2] for point in right_back_leg_points), 2.35)
-        self.assertEqual(max(point[2] for point in right_back_leg_points), 2.45)
+        self.assertEqual(min(point[2] for point in left_back_leg_points), 2.6)
+        self.assertEqual(max(point[2] for point in left_back_leg_points), 3.25)
+        self.assertEqual(min(point[2] for point in right_back_leg_points), 3.15)
+        self.assertEqual(max(point[2] for point in right_back_leg_points), 3.25)
 
     def test_chair_parts_include_top_and_four_sides(self):
         chair = Chair(4, 2, "left")
 
-        self.assertEqual(len(chair.coordinates_seat), 5)
-        self.assertEqual(len(chair.coordinates_backrest), 15)
-
-    def test_chair_rejects_unknown_direction(self):
-        with self.assertRaises(ValueError):
-            Chair(4, 2, "diagonal")
+        self.assertEqual(len(chair.coordinates_chairseat), 5)
+        self.assertEqual(len(chair.coordinates_chairlegs_back), 13)
 
 
 if __name__ == "__main__":

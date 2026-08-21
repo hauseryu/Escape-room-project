@@ -7,12 +7,13 @@ from escape_room import graphics
 
 
 class Key:
-    def __init__(self, inventory,room_placement=False):
+    def __init__(self, inventory,shift_coordinates=(0,0,0),room_placement=False):
         self.canvas = None
         self.object_owner = ""
         self.inventory = inventory
         self.object_id = None
         self.selection_id = None
+        self.shift_coordinates = shift_coordinates
         self.room_placement = room_placement
         package_dir = os.path.dirname(os.path.dirname(__file__))
         self.image_path = os.path.join(package_dir, "assets", "images", "key_transparent.png")
@@ -31,6 +32,7 @@ class Key:
                 3.0,
                 globals.canvas_width,
                 globals.canvas_height,
+                self.shift_coordinates
             )
         if self.inventory.objectIsSelected("key",self.object_owner):
             objIndex = self.inventory.getObjectIndex("key",self.object_owner)

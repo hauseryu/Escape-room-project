@@ -1,5 +1,6 @@
 class Wardrobe():
-	def __init__(self):
+	def __init__(self,shift_coordinates=(0,0,0)):
+		self.shift_coordinates = shift_coordinates
 		self.wardrobe_coordinates = [
 			["#4A2A1A", (0, 0, 4), (1.8, 0, 4), (1.8, 2, 4), (0, 2, 4)],
 			["#59331F", (0, 0, 3.5), (0, 0, 4), (0, 2, 4), (0, 2, 3.5)],

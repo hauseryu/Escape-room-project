@@ -10,7 +10,8 @@ class Bookshelf:
     x=0..1.8, y=0..2 and z=3.5..4.
     """
 
-    def __init__(self):
+    def __init__(self,shift_coordinates=(0,0,0)):
+        self.shift_coordinates = shift_coordinates
         # Wooden carcass, back panel, three shelf boards and the two side walls.
         self.coordinates_shelf = [
             ["#3B2114", (0, 0, 4), (1.8, 0, 4), (1.8, 2, 4), (0, 2, 4)],
@@ -50,7 +51,7 @@ class Bookshelf:
         for book, title in zip(self.coordinates_books, self.books_titles):
             x, y, z = self._center(book[1:])
             screen_x, screen_y = graphics.compute_2d_coordinates(
-                x, y, z, canvas_width, canvas_height
+                x, y, z, canvas_width, canvas_height, self.shift_coordinates
             )
             # Text is kept compact so it fits on the narrow spines.
             canvas.create_text(

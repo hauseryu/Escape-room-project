@@ -8,6 +8,7 @@ from escape_room import graphics
 from escape_room import inventory
 from escape_room import player_panel
 from escape_room import globals
+from escape_room import room_data
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
@@ -43,12 +44,23 @@ class Room(tkinter.Frame):
                                           height=globals.canvas_height)
         self.canvas_area.pack()
         self.pack()
+        # object-related coding
+        self.key = []
+        self.bookshelf = []
+        self.wardrobe = []
+        self.chair = []
+        self.table = []
+        self.door = []
+        self.light = []
+        self.picture = []
 
     # initialize room with all relevant settings
     def init_room(self,game_client):
         self.player_name = None
         self.player_icon_number = None
         self.game_client = game_client
+        # get room data that determines the room layout + objects
+        self.room_data = room_data.start_room
 
         # UI-related coding
         self.coordinates = []
@@ -84,19 +96,67 @@ class Room(tkinter.Frame):
         self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                      icon_queue=self.icon_queue,
                                                      gui_master=self.master)
-        # self.load_mock_game_state()
-        self.light = Light()
-        self.table = Table()
-        self.chair = Chair(5.00, 2.35, "right")
-        self.key = Key(self.inventory,True) # room_placement = True
-        self.doors = self.create_doors()
-        self.wardrobe = Wardrobe()
-        self.picture = Picture(IMAGE_DIR / "riddle_not_readable.png")
-        self.bookshelf = Bookshelf()
+        # create doors
+        for index,door in enumerate(self.room_data["door"]):
+            coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
+            color = self.room_data["door"][index][1]
+            direction = self.room_data["door"][index][2]
+            if direction == "front":
+                shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
+            elif direction == "left":
+                shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
+            elif direction == "right":
+                shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
+            tag = self.room_data["door"][index][3]            
+            obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord)
+            self.door.append(obj)        
+        # create lights
+        for index,light in enumerate(self.room_data["light"]):
+            coord = self.room_data["light"][index][0] # get light coordinates (first element in list)
+            shift_coord = (coord[0]-3.88,coord[1]-3.0,coord[2]-1.92)
+            obj = Light(shift_coordinates=shift_coord)
+            self.light.append(obj)
+        # create tables 
+        for index,table in enumerate(self.room_data["table"]):
+            coord = self.room_data["table"][index][0] # get table coordinates (first element in list)
+            shift_coord = (coord[0]-7.55,coord[1]-0.67,coord[2]-3.75)
+            obj = Table(shift_coordinates=shift_coord)
+            self.table.append(obj)
+        # create chairs
+        for index,chair in enumerate(self.room_data["chair"]):
+            coord = self.room_data["chair"][index][0] # get chair coordinates (first element in list)
+            direction = self.room_data["chair"][index][1] # get chair direction (right/left)
+            shift_coord = (coord[0]-5.00,coord[1]-0,coord[2]-2.35) 
+            obj = Chair(coord[0],coord[1],coord[2],direction,shift_coordinates=shift_coord)
+            # obj = Chair(direction,shift_coordinates=shift_coord)
+            self.chair.append(obj)
+        # create keys
+        for index,key in enumerate(self.room_data["key"]):
+            coord = self.room_data["key"][index][0] # get key coordinates (first element in list)
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
+            obj = Key(self.inventory,shift_coordinates=shift_coord,room_placement=True)
+            self.key.append(obj)
+        # create pictures
+        for index,picture in enumerate(self.room_data["picture"]):
+            coord = self.room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
+            shift_coord = (coord[0]-5.05,coord[1]-2.35,coord[2]-3.985)
+            obj = Picture(IMAGE_DIR / "riddle_not_readable.png",shift_coordinates=shift_coord)
+            self.picture.append(obj)
+        # create bookshelves
+        for index,bookshelf in enumerate(self.room_data["bookshelf"]):
+            coord = self.room_data["bookshelf"][index][0] # get bookshelf coordinates (first element in list)
+            shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
+            obj = Bookshelf(shift_coordinates=shift_coord)
+            self.bookshelf.append(obj)
+        # create wardrobes
+        for index,wardrobe in enumerate(self.room_data["wardrobe"]):
+            coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
+            shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
+            obj = Wardrobe(shift_coordinates=shift_coord)
+            self.wardrobe.append(obj)
 
         # create the canvas area and draw the start screen
-        self.canvas_area.pack()
-        
+        self.canvas_area.pack()        
         self.canvas_area.bind("<Button-1>", self.handle_door_click)
 
     def update_player_data(self,player_name,player_icon_number):
@@ -104,66 +164,84 @@ class Room(tkinter.Frame):
         self.player_name = player_name
         self.player_icon_number = player_icon_number
         # set ownership of key
-        self.key.object_owner = self.player_name
-
-    def create_doors(self):
-        return [
-            Door((3.2, 0, 4), "brown", "front", "red_door", player_name=self.player_name, is_player_door=True), 
-            Door((0, 0, 1.5), "green", "left", "green_door", player_name=self.player_name, is_player_door=False),  
-            Door((8, 0, 3.1), "blue", "right", "blue_door"),
-        ]
+        for key in self.key:
+            key.object_owner = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
         back_wall_coordinates = ["white", (0, 0, 4), (8, 0, 4), (8, 3, 4), (0, 3, 4)]
 
         # draw the floor and walls with textures
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[0], FLOOR_TEXTURE)
+        shift_coord = graphics.shift_coordinates(self.room_coordinates[0][1],self.room_data["room"])
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[0], FLOOR_TEXTURE,
+                                       shift_coordinates=shift_coord)
         if hasattr(self.canvas_area, "tk"):
-            graphics.draw_textured_polygon(self.canvas_area, back_wall_coordinates, WALL_TEXTURE, "white")
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[1], WALL_TEXTURE, "white")
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white")
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white")
+            graphics.draw_textured_polygon(self.canvas_area, back_wall_coordinates, WALL_TEXTURE, "white",
+                                           shift_coordinates=shift_coord)
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[1], WALL_TEXTURE, "white",
+                                       shift_coordinates=shift_coord)
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white",
+                                       shift_coordinates=shift_coord)
+        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white",
+                                       shift_coordinates=shift_coord)
         
         # draw the doors
-        for door in self.doors:
+        for index,door in enumerate(self.door):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
         
-        # draw the light
-        graphics.draw(self.canvas_area,self.light.coordinates_lampshade)
-        if self.light.state == 0 or self.light.state == -1:
-            graphics.draw(self.canvas_area,self.light.coordinates_light_switch_off,tag="light_switch",object=self.light,
-                          world_coordinates_changed=self.light.coordinates_light_switch_on,arc_coordinates=self.light.arc_coordinates)
-            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[0], tag="light_bulb")
-        elif self.light.state == 1:
-            graphics.draw(self.canvas_area,self.light.coordinates_light_switch_on,tag="light_switch",object=self.light,
-                          world_coordinates_changed=self.light.coordinates_light_switch_off,arc_coordinates=self.light.arc_coordinates)
-            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[1], tag="light_bulb")
-            graphics.draw_arc(self.canvas_area, *self.light.arc_coordinates[2], tag="light_shine")
+        # draw the lights
+        for light in self.light:
+            graphics.draw(self.canvas_area,light.coordinates_lampshade,shift_coordinates=light.shift_coordinates)
+            if light.state == 0 or light.state == -1:
+                graphics.draw(self.canvas_area,light.coordinates_light_switch_off,tag="light_switch",object=light,
+                            world_coordinates_changed=light.coordinates_light_switch_on,arc_coordinates=light.arc_coordinates,
+                            shift_coordinates=light.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[0], tag="light_bulb",
+                                  shift_coordinates=light.shift_coordinates)
+            elif light.state == 1:
+                graphics.draw(self.canvas_area,light.coordinates_light_switch_on,tag="light_switch",object=light,
+                            world_coordinates_changed=light.coordinates_light_switch_off,arc_coordinates=light.arc_coordinates,
+                            shift_coordinates=light.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[1], tag="light_bulb",
+                                  shift_coordinates=light.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[2], tag="light_shine",
+                                  shift_coordinates=light.shift_coordinates)
         
-        # draw the picture
-        graphics.draw(self.canvas_area,self.picture.coordinates_frame)
-        graphics.draw(self.canvas_area,self.picture.coordinates_image,tag="picture")
-        self.picture.draw_image(self.canvas_area, tag="picture")
+        # draw the pictures
+        for picture in self.picture:
+            graphics.draw(self.canvas_area,picture.coordinates_frame,shift_coordinates=picture.shift_coordinates)
+            graphics.draw(self.canvas_area,picture.coordinates_image,tag="picture",
+                          shift_coordinates=picture.shift_coordinates)
+            picture.draw_image(self.canvas_area, tag="picture")
 
-        # draw the table and chair
-        graphics.draw(self.canvas_area,self.table.coordinates_table)
-        graphics.draw(self.canvas_area,self.chair.coordinates_chair)
-        
-        # draw the wardrobe or bookshelf
-        draw_choice = 1 # 0 = wardrobe, 1 = bookshelf
-        if draw_choice == 0:
-            graphics.draw(self.canvas_area,self.wardrobe.wardrobe_coordinates)
-            graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[0])
-            graphics.draw_arc(self.canvas_area, *self.wardrobe.wardrobe_coordinates_knobes[1])
-        elif draw_choice == 1:
-            graphics.draw(self.canvas_area,self.bookshelf.coordinates_shelf)
-            graphics.draw(self.canvas_area,self.bookshelf.coordinates_books)
-            self.bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
+        # draw the table
+        for table in self.table:
+            graphics.draw(self.canvas_area,table.coordinates_table,shift_coordinates=table.shift_coordinates)
+
+        # draw the chair
+        for chair in self.chair:
+            graphics.draw(self.canvas_area,chair.coordinates_chair,shift_coordinates=chair.shift_coordinates)
+
+        # draw the bookshelves
+        for bookshelf in self.bookshelf:
+            graphics.draw(self.canvas_area,bookshelf.coordinates_shelf,
+                          shift_coordinates=bookshelf.shift_coordinates)
+            graphics.draw(self.canvas_area,bookshelf.coordinates_books,
+                          shift_coordinates=bookshelf.shift_coordinates)
+            bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
+        # draw the wardrobes
+        for wardrobe in self.wardrobe:
+            graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates,
+                          shift_coordinates=wardrobe.shift_coordinates)
+            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0],
+                              shift_coordinates=wardrobe.shift_coordinates)
+            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1],
+                              shift_coordinates=wardrobe.shift_coordinates)
 
         # draw the key and inventory
         self.inventory.draw(self.canvas_area)
-        self.key.draw(self.canvas_area)
+        for key in self.key:
+            key.draw(self.canvas_area)
 
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(
@@ -177,7 +255,7 @@ class Room(tkinter.Frame):
                                                 globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"))
         
     def handle_door_click(self, event):
-        for door in self.doors:
+        for door in self.door:
             if door.handle_click(self.canvas_area, event, self.inventory.getSelectedObject()):
                 self.draw_room()
                 # self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
