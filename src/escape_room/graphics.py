@@ -46,7 +46,7 @@ def shift_coordinates(world_coord_source,world_coord_target):
     return (x_target-x_source,y_target-y_source,z_source-z_target)
     
     # draw an object using world coordinates
-def draw(canvas,world_coordinates,tag=None,object=None,world_coordinates_changed=None,arc_coordinates=None,
+def draw(canvas,world_coordinates,tag=None,object=None,arc_coordinates=None,
          shift_coordinates = (0,0,0)): 
     coordinates = convert_polygon_coordinates(world_coordinates,shift_coordinates)
     # draw the polygons on the canvas
@@ -54,7 +54,7 @@ def draw(canvas,world_coordinates,tag=None,object=None,world_coordinates_changed
         canvas.create_polygon(polygon[1:],width=1,fill=polygon[0],outline="black",tags=tag)
         if tag != None:
             canvas.tag_bind(tag,"<Button-1>",
-                            lambda event: clicked(event, tag, object, canvas, world_coordinates,world_coordinates_changed,arc_coordinates))
+                            lambda event: clicked(event, tag, object, canvas, world_coordinates,arc_coordinates))
 
 def draw_textured_polygon(canvas, polygon, texture_path, fallback_fill="#8B4513", shift_coordinates = (0,0,0)):
     coordinates = convert_polygon_coordinates([polygon],shift_coordinates)[0]
@@ -108,8 +108,10 @@ def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None, shift_coor
     else:
         canvas.create_arc(x0, y0, x1, y1, start=start, extent=extent, fill=color, outline="black", tags=tag)
 
-def clicked(event,tag,object,canvas,world_coordinates,world_coordinates_changed,arc_coordinates):
+def clicked(event,tag,object,canvas,world_coordinates,arc_coordinates):
     if tag == "light_switch":
-        object.clicked(event,tag,object,canvas,world_coordinates,world_coordinates_changed,arc_coordinates)
+        object.clicked(event,tag,object,canvas,world_coordinates,arc_coordinates)
+    if tag == "safe":
+        object.clicked(event,tag,object,canvas,world_coordinates)
 
 
