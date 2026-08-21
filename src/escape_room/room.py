@@ -38,6 +38,8 @@ class Room(tkinter.Frame):
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
         master.bind("<<IconEvent>>", self.on_icon_event)
+        self.goto_next_room = False
+
         # UI-related coding
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
@@ -55,12 +57,12 @@ class Room(tkinter.Frame):
         self.picture = []
 
     # initialize room with all relevant settings
-    def init_room(self,game_client):
+    def init_room(self,game_client,room_data = room_data.start_room):
         self.player_name = None
         self.player_icon_number = None
         self.game_client = game_client
         # get room data that determines the room layout + objects
-        self.room_data = room_data.start_room
+        self.room_data = room_data
 
         # UI-related coding
         self.coordinates = []
@@ -108,7 +110,8 @@ class Room(tkinter.Frame):
             elif direction == "right":
                 shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
             tag = self.room_data["door"][index][3]            
-            obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord)
+            obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
+                       next_room_callback=self.next_room_callback)
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -258,7 +261,18 @@ class Room(tkinter.Frame):
         for door in self.door:
             if door.handle_click(self.canvas_area, event):
                 self.draw_room()
+                self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
+
+    def next_room_callback(self):
+        self.goto_next_room = True
+
+    def execute_room_switch(self):
+        print("[GAME]: room switch")
+        self.goto_next_room = False # reset the room switch attribute
+        self.canvas_area.delete("all")
+        # self.init_room(self.game_client)
+        pass
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""

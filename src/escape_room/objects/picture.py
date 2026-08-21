@@ -26,7 +26,11 @@ class Picture:
         self.correct_answers = []
 
         for _ in range(3):
-            riddle, correct_answer = generate_riddle()
+            try:
+                riddle, correct_answer = generate_riddle()
+            except ValueError:
+                riddle="riddle not available"
+                correct_answer=""
 
             self.riddles.append(riddle)
             self.correct_answers.append(correct_answer)
