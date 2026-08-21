@@ -4,15 +4,15 @@ from pathlib import Path
 import queue
 import os
 
-from src.escape_room import graphics
-from src.escape_room import inventory
-from src.escape_room import player_panel
-from src.escape_room import globals
+from escape_room import graphics
+from escape_room import inventory
+from escape_room import player_panel
+from escape_room import globals
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
 from escape_room.objects.light import Light
-from escape_room.objects.smallkey import Key
+from escape_room.objects.key import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
@@ -85,11 +85,11 @@ class Room(tkinter.Frame):
                                                      icon_queue=self.icon_queue,
                                                      gui_master=self.master)
         # self.load_mock_game_state()
-        self.doors = self.create_doors()
         self.light = Light()
         self.table = Table()
         self.chair = Chair(5.00, 2.35, "right")
         self.key = Key(self.inventory,True) # room_placement = True
+        self.doors = self.create_doors()
         self.wardrobe = Wardrobe()
         self.picture = Picture(IMAGE_DIR / "riddle_not_readable.png")
         self.bookshelf = Bookshelf()
@@ -108,8 +108,8 @@ class Room(tkinter.Frame):
 
     def create_doors(self):
         return [
-            Door((3.2, 0, 4), "brown", "front", "red_door"),
-            Door((0, 0, 1.5), "green", "left", "green_door"),
+            Door((3.2, 0, 4), "brown", "front", "red_door", player_name=self.player_name, is_player_door=True), 
+            Door((0, 0, 1.5), "green", "left", "green_door", player_name=self.player_name, is_player_door=False),  
             Door((8, 0, 3.1), "blue", "right", "blue_door"),
         ]
 
@@ -178,8 +178,9 @@ class Room(tkinter.Frame):
         
     def handle_door_click(self, event):
         for door in self.doors:
-            if door.handle_click(self.canvas_area, event):
+            if door.handle_click(self.canvas_area, event, self.inventory.getSelectedObject()):
                 self.draw_room()
+                # self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
     def on_network_event(self, event):
@@ -246,6 +247,3 @@ class Room(tkinter.Frame):
             # remove from inventory
             self.inventory.delObject(object,object_owner)
             self.inventory.redraw_inventory()
-
-
-

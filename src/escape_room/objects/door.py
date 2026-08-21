@@ -1,4 +1,5 @@
 from escape_room.graphics import compute_2d_coordinates
+from escape_room.confirmation_popup import ConfirmationPopup
 
 _DEFAULT_DOOR_RGB = (111, 63, 32)
 
@@ -53,11 +54,14 @@ class Door:
     DOOR_WIDTH = 1.6
     DOOR_HEIGHT = 2.0
     
-    def __init__(self, position, color, direction, tag):
+    def __init__(self, position, color, direction, tag, key_owner=None, player_name=None, is_player_door=None):
         self.position = tuple(position)
         self.color = color
         self.direction = direction
         self.tag = tag
+        self.key_owner = key_owner
+        self.player_name = player_name
+        self.is_player_door = is_player_door
         self.is_open = False
 
         self.corners = self._create_corners()
@@ -99,8 +103,19 @@ class Door:
     def _tags(self):
         return (self.tag, "door")
     
-    def open_door(self):
+    def open_door(self, selected_object):
+        (object_type, object_owner) = selected_object
+        
+        if object_type != "key":
+            return False
+        
+        if self.is_player_door and object_owner == self.player_name:
+            return True
+        elif not self.is_player_door and object_owner != self.player_name:
+            return True
+
         self.is_open = True
+        return True     
 
 
     def close_door(self):
@@ -124,13 +139,27 @@ class Door:
 
         return False
     
-    def handle_click(self, canvas, event):
+    def handle_click(self, canvas, event, selected_object):
         if self.clicked(canvas, event):
-            self.toggle()
-            return True
+            if self.open_door(selected_object):
+                self.toggle()
+                
+                return True
+            """dialog that the door is locked and requires a key to open"""
+            main_window = event.widget.winfo_toplevel()
+            
+            # Call our custom English popup instead of messagebox
+            popup = ConfirmationPopup(
+                parent_window=main_window,
+                title="Locked Door",
+                message="The door is locked. You need the correct key to open it. Do you want to try using a key from your inventory?",
+                mouse_x=event.x_root, # global position of mouse coordinates
+                mouse_y=event.y_root,
+                show_confirmation=False,
+            )
 
         return False
-    
+
     def draw(self, canvas, win_width, win_height):
         if self.is_open:
             self._draw_opening(canvas, win_width, win_height)
