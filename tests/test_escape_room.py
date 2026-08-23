@@ -128,7 +128,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.light = [Light()]
         app.room.table = [Table()]
         app.room.chair = [Chair(4.85, 0,2.35, "right")]
-        app.room.wardrobe = [Wardrobe()]
+        app.room.wardrobe = [Wardrobe("left")]
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
         app.room.key = [FakeDrawable()]
@@ -230,7 +230,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.light = [Light()]
         app.room.table = [Table()]
         app.room.chair = [Chair(4.85, 0,2.35, "right")]
-        app.room.wardrobe = [Wardrobe()]
+        app.room.wardrobe = [Wardrobe("left")]
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
         app.room.key = [FakeDrawable()]
@@ -304,9 +304,9 @@ class EscapeRoomTest(unittest.TestCase):
         ]
 
         self.assertEqual(min(point[2] for point in left_back_leg_points), 2.6)
-        self.assertEqual(max(point[2] for point in left_back_leg_points), 3.25)
-        self.assertEqual(min(point[2] for point in right_back_leg_points), 3.15)
-        self.assertEqual(max(point[2] for point in right_back_leg_points), 3.25)
+        self.assertEqual(max(point[2] for point in left_back_leg_points), 3.15)
+        self.assertEqual(min(point[2] for point in right_back_leg_points), 3.05)
+        self.assertEqual(max(point[2] for point in right_back_leg_points), 3.15)
 
     def test_chair_parts_include_top_and_four_sides(self):
         chair = Chair(4, 2, "left")

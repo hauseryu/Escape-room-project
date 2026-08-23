@@ -31,6 +31,9 @@ class Inventory():
         self._draw_background(canvas)
         self._draw_header(canvas)
         self._draw_grid(canvas)
+        for key,value in self.inventory.items():
+            (_,object_ref,_) = value
+            object_ref.draw(self.canvas)
 
     def _draw_background(self, canvas):
         canvas.create_rectangle(0, 0, self.WIDTH, self.HEIGHT, fill="black")
