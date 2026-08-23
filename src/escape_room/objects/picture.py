@@ -27,13 +27,15 @@ class Picture:
 
         for _ in range(3):
             try:
-                riddle, correct_answer = generate_riddle()
+                (riddle, correct_answer) = generate_riddle()
             except ValueError:
                 riddle="riddle not available"
                 correct_answer=""
 
             self.riddles.append(riddle)
             self.correct_answers.append(correct_answer)
+        print("[GAME] Riddle answers: ")
+        print(self.correct_answers)
 
         self.current_riddle = 0
 
