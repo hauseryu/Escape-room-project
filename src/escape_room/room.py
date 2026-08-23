@@ -118,6 +118,7 @@ class Room(tkinter.Frame):
             coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
             color = self.room_data["door"][index][1]
             direction = self.room_data["door"][index][2]
+            tag = self.room_data["door"][index][3] # tags for door
             player_door = self.room_data["door"][index][4] # player doors can be opened with own key
             can_be_opened = self.room_data["door"][index][5] # door can be opened
             next_room = self.room_data["door"][index][6] # next room
@@ -131,6 +132,7 @@ class Room(tkinter.Frame):
             obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
                        next_room_callback=self.next_room_callback,player_name=self.player_name,
                        is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room)
+            self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -190,7 +192,6 @@ class Room(tkinter.Frame):
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
-        self.canvas_area.bind("<Button-1>", self.handle_door_click)
 
     def update_player_data(self,player_name,player_icon_number):
         # player name + icon
