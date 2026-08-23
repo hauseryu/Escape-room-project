@@ -1,4 +1,7 @@
 from escape_room.graphics import compute_2d_coordinates
+from escape_room.confirmation_popup import ConfirmationPopup
+from tkinter import messagebox  # Required import for native dialog popups
+import tkinter
 
 _DEFAULT_DOOR_RGB = (111, 63, 32)
 
@@ -53,13 +56,20 @@ class Door:
     DOOR_WIDTH = 1.0
     DOOR_HEIGHT = 2.0
     
-    def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0)):
+    def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0),
+                 player_name=None, is_player_door=None,can_be_opened=None,next_room=None,
+                 next_room_callback=None):
         self.position = tuple(position)
         self.color = color
         self.direction = direction
         self.tag = tag
+        self.player_name = player_name
+        self.is_player_door = is_player_door        
+        self.can_be_opened = can_be_opened
+        self.next_room = next_room
         self.is_open = False
         self.shift_coordinates = shift_coordinates
+        self.next_room_callback = next_room_callback
 
         self.corners = self._create_corners()
 
@@ -103,6 +113,22 @@ class Door:
     def open_door(self):
         self.is_open = True
 
+    def door_can_be_opened(self, selected_object):
+        (object_type, object_owner) = selected_object
+
+        if not self.can_be_opened:
+            return False
+        if self.is_open:
+            return False # opened door cannot be opened again!
+        
+        if object_type != "key":
+            return False
+
+        if self.is_player_door and object_owner == self.player_name:
+            return True
+        elif not self.is_player_door and object_owner != self.player_name:
+            return True
+        return False
 
     def close_door(self):
         self.is_open = False
@@ -125,12 +151,50 @@ class Door:
 
         return False
     
-    def handle_click(self, canvas, event):
+    def handle_click(self, canvas, event, selected_object):
         if self.clicked(canvas, event):
-            self.toggle()
-            return True
+            if self.is_open: # open doors can always be closed
+                self.toggle()
+                return True # True => redraw door
+            if self.door_can_be_opened(selected_object):
+                self.toggle()
+            else:
+                """dialog that the door is locked and requires a key to open"""
+                main_window = event.widget.winfo_toplevel()
 
-        return False
+                # Call our custom English popup instead of messagebox
+                popup = ConfirmationPopup(
+                    parent_window=main_window,
+                    title="Locked Door",
+                    message="The door is locked. You need the correct key to open it. Do you want to try using a key from your inventory?",
+                    mouse_x=event.x_root, # global position of mouse coordinates
+                    mouse_y=event.y_root,
+                    show_confirmation=False
+                )
+                return False # => no redraw    
+            if self.is_open:
+                """Triggered when the player clicks on a door inside the canvas."""
+                main_window = event.widget.winfo_toplevel()
+                
+                # Call our custom English popup instead of messagebox
+                popup = ConfirmationPopup(
+                    parent_window=main_window,
+                    title="Change Room",
+                    message="Do you want to enter the next room?",
+                    mouse_x=event.x_root, # global position of mouse coordinates
+                    mouse_y=event.y_root
+                )
+
+                # The code pauses until the user clicks a button, then checks popup.result
+                if popup.result:
+                    print("[GAME] Player decided to change the room.")
+                    if self.next_room_callback != None:
+                        self.next_room_callback(self.next_room)
+                else:
+                    print("[GAME] Player decided to stay in the current room.")
+            return True # => redraw
+        
+        return False # => no redraw
     
     def draw(self, canvas, win_width, win_height):
         if self.is_open:

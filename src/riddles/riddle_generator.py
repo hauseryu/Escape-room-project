@@ -2,6 +2,7 @@ from urllib import response
 
 from google import genai
 from google.genai import types
+from google.genai import errors
 import os
 from dotenv import load_dotenv
 import random
@@ -28,38 +29,41 @@ def generate_riddle():
         temperature=1.0,
     )
 
-    response = client.models.generate_content(
-        model="gemini-3.5-flash-lite",
-        contents=f"""
-            Create a short riddle.
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.5-flash-lite",
+            contents=f"""
+                Create a short riddle.
 
-            Possible topics:
-            {themes_text}
+                Possible topics:
+                {themes_text}
 
-            Rules:
-            - Use 2 to 3 of the given topics.
-            - Maximum 2-3 short sentences.
-            - Exactly one answer must be correct.
-            - Do not use * or **.
-            - The riddle should have a high difficulty level, but not too complex and specific.
+                Rules:
+                - Use 2 to 3 of the given topics.
+                - Maximum 2-3 short sentences.
+                - Exactly one answer must be correct.
+                - Do not use * or **.
+                - The riddle should have a high difficulty level, but not too complex and specific.
 
-            Answer exactly in this format:
+                Answer exactly in this format:
 
-            Riddle:
-            ...
+                Riddle:
+                ...
 
-            1)
-            2)
-            3)
-            4)
+                1)
+                2)
+                3)
+                4)
 
-            Correct answer:
-            ...
-            """,
-        config=config
-    )
+                Correct answer:
+                ...
+                """,
+            config=config
+        )
+        text = response.text.strip()
 
-    text = response.text.strip()
+    except errors.ServerError:
+        text = "riddle currently not available!"
 
     if "Correct answer:" not in text:
         raise ValueError("LLM response does not contain 'Correct answer:'")
