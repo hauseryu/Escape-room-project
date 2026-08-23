@@ -9,11 +9,12 @@ from escape_room import inventory
 from escape_room import player_panel
 from escape_room import globals
 from escape_room import room_data
+from escape_room.room_state import RoomState
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
 from escape_room.objects.light import Light
-from escape_room.objects.smallkey import Key
+from escape_room.objects.key import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
@@ -47,6 +48,12 @@ class Room(tkinter.Frame):
         self.canvas_area.pack()
         self.pack()
         # object-related coding
+        self.room_state = RoomState()
+        self.reset_objects()
+
+    # reset objects to initial state
+    def reset_objects(self):
+        # object-related coding
         self.key = []
         self.bookshelf = []
         self.wardrobe = []
@@ -57,12 +64,17 @@ class Room(tkinter.Frame):
         self.picture = []
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room):
-        self.player_name = None
-        self.player_icon_number = None
+    def init_room(self,game_client,room_data = room_data.start_room,next_room=False):
+        if not next_room:
+            self.player_name = None
+            self.player_icon_number = None
         self.game_client = game_client
         # get room data that determines the room layout + objects
         self.room_data = room_data
+        # keep room state in own object
+        self.room_state.add_room(self.room_data["room_name"])
+        self.room_state.set_current_room(self.room_data["room_name"])
+        self.next_room = None
 
         # UI-related coding
         self.coordinates = []
@@ -94,7 +106,8 @@ class Room(tkinter.Frame):
             "assets",
             "images",
         )
-        self.inventory = inventory.Inventory()
+        if not next_room:
+            self.inventory = inventory.Inventory()
         self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                      icon_queue=self.icon_queue,
                                                      gui_master=self.master)
@@ -103,6 +116,9 @@ class Room(tkinter.Frame):
             coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
             color = self.room_data["door"][index][1]
             direction = self.room_data["door"][index][2]
+            player_door = self.room_data["door"][index][4] # player doors can be opened with own key
+            can_be_opened = self.room_data["door"][index][5] # door can be opened
+            next_room = self.room_data["door"][index][6] # next room
             if direction == "front":
                 shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
             elif direction == "left":
@@ -111,7 +127,8 @@ class Room(tkinter.Frame):
                 shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
             tag = self.room_data["door"][index][3]            
             obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
-                       next_room_callback=self.next_room_callback)
+                       next_room_callback=self.next_room_callback,player_name=self.player_name,
+                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room)
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -136,8 +153,12 @@ class Room(tkinter.Frame):
         # create keys
         for index,key in enumerate(self.room_data["key"]):
             coord = self.room_data["key"][index][0] # get key coordinates (first element in list)
+            unique_id = self.room_data["key"][index][1] # unique identifier for the key
+            if self.room_state.object_is_removed("key",unique_id):
+                continue
             shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
-            obj = Key(self.inventory,shift_coordinates=shift_coord,room_placement=True)
+            obj = Key(self.inventory,self.room_state,
+                      shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
             self.key.append(obj)
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):
@@ -154,8 +175,9 @@ class Room(tkinter.Frame):
         # create wardrobes
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
             coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
+            direction = self.room_data["chair"][index][1] # get wardrobe direction (right/left)
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
-            obj = Wardrobe(shift_coordinates=shift_coord)
+            obj = Wardrobe(direction,shift_coordinates=shift_coord)
             self.wardrobe.append(obj)
 
         # create the canvas area and draw the start screen
@@ -169,6 +191,8 @@ class Room(tkinter.Frame):
         # set ownership of key
         for key in self.key:
             key.object_owner = self.player_name
+        for door in self.door:
+            door.player_name = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -259,20 +283,24 @@ class Room(tkinter.Frame):
         
     def handle_door_click(self, event):
         for door in self.door:
-            if door.handle_click(self.canvas_area, event):
+            if door.handle_click(self.canvas_area, event, self.inventory.getSelectedObject()):
                 self.draw_room()
-                self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
+                if self.goto_next_room:
+                    self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
-    def next_room_callback(self):
+    def next_room_callback(self,next_room):
         self.goto_next_room = True
+        self.next_room = next_room
 
     def execute_room_switch(self):
         print("[GAME]: room switch")
         self.goto_next_room = False # reset the room switch attribute
         self.canvas_area.delete("all")
-        # self.init_room(self.game_client)
-        pass
+        self.room_data = room_data.all_rooms[self.next_room]
+        self.reset_objects()
+        self.init_room(self.game_client,room_data=self.room_data,next_room=True)
+        self.draw_room()
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""

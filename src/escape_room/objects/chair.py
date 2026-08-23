@@ -11,16 +11,18 @@ class Chair():
         self.x = x
         self.y = y
         self.z = z
+        self.width_small = 0.1
+        self.width_large = 0.7
         self.direction = direction
         self.shift_coordinates = shift_coordinates
 
         # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
-        self.coordinates_chairseat = self._create_panel_coordinates(back=False)
+        self.coordinates_chairseat = self._create_panel_coordinates(z1=2.6,z2=3.15,back=False)
 
         # All 4 lower legs beneath the seat
         self.coordinates_chairlegs = [
-            *self._create_leg_coordinates(4.45, 3.15),
-            *self._create_leg_coordinates(5.05, 3.15),
+            *self._create_leg_coordinates(4.45, 3.15-self.width_small),
+            *self._create_leg_coordinates(5.05, 3.15-self.width_small),
             *self._create_leg_coordinates(4.45, 2.6),
             *self._create_leg_coordinates(5.05, 2.6),
         ]
@@ -37,8 +39,8 @@ class Chair():
 
         # 3. Upper Parts: Mounted dynamically using 'x_backrest'
         self.coordinates_chairlegs_back = [
-            *self._create_leg_coordinates(x_backrest, 3.15, back=True),
-            *self._create_panel_coordinates(back=True, x_pos=x_backrest),
+            *self._create_leg_coordinates(x_backrest, 3.15-self.width_small, back=True),
+            *self._create_panel_coordinates(z1=2.6,z2=3.15,back=True, x_pos=x_backrest),
             *self._create_leg_coordinates(x_backrest, 2.6, back=True),
         ]
 
@@ -47,9 +49,8 @@ class Chair():
             self.coordinates_chairlegs_back
 
     def _create_leg_coordinates(self, x, z, back=False):
-        width = 0.10
-        x2 = x + width
-        z2 = z + width
+        x2 = x + self.width_small
+        z2 = z + self.width_small
 
         if not back:
             low = 0
@@ -65,40 +66,41 @@ class Chair():
             ["#7A4A22", (x, low, z), (x2, low, z), (x2, high, z), (x, high, z)],
         ]
 
-    def _create_panel_coordinates(self, back=False, x_pos=4.45):    
+    def _create_panel_coordinates(self, z1=0, z2=0, back=False, x_pos=4.45):    
         if not back:
-            width = 0.7
+            width = self.width_large
             height1 = 0.4
             height2 = 0.51
         else:
-            width = 0.1
+            width = self.width_small
             height1 = 0.8
             height2 = 0.91
+            z2 -= self.width_small
             
         return [
             ["#5A3518",
-             (x_pos + width, height1, 3.15),
-             (x_pos, height1, 3.15),
-             (x_pos, height2, 3.15),
-             (x_pos + width, height2, 3.15)],
+             (x_pos + width, height1, z2),
+             (x_pos, height1, z2),
+             (x_pos, height2, z2),
+             (x_pos + width, height2, z2)],
             ["#6F4520",
-             (x_pos, height1, 3.15),
-             (x_pos, height1, 2.6),
-             (x_pos, height2, 2.6),
-             (x_pos, height2, 3.15)],
+             (x_pos, height1, z2),
+             (x_pos, height1, z1),
+             (x_pos, height2, z1),
+             (x_pos, height2, z2)],
             ["#6F4520",
-             (x_pos + width, height1, 2.6),
-             (x_pos + width, height1, 3.15),
-             (x_pos + width, height2, 3.15),
-             (x_pos + width, height2, 2.6)],
+             (x_pos + width, height1, z1),
+             (x_pos + width, height1, z2),
+             (x_pos + width, height2, z2),
+             (x_pos + width, height2, z1)],
             ["#8B5A2B",
-             (x_pos, height2, 2.6),
-             (x_pos + width, height2, 2.6),
-             (x_pos + width, height2, 3.15),
-             (x_pos, height2, 3.15)],
+             (x_pos, height2, z1),
+             (x_pos + width, height2, z1),
+             (x_pos + width, height2, z2),
+             (x_pos, height2, z2)],
             ["#7A4A22",
-             (x_pos, height1, 2.6),
-             (x_pos + width, height1, 2.6),
-             (x_pos + width, height2, 2.6),
-             (x_pos, height2, 2.6)],
+             (x_pos, height1, z1),
+             (x_pos + width, height1, z1),
+             (x_pos + width, height2, z1),
+             (x_pos, height2, z1)],
         ]
