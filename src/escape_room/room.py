@@ -249,9 +249,10 @@ class Room(tkinter.Frame):
         # draw the safes
         for safe in self.safe:
             if safe.state == 0:
+                safe.set_password(picture.correct_answers)
                 graphics.draw(self.canvas_area, safe.safe_coordinates, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)    
             elif safe.state == 1:
-                graphics.draw(self.canvas_area, safe.safe_coordinates_open, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)
+                graphics.draw(self.canvas_area, safe.safe_coordinates_open, object = safe, shift_coordinates=safe.shift_coordinates)
 
         # draw the key and inventory
         self.inventory.draw(self.canvas_area)

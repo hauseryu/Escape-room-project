@@ -101,6 +101,7 @@ class Light():
             
             if Light.clicked.count_light % 2 == 0: # light is off, turn it on
                 self.state = 1
+                #canvas.create_rectangle(0, 0, canvas.winfo_width(), canvas.winfo_height(), fill="#000000", stipple="gray50", outline="",tags="safe_input")
                 graphics.draw(canvas, world_coordinates=self.coordinates_light_switch_on,tag=tag,object=object,
                           arc_coordinates=arc_coordinates,
                           shift_coordinates=self.shift_coordinates)
