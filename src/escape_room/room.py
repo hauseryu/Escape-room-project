@@ -19,6 +19,7 @@ from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
 from escape_room.objects.bookshelf import Bookshelf
+from escape_room.objects.safe import Safe
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
@@ -62,6 +63,7 @@ class Room(tkinter.Frame):
         self.door = []
         self.light = []
         self.picture = []
+        self.safe = []
 
     # initialize room with all relevant settings
     def init_room(self,game_client,room_data = room_data.start_room,next_room=False):
@@ -179,6 +181,12 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
             obj = Wardrobe(direction,shift_coordinates=shift_coord)
             self.wardrobe.append(obj)
+        #create safes
+        for index,safe in enumerate(self.room_data["safe"]):
+            coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
+            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)
+            obj = Safe(shift_coordinates=shift_coord)
+            self.safe.append(obj)
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -221,13 +229,13 @@ class Room(tkinter.Frame):
             graphics.draw(self.canvas_area,light.coordinates_lampshade,shift_coordinates=light.shift_coordinates)
             if light.state == 0 or light.state == -1:
                 graphics.draw(self.canvas_area,light.coordinates_light_switch_off,tag="light_switch",object=light,
-                            world_coordinates_changed=light.coordinates_light_switch_on,arc_coordinates=light.arc_coordinates,
+                            arc_coordinates=light.arc_coordinates,
                             shift_coordinates=light.shift_coordinates)
                 graphics.draw_arc(self.canvas_area, *light.arc_coordinates[0], tag="light_bulb",
                                   shift_coordinates=light.shift_coordinates)
             elif light.state == 1:
                 graphics.draw(self.canvas_area,light.coordinates_light_switch_on,tag="light_switch",object=light,
-                            world_coordinates_changed=light.coordinates_light_switch_off,arc_coordinates=light.arc_coordinates,
+                            arc_coordinates=light.arc_coordinates,
                             shift_coordinates=light.shift_coordinates)
                 graphics.draw_arc(self.canvas_area, *light.arc_coordinates[1], tag="light_bulb",
                                   shift_coordinates=light.shift_coordinates)
@@ -264,6 +272,14 @@ class Room(tkinter.Frame):
                               shift_coordinates=wardrobe.shift_coordinates)
             graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1],
                               shift_coordinates=wardrobe.shift_coordinates)
+
+        # draw the safes
+        for safe in self.safe:
+            if safe.state == 0:
+                safe.set_password(picture.correct_answers)
+                graphics.draw(self.canvas_area, safe.safe_coordinates, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)    
+            elif safe.state == 1:
+                graphics.draw(self.canvas_area, safe.safe_coordinates_open, object = safe, shift_coordinates=safe.shift_coordinates)
 
         # draw the key and inventory
         self.inventory.draw(self.canvas_area)

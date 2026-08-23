@@ -22,8 +22,11 @@ start_room = {
         "picture": [[(6.05, 2.35, 3.985)] # picture 1 (riddle)
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
-                ]
+                ],
+        "safe": [[(5.0, 1.0, 4.0)] # safe 1
+                ],  
 }
+
 
 # from initial room -> left door 
 mystery_room = {  

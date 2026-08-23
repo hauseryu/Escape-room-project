@@ -90,7 +90,7 @@ class Light():
 
         self.state = -1 # -1 = uninitialized, 0 = off, 1 = on
 
-    def clicked(self,event,tag,object,canvas,world_coordinates,world_coordinates_changed,arc_coordinates):
+    def clicked(self,event,tag,object,canvas,world_coordinates,arc_coordinates):
         if tag == "light_switch":
             if not hasattr(Light.clicked, "count_light"):
                 Light.clicked.count_light = 0
@@ -98,15 +98,20 @@ class Light():
             canvas.delete("light_bulb")
             if canvas.find_withtag("light_shine"):
                 canvas.delete("light_shine")
-            graphics.draw(canvas, world_coordinates_changed,tag=tag,object=object,
-                          world_coordinates_changed=world_coordinates,arc_coordinates=arc_coordinates,
-                          shift_coordinates=self.shift_coordinates)
-            if Light.clicked.count_light % 2 == 0:
+            
+            if Light.clicked.count_light % 2 == 0: # light is off, turn it on
                 self.state = 1
+                #canvas.create_rectangle(0, 0, canvas.winfo_width(), canvas.winfo_height(), fill="#000000", stipple="gray50", outline="",tags="safe_input")
+                graphics.draw(canvas, world_coordinates=self.coordinates_light_switch_on,tag=tag,object=object,
+                          arc_coordinates=arc_coordinates,
+                          shift_coordinates=self.shift_coordinates)
                 graphics.draw_arc(canvas, *arc_coordinates[1],tag="light_bulb",shift_coordinates=self.shift_coordinates)
                 graphics.draw_arc(canvas, *arc_coordinates[2],tag="light_shine",shift_coordinates=self.shift_coordinates)
-            else:
-                self.state = 0
+            else: # light is on, turn it off               
+                self.state = 0 
+                graphics.draw(canvas, world_coordinates=self.coordinates_light_switch_off,tag=tag,object=object,
+                          arc_coordinates=arc_coordinates,
+                          shift_coordinates=self.shift_coordinates)
                 graphics.draw_arc(canvas, *arc_coordinates[0],tag="light_bulb",shift_coordinates=self.shift_coordinates)
             Light.clicked.count_light += 1
 
