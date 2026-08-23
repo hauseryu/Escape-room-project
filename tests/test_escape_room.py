@@ -131,6 +131,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.wardrobe = [Wardrobe("left")]
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
+        app.room.safe = [MagicMock()]
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
@@ -233,6 +234,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.wardrobe = [Wardrobe("left")]
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
+        app.room.safe = [MagicMock()]
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
