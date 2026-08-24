@@ -55,29 +55,27 @@ def generate_riddle():
                 3)
                 4)
 
-                Correct answer:
+                Correct answer (only the number):
                 ...
                 """,
             config=config
         )
+        
         text = response.text.strip()
-
     except errors.ServerError:
         text = "riddle currently not available!"
 
-    if "Correct answer:" not in text:
+    if "Correct answer (only the number):" not in text:
         raise ValueError("LLM response does not contain 'Correct answer:'")
 
     visible_part, answer_part = text.split(
-        "Correct answer:",
+        "Correct answer (only the number):",
         1
     )
 
-    # Richtige Antwort
-    correct_answer = answer_part.strip()
-
+    visible_part = text
     # "Riddle:" entfernen
     visible_part = visible_part.replace("Riddle:", "", 1).strip()
 
 
-    return visible_part, correct_answer
+    return (visible_part, answer_part.strip())
