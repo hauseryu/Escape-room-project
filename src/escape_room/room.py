@@ -7,6 +7,7 @@ import os
 from escape_room import graphics
 from escape_room import inventory
 from escape_room import player_panel
+from escape_room import chat_panel
 from escape_room import globals
 from escape_room import room_data
 from escape_room.room_state import RoomState
@@ -35,11 +36,15 @@ class Room(tkinter.Frame):
         self.master = master
 
         # multiplayer and data transfer related coding
+        # using queues, which are thread-safe (no danger of different threads accessing same queue)
         self.network_queue = queue.Queue() # communication for server events
-        self.icon_queue = queue.Queue() # communication for icon events        
+        self.icon_queue = queue.Queue() # communication for icon events     
+        self.chat_queue = queue.Queue() # communication of chat messages
+           
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
         master.bind("<<IconEvent>>", self.on_icon_event)
+        master.bind("<<ChatEvent>>", self.on_message_event)
         self.goto_next_room = False
 
         # UI-related coding
@@ -113,6 +118,10 @@ class Room(tkinter.Frame):
         self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                      icon_queue=self.icon_queue,
                                                      gui_master=self.master)
+        self.chat_panel = chat_panel.ChatPanel(self.master, 
+                                               message_queue=self.chat_queue,
+                                               gui_master=self.master)
+
         # create doors
         for index,door in enumerate(self.room_data["door"]):
             coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
@@ -205,6 +214,8 @@ class Room(tkinter.Frame):
         # player name + icon
         self.player_name = player_name
         self.player_icon_number = player_icon_number
+        # inform chat panel
+        self.chat_panel.player_name = player_name
         # set ownership of key
         for key in self.key:
             key.object_owner = self.player_name
@@ -313,6 +324,15 @@ class Room(tkinter.Frame):
         )        
         self.player_panel.update_current_player(self.player_name, 
                                                 globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"))
+        # draw chat frame
+        self.chat_panel_canvas_id = self.canvas_area.create_window(
+            355+900, 1,                   # X and Y coordinates inside the canvas
+            window=self.chat_panel,  # The frame object to embed
+            anchor="nw",               # Top-left corner alignment
+            width=700,                 # Optional: Explicitly force width
+            height=202                 # Optional: Explicitly force height
+        )        
+        
         
     def handle_door_click(self, event):
         for door in self.door:
@@ -377,6 +397,12 @@ class Room(tkinter.Frame):
                     # draw the key and inventory
                     key.draw(self.canvas_area) # draw key into inventory
 
+                elif event_type == "chat_message":
+                    print("[GUI Event] received chat message")
+                    text = event_data.get("text")
+                    sent_from = event_data.get("sent_from")
+                    self.chat_panel.append_message(sent_from,text)
+
         except queue.Empty:
             pass
 
@@ -400,5 +426,22 @@ class Room(tkinter.Frame):
             self.inventory.delObject(object,object_owner)
             self.inventory.redraw_inventory()
 
-
+    def on_message_event(self, event):
+        """Event handler triggered automatically when a new chat item lands in the queue."""
+        print("[ROOM] <<ChatEvent>> received! Processing queue items...")
+        
+        # Empty the queue safely using block=False
+        while True:
+            try:
+                next_chat_payload = self.chat_queue.get(block=False)
+                
+                # Forward to your network EscapeClient
+                print(f"[ROOM] Forwarding payload to client: {next_chat_payload}")
+                self.game_client.send_action(action_type="chat_message", json_payload=next_chat_payload)
+                
+                self.chat_queue.task_done()
+                
+            except queue.Empty:
+                # Break out when the queue is completely empty
+                break
 
