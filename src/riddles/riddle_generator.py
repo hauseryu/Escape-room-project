@@ -73,7 +73,6 @@ def generate_riddle():
         1
     )
 
-    visible_part = text
     # "Riddle:" entfernen
     visible_part = visible_part.replace("Riddle:", "", 1).strip()
 
