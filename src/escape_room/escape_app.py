@@ -41,6 +41,7 @@ class EscapeApp():
             player_name="", 
             player_icon_number=1, # set some default icon number
             network_queue=self.room.network_queue,
+            chat_queue=self.room.chat_queue,
             gui_master=self.room.master
         )
         # now retrieve list of local devices
