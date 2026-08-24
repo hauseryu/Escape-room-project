@@ -135,6 +135,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
+        app.room.chat_panel = MagicMock() 
         app.room.player_name = ""
         app.room.player_icon_number = 1
         app.room.room_coordinates = [
@@ -238,6 +239,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
+        app.room.chat_panel = MagicMock() 
         app.room.player_name = ""
         app.room.player_icon_number = 1
 

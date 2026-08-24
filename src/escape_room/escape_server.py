@@ -45,6 +45,17 @@ class EscapeServer():
                             outgoing_queue.put(json.dumps({"event": "system", "msg": f"{inventory} passed over to {target} ."}))
                         else:
                             outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
+
+                # SCENARIO: passing over message to all players ("chat_message")
+                if action == "chat_message":
+                    sent_from = game_data.get("sent_from")
+                    text = game_data.get("text")
+                    print(f"[SERVER] Received chat message from {sent_from}:{text}")
+                    payload = {"action": "chat_message", 
+                                "sent_from": sent_from,
+                                "text": text}
+                    json_string = json.dumps(payload)
+                    self.broadcast_message(json_string,sent_from)
                             
             except json.JSONDecodeError:
                 print(f"[FEHLER] invalid data format from {player_name}")
@@ -129,6 +140,13 @@ class EscapeServer():
         with players_lock:
             for data in active_players.values():
                 data["queue"].put(json_string)
+
+    def broadcast_message(self,json_string,sent_from):
+        """send message to all clients."""
+        with players_lock:
+            for data in active_players.values():
+                if data["queue"] != active_players[sent_from]["queue"]: # don't send to player who wrote the message
+                    data["queue"].put(json_string)
 
     def start_server(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
