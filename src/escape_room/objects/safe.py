@@ -1,11 +1,12 @@
 from escape_room import graphics
 
 class Safe():
-    def __init__(self, shift_coordinates=(0, 0, 0)):
+    def __init__(self, key = None, shift_coordinates=(0, 0, 0)):
         self.shift_coordinates = shift_coordinates
         self.password = "" # correct password, set using set_password method
         self.input_password = ""
         self.state = 0  # 0 = closed, 1 = open
+        self.key = key  # key object that can be placed inside the safe
         self.safe_coordinates = [
         ["#333333",(5.00, 0.90, 4.00),(5.70, 0.90, 4.00),(5.70, 1.30, 4.00),(5.00, 1.30, 4.00)],
         ["#AAAAAA",(5.04, 0.94, 3.99),(5.66, 0.94, 3.99),(5.66, 1.26, 3.99),(5.04, 1.26, 3.99)],
@@ -103,6 +104,10 @@ class Safe():
                     canvas.create_rectangle(x1, y1,x2, y2,fill="white",outline="",tags=("safe_input", f"safe_key_{key}"))
                     canvas.create_text((x1 + x2) / 2,(y1 + y2) / 2,text=key,font=("Arial", 18),fill="black",tags=("safe_input", f"safe_key_{key}"))
                     canvas.tag_bind(f"safe_key_{key}", "<Button-1>", lambda event, k=key: self.handle_key_press(event, k, canvas))
+        elif self.state == 1: # open safe
+            canvas.delete("safe_input")
+            canvas.delete("safe")
+            graphics.draw(canvas, self.safe_coordinates_open, tag="safe", object=self, shift_coordinates=self.shift_coordinates)
 
     def close_safe_input(self, event, canvas):
         canvas.delete("safe_input")
@@ -113,8 +118,11 @@ class Safe():
         elif key == "*":
             if self.check_password(self.input_password):
                 self.state = 1
+                self.input_password = ""
                 canvas.delete("safe_input")
+                canvas.delete("safe")
                 graphics.draw(canvas, self.safe_coordinates_open, tag="safe", object=self, shift_coordinates=self.shift_coordinates)
+                self.key.draw(canvas)
             else:
                 self.input_password = ""
         else:

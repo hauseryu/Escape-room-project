@@ -153,7 +153,7 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-5.00,coord[1]-0,coord[2]-2.35) 
             obj = Chair(coord[0],coord[1],coord[2],direction,shift_coordinates=shift_coord)
             # obj = Chair(direction,shift_coordinates=shift_coord)
-            self.chair.append(obj)
+            self.chair.append(obj)        
         # create keys
         for index,key in enumerate(self.room_data["key"]):
             coord = self.room_data["key"][index][0] # get key coordinates (first element in list)
@@ -164,6 +164,19 @@ class Room(tkinter.Frame):
             obj = Key(self.inventory,self.room_state,
                       shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
             self.key.append(obj)
+        #create safes
+        for index,safe in enumerate(self.room_data["safe"]):
+            coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
+            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)            
+            safe_created = False
+            if(self.room_data["safe"][index][1]!=""):
+                for key in self.key:
+                    if key.unique_id == self.room_data["safe"][index][1]:
+                        obj = Safe(key, shift_coordinates=shift_coord)
+                        safe_created = True
+            if not safe_created:
+                obj = Safe(None, shift_coordinates=shift_coord)
+            self.safe.append(obj)
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):
             coord = self.room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
@@ -183,12 +196,7 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
             obj = Wardrobe(direction,shift_coordinates=shift_coord)
             self.wardrobe.append(obj)
-        #create safes
-        for index,safe in enumerate(self.room_data["safe"]):
-            coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
-            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)
-            obj = Safe(shift_coordinates=shift_coord)
-            self.safe.append(obj)
+        
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -280,12 +288,20 @@ class Room(tkinter.Frame):
                 safe.set_password(picture.correct_answers)
                 graphics.draw(self.canvas_area, safe.safe_coordinates, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)    
             elif safe.state == 1:
-                graphics.draw(self.canvas_area, safe.safe_coordinates_open, object = safe, shift_coordinates=safe.shift_coordinates)
+                graphics.draw(self.canvas_area, safe.safe_coordinates_open, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)
 
         # draw the key and inventory
         self.inventory.draw(self.canvas_area)
+        draw_key = True
         for key in self.key:
-            key.draw(self.canvas_area)
+            for safe in self.safe:
+                if (key.unique_id == safe.key.unique_id and safe.state == 1):
+                    key.draw(self.canvas_area)
+                elif (key.unique_id == safe.key.unique_id and safe.state == 0):
+                    draw_key = False
+            if draw_key:
+                key.draw(self.canvas_area) 
+                draw_key = True
 
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(
