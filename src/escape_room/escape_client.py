@@ -4,12 +4,13 @@ import json
 import scapy.all as scapy
 
 class EscapeClient:
-    def __init__(self, server_ip, port, player_name, player_icon_number, network_queue,gui_master):
+    def __init__(self, server_ip, port, player_name, player_icon_number, network_queue, chat_queue, gui_master):
         self.server_ip = server_ip
         self.port = port
         self.player_name = player_name
         self.player_icon_number = player_icon_number
         self.network_queue = network_queue  # Waiting queue in main app
+        self.chat_queue = chat_queue # for incoming chat messages
         self.client_socket = None
         self.gui_master = gui_master
 
@@ -88,18 +89,22 @@ class EscapeClient:
         if self.client_socket:
             self.client_socket.close()
 
-    def send_action(self, action_type, player=None, inventory=None, owner=None):
+    def send_action(self, action_type, player=None, inventory=None, owner=None, json_payload = None):
         """ useful method to send actions to the sever via the GUI class."""
         if not self.client_socket:
             print("⚠️ No active server connection.")
             return
             
-        payload = {
-            "action": action_type,
-            "player_name": player,
-            "inventory": inventory,
-            "owner": owner
-        }
+        if action_type == "chat_message":
+            payload = json_payload
+        else:
+            payload = {
+                "action": action_type,
+                "player_name": player,
+                "inventory": inventory,
+                "owner": owner
+            }
+
         try:
             json_string = json.dumps(payload)
             self.client_socket.sendall(json_string.encode("utf-8"))
