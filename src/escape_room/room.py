@@ -21,6 +21,7 @@ from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
 from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
+from escape_room.menu import Menu
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
@@ -56,6 +57,7 @@ class Room(tkinter.Frame):
         # object-related coding
         self.room_state = RoomState()
         self.reset_objects()
+        self.menu = Menu(self)
 
     # reset objects to initial state
     def reset_objects(self):
