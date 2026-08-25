@@ -9,13 +9,13 @@ start_room = {
                   "mystery_room"], # door2: player door, can be opened, next_room = mystery_room
                  [(8, 0, 3.1), "blue", "right", "blue_door", False, False, ""]   # door3: not player door, cannot be opened
                 ], 
-        "light": [[(3.88, 3, 1.92)] # light1
+        "light": [[(3.88, 3, 1.92),"light1"] # light1 => global identifier for the light
                 ],
         "table": [[(7.55, 0.67, 3.75)] # table 1 7.55
                 ],
         "chair": [ [(5.00,0,2.35),"right"] #  
                 ],
-        "key": [[(6.5,0.78,3.0),"key1"] # key 1 => key1 is a global identifier of the key!
+        "key": [[(5.3,1.25,5.0),"key1"] # key 1 => key1 is a global identifier of the key!
                 ],
         "wardrobe": [  # no wardrobe
                 ],
@@ -23,7 +23,7 @@ start_room = {
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
-        "safe": [[(5.0, 1.0, 4.0)] # safe 1
+        "safe": [[(5.0, 1.0, 4.0),"key1"] # safe 1
                 ],  
 }
 
@@ -35,7 +35,7 @@ mystery_room = {
         "door": [[(8, 0, 2.8), "black", "right", "black_door", True, 
                   True, "start_room"]   # door1: not player door, cannot be opened
                 ], 
-        "light": [[(3.89, 3, 1.92)] # light1
+        "light": [[(3.89, 3, 1.92),"light1"] # light1
                 ],
         "table": [[(4.75, 0.67, 2.75)] # table 1 7.55
                 ],
@@ -48,6 +48,8 @@ mystery_room = {
         "picture": [
                 ],
         "bookshelf": [
+                ],
+        "safe": [
                 ]
 }
 

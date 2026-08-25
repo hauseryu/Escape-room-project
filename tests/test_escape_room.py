@@ -26,6 +26,7 @@ IMAGE_DIR = Path(__file__).resolve().parent
 class FakeDrawable:
     def __init__(self):
         self.drawn_on = None
+        self.unique_id = ""
 
     def draw(self, canvas):
         self.drawn_on = canvas

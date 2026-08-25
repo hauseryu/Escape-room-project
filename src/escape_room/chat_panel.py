@@ -1,5 +1,10 @@
 import tkinter as tk
 import queue
+from pathlib import Path
+from PIL import Image, ImageTk
+
+IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+CHAT_MESSAGING_ICON = IMAGE_DIR / "chat_messaging.png"
 
 class ChatPanel(tk.Frame):
     """A subarea container to display chat horizontally."""
@@ -14,7 +19,16 @@ class ChatPanel(tk.Frame):
         # --- Section 1: Chat History Display ---
         # We use a tk.Text widget to show all past messages
         # width and height are in character units, not pixels
-        self.chat_history = tk.Text(self, width=40, height=9, state="disabled", wrap="word")
+        try:
+            icon = Image.open(CHAT_MESSAGING_ICON).convert("RGBA")
+            self.icon_image = ImageTk.PhotoImage(icon, master=gui_master)
+            
+            # label uses loaded image
+            self.icon_label = tk.Label(self, image=self.icon_image)
+            self.icon_label.pack(side="left", anchor="n", padx=(0, 10))
+        except Exception as e:
+            print(f"[CHAT ERROR] Could not load icon: {e}")
+        self.chat_history = tk.Text(self, width=20, height=8, state="disabled", wrap="word")
         self.chat_history.pack(fill="both", expand=True, pady=(0, 5))
         
         # --- Section 2: Input Field and Send Button Container ---
@@ -28,7 +42,7 @@ class ChatPanel(tk.Frame):
         
         self.send_button = tk.Button(self.input_frame, text="Send", font=("Arial", 10), command=self.on_send_click)
         self.send_button.pack(side="right", ipady=5)
-
+      
     def on_send_click(self, event=None):
         """Triggered when the user clicks 'Send' or presses the Enter key."""
         message_text = self.chat_entry.get().strip()
