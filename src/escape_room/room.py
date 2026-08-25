@@ -57,7 +57,7 @@ class Room(tkinter.Frame):
         # object-related coding
         self.room_state = RoomState()
         self.reset_objects()
-        self.menu = Menu(self)
+        # self.menu = Menu(self)
 
     # reset objects to initial state
     def reset_objects(self):
@@ -123,6 +123,7 @@ class Room(tkinter.Frame):
         self.chat_panel = chat_panel.ChatPanel(self.master, 
                                                message_queue=self.chat_queue,
                                                gui_master=self.master)
+        self.menu = Menu(self)
 
         # create doors
         for index,door in enumerate(self.room_data["door"]):
@@ -336,9 +337,17 @@ class Room(tkinter.Frame):
             355+900, 1,                   # X and Y coordinates inside the canvas
             window=self.chat_panel,  # The frame object to embed
             anchor="nw",               # Top-left corner alignment
-            width=700,                 # Optional: Explicitly force width
+            width=600,                 # Optional: Explicitly force width
             height=202                 # Optional: Explicitly force height
         )        
+                # draw chat frame
+        self.menu_canvas_id = self.canvas_area.create_window(
+            355+900+600, 1,                   # X and Y coordinates inside the canvas
+            window=self.menu,  # The frame object to embed
+            anchor="nw",               # Top-left corner alignment
+            width=150,                 # Optional: Explicitly force width
+            height=202                 # Optional: Explicitly force height
+        )     
         
         
     def handle_door_click(self, event):
