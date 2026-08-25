@@ -146,8 +146,13 @@ class Room(tkinter.Frame):
         # create lights
         for index,light in enumerate(self.room_data["light"]):
             coord = self.room_data["light"][index][0] # get light coordinates (first element in list)
+            unique_id = self.room_data["light"][index][1] # unique id for the light
             shift_coord = (coord[0]-3.88,coord[1]-3.0,coord[2]-1.92)
-            obj = Light(shift_coordinates=shift_coord)
+            obj = Light(room_state=self.room_state,unique_id=unique_id,shift_coordinates=shift_coord)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("light",unique_id)
+            if state!=None:
+                obj.state = state
             self.light.append(obj)
         # create tables 
         for index,table in enumerate(self.room_data["table"]):
