@@ -1,8 +1,10 @@
 from escape_room import graphics
 
 class Light():
-    def __init__(self,shift_coordinates=(0,0,0)):
+    def __init__(self,room_state=None,unique_id=None,shift_coordinates=(0,0,0)):
         self.shift_coordinates = shift_coordinates
+        self.unique_id = unique_id
+        self.room_state = room_state
         self.coordinates_lampshade = [
             ["#30251F",
              (3.88, 3, 1.92),
@@ -101,6 +103,7 @@ class Light():
             
             if Light.clicked.count_light % 2 == 0: # light is off, turn it on
                 self.state = 1
+                self.room_state.set_state_object("light",self.unique_id,1)
                 #canvas.create_rectangle(0, 0, canvas.winfo_width(), canvas.winfo_height(), fill="#000000", stipple="gray50", outline="",tags="safe_input")
                 graphics.draw(canvas, world_coordinates=self.coordinates_light_switch_on,tag=tag,object=object,
                           arc_coordinates=arc_coordinates,
@@ -109,6 +112,7 @@ class Light():
                 graphics.draw_arc(canvas, *arc_coordinates[2],tag="light_shine",shift_coordinates=self.shift_coordinates)
             else: # light is on, turn it off               
                 self.state = 0 
+                self.room_state.set_state_object("light",self.unique_id,0)
                 graphics.draw(canvas, world_coordinates=self.coordinates_light_switch_off,tag=tag,object=object,
                           arc_coordinates=arc_coordinates,
                           shift_coordinates=self.shift_coordinates)

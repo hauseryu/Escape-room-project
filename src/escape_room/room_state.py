@@ -14,7 +14,8 @@ class RoomState():
 
         # if not, add it
         self.room_state.update({room_name: {
-            "key": {}
+            "key": {},
+            "light": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
@@ -32,3 +33,13 @@ class RoomState():
         except KeyError:
             pass
         return False
+
+    def set_state_object(self,object,unique_id,state):
+        self.room_state[self.current_room][object].update({unique_id:state})
+
+    def get_state_object(self,object,unique_id):
+        try:
+            state = self.room_state[self.current_room][object][unique_id]
+            return state
+        except KeyError:
+            return None        
