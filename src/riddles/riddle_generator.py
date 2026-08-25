@@ -24,6 +24,11 @@ def generate_riddle():
     selected_themes = random.sample(THEMES, 3)
     themes_text = ", ".join(selected_themes)
 
+    deactivate_riddle = os.environ['RIDDLE']
+    if deactivate_riddle == 'OFF':
+        print("[DEBUG] riddle is currently deactivated by system variable RIDDLE=OFF")
+        return ("riddle not available","1")
+
     config = types.GenerateContentConfig(
         max_output_tokens=200,
         temperature=1.0,
