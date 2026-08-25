@@ -312,7 +312,7 @@ class Room(tkinter.Frame):
                     draw_key = False
             if draw_key:
                 key.draw(self.canvas_area) 
-                draw_key = True
+            draw_key = True
 
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(

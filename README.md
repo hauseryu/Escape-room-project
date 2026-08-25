@@ -37,6 +37,13 @@ python src/main.py
 python -m unittest discover -s tests
 ```
 
+## Deactivate Riddle
+1) set system environment variable RIDDLE to OFF
+=> in Windows input field, enter env and allow administrator access
+=> then set system variable RIDDLE to value OFF
+2) restart the Python development environment
+3) run the EscapeApp
+
 ## Project Structure
 
 ```text
