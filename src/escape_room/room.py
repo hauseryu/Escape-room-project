@@ -134,6 +134,7 @@ class Room(tkinter.Frame):
             player_door = self.room_data["door"][index][4] # player doors can be opened with own key
             can_be_opened = self.room_data["door"][index][5] # door can be opened
             next_room = self.room_data["door"][index][6] # next room
+            unique_id = self.room_data["door"][index][7] # unique identifier
             if direction == "front":
                 shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
             elif direction == "left":
@@ -143,8 +144,15 @@ class Room(tkinter.Frame):
             tag = self.room_data["door"][index][3]            
             obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
                        next_room_callback=self.next_room_callback,player_name=self.player_name,
-                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room)
+                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room,
+                       room_state=self.room_state,unique_id=unique_id)
             self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("door",unique_id)
+            if state=="OPEN":
+                obj.is_open = True
+            elif state=="CLOSED":
+                obj.is_open = False
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -184,15 +192,24 @@ class Room(tkinter.Frame):
         #create safes
         for index,safe in enumerate(self.room_data["safe"]):
             coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
-            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)            
+            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)       
+            unique_id = self.room_data["safe"][index][2]
             safe_created = False
             if(self.room_data["safe"][index][1]!=""):
                 for key in self.key:
                     if key.unique_id == self.room_data["safe"][index][1]:
-                        obj = Safe(key, shift_coordinates=shift_coord)
+                        obj = Safe(key, shift_coordinates=shift_coord,
+                                   room_state=self.room_state,unique_id=unique_id)
                         safe_created = True
             if not safe_created:
-                obj = Safe(None, shift_coordinates=shift_coord)
+                obj = Safe(None, shift_coordinates=shift_coord,
+                           room_state=self.room_state,unique_id=unique_id)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("safe",unique_id)
+            if state=="OPEN":
+                obj.state = 1
+            else:
+                obj.state = 0
             self.safe.append(obj)
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):

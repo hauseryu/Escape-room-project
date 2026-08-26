@@ -1,12 +1,14 @@
 from escape_room import graphics
 
 class Safe():
-    def __init__(self, key = None, shift_coordinates=(0, 0, 0)):
+    def __init__(self, key = None, shift_coordinates=(0, 0, 0),room_state=None,unique_id=None):
         self.shift_coordinates = shift_coordinates
         self.password = "" # correct password, set using set_password method
         self.input_password = ""
         self.state = 0  # 0 = closed, 1 = open
         self.key = key  # key object that can be placed inside the safe
+        self.room_state = room_state
+        self.unique_id = unique_id
         self.safe_coordinates = [
         ["#333333",(5.00, 0.90, 4.00),(5.70, 0.90, 4.00),(5.70, 1.30, 4.00),(5.00, 1.30, 4.00)],
         ["#AAAAAA",(5.04, 0.94, 3.99),(5.66, 0.94, 3.99),(5.66, 1.26, 3.99),(5.04, 1.26, 3.99)],
@@ -118,6 +120,7 @@ class Safe():
         elif key == "*":
             if self.check_password(self.input_password):
                 self.state = 1
+                self.room_state.set_state_object("safe",self.unique_id,"OPEN")
                 self.input_password = ""
                 canvas.delete("safe_input")
                 canvas.delete("safe")

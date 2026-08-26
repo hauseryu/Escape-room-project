@@ -4,10 +4,10 @@
 start_room = {  
         "room_name": "start_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, ""], # door1: not player door, can be opened
+        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, "","door1"], # door1: not player door, can be opened
                  [(0, 0, 1.5), "green", "left", "green_door", True, True, 
-                  "mystery_room"], # door2: player door, can be opened, next_room = mystery_room
-                 [(8, 0, 3.1), "blue", "right", "blue_door", False, False, ""]   # door3: not player door, cannot be opened
+                  "mystery_room","door2"], # door2: player door, can be opened, next_room = mystery_room
+                 [(8, 0, 3.1), "blue", "right", "blue_door", False, False, "","door3"]   # door3: not player door, cannot be opened
                 ], 
         "light": [[(3.88, 3, 1.92),"light1"] # light1 => global identifier for the light
                 ],
@@ -23,7 +23,7 @@ start_room = {
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
-        "safe": [[(5.0, 1.0, 4.0),"key1"] # safe 1
+        "safe": [[(5.0, 1.0, 4.0),"key1", "safe1"] # safe 1, contains key1, unique name is safe1
                 ],  
 }
 
@@ -33,7 +33,7 @@ mystery_room = {
         "room_name": "mystery_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(8, 0, 2.8), "black", "right", "black_door", True, 
-                  True, "start_room"]   # door1: not player door, cannot be opened
+                  True, "start_room","door1"]   # door1: not player door, cannot be opened
                 ], 
         "light": [[(3.89, 3, 1.92),"light1"] # light1
                 ],

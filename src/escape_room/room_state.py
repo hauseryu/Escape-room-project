@@ -15,7 +15,9 @@ class RoomState():
         # if not, add it
         self.room_state.update({room_name: {
             "key": {},
-            "light": {}
+            "light": {},
+            "door": {},
+            "safe": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
