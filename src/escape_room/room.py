@@ -209,7 +209,7 @@ class Room(tkinter.Frame):
         # create wardrobes
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
             coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
-            direction = self.room_data["chair"][index][1] # get wardrobe direction (right/left)
+            direction = self.room_data["wardrobe"][index][1] # get wardrobe direction (right/left)
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
             obj = Wardrobe(direction,shift_coordinates=shift_coord)
             self.wardrobe.append(obj)
@@ -294,11 +294,11 @@ class Room(tkinter.Frame):
             bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
         # draw the wardrobes
         for wardrobe in self.wardrobe:
-            graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates,
+            graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates, tag="wardrobe", object=wardrobe,
                           shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0],
+            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0], tag="wardrobe", 
                               shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1],
+            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1], tag="wardrobe", 
                               shift_coordinates=wardrobe.shift_coordinates)
 
         # draw the safes
