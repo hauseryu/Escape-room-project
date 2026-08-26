@@ -227,10 +227,11 @@ class Room(tkinter.Frame):
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
             coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
             direction = self.room_data["chair"][index][1] # get wardrobe direction (right/left)
+            unique_id = self.room_data["chair"][index][2] # unique identifier
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
-            obj = Wardrobe(direction,shift_coordinates=shift_coord)
+            obj = Wardrobe(direction,shift_coordinates=shift_coord,
+                           room_state=self.room_state,unique_id=unique_id)
             self.wardrobe.append(obj)
-        
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        

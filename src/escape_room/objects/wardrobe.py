@@ -1,6 +1,8 @@
 class Wardrobe():
-	def __init__(self,direction,shift_coordinates=(0,0,0)):
+	def __init__(self,direction,shift_coordinates=(0,0,0),room_state=None,unique_id=None):
 		self.shift_coordinates = shift_coordinates
+		self.room_state = room_state
+		self.unique_id = unique_id
 		if direction=="left":
 			self.wardrobe_coordinates = [
 				["#4A2A1A", (0, 0, 4), (1.8, 0, 4), (1.8, 2, 4), (0, 2, 4)],

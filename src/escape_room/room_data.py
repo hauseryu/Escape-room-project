@@ -43,7 +43,7 @@ mystery_room = {
                 ],
         "key": [
                 ],
-        "wardrobe": [[(5.9, 0, 4),"right"]  # wardrobe 1
+        "wardrobe": [[(5.9, 0, 4),"right","wardrobe1"]  # wardrobe 1
                 ],
         "picture": [
                 ],
