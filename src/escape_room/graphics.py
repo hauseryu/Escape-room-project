@@ -111,7 +111,7 @@ def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None, shift_coor
 def clicked(event,tag,object,canvas,world_coordinates,arc_coordinates):
     if tag == "light_switch":
         object.clicked(event,tag,object,canvas,world_coordinates,arc_coordinates)
-    if tag == "safe":
+    if tag == "safe" or tag == "wardrobe":
         object.clicked(event,tag,object,canvas,world_coordinates)
 
 
