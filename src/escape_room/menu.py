@@ -23,8 +23,9 @@ class Menu(tk.Frame):
        
         tk.Button(
             self,
-            text="Return to start screen",
-            command=self.return_to_start_screen
+            text="Return to \nstart screen",
+            command=self.return_to_start_screen,
+            height=2
         ).pack(fill="x", padx=20, pady=20)
 
     def save_game(self):
