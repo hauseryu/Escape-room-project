@@ -226,11 +226,17 @@ class Room(tkinter.Frame):
         # create wardrobes
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
             coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
-            direction = self.room_data["chair"][index][1] # get wardrobe direction (right/left)
-            unique_id = self.room_data["chair"][index][2] # unique identifier
+            direction = self.room_data["wardrobe"][index][1] # get wardrobe direction (right/left)
+            unique_id = self.room_data["wardrobe"][index][2] # unique identifier
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
             obj = Wardrobe(direction,shift_coordinates=shift_coord,
                            room_state=self.room_state,unique_id=unique_id)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("wardrobe",unique_id)
+            if state==1:
+                obj.state = 1
+            else:
+                obj.state = 0
             self.wardrobe.append(obj)
 
         # create the canvas area and draw the start screen
@@ -312,12 +318,20 @@ class Room(tkinter.Frame):
             bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
         # draw the wardrobes
         for wardrobe in self.wardrobe:
-            graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates,
-                          shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0],
-                              shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1],
-                              shift_coordinates=wardrobe.shift_coordinates)
+            if wardrobe.state == 0:
+                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates, tag="wardrobe", object=wardrobe,
+                            shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+            elif wardrobe.state == 1:
+                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates_open, tag="wardrobe", object=wardrobe,
+                            shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[0], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[1], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
 
         # draw the safes
         for safe in self.safe:
