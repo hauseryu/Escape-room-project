@@ -34,7 +34,7 @@ class Picture:
 
             self.riddles.append(riddle)
             self.correct_answers.append(correct_answer)
-        print("[GAME] Riddle answers: ")
+        print("[GAME] Riddle answers: ", end="")
         print(self.correct_answers)
 
         self.current_riddle = 0
