@@ -58,7 +58,7 @@ class Door:
     
     def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0),
                  player_name=None, is_player_door=None,can_be_opened=None,next_room=None,
-                 next_room_callback=None):
+                 next_room_callback=None,room_state=None,unique_id=None):
         self.position = tuple(position)
         self.color = color
         self.direction = direction
@@ -68,6 +68,8 @@ class Door:
         self.can_be_opened = can_be_opened
         self.next_room = next_room
         self.is_open = False
+        self.room_state = room_state
+        self.unique_id = unique_id
         self.shift_coordinates = shift_coordinates
         self.next_room_callback = next_room_callback
 
@@ -112,6 +114,7 @@ class Door:
     
     def open_door(self):
         self.is_open = True
+        self.room_state.set_state_object("door",self.unique_id,"OPEN")
 
     def door_can_be_opened(self, selected_object):
         (object_type, object_owner) = selected_object
@@ -132,10 +135,14 @@ class Door:
 
     def close_door(self):
         self.is_open = False
-
+        self.room_state.set_state_object("door",self.unique_id,"CLOSED")
 
     def toggle(self):
         self.is_open = not self.is_open
+        if self.is_open:
+            self.room_state.set_state_object("door",self.unique_id,"OPEN")
+        else:
+            self.room_state.set_state_object("door",self.unique_id,"CLOSED")
     
     def clicked(self, canvas, event):
         items = canvas.find_overlapping(

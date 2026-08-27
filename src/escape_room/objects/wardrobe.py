@@ -1,8 +1,10 @@
 from escape_room import graphics
 
 class Wardrobe():
-	def __init__(self,direction,shift_coordinates=(0,0,0)):
+	def __init__(self,direction,shift_coordinates=(0,0,0),room_state=None,unique_id=None):
 		self.shift_coordinates = shift_coordinates
+		self.room_state = room_state
+		self.unique_id = unique_id
 		self.state = 0 # 0 = closed, 1 = open
 		if direction=="left":
 			self.wardrobe_coordinates = [
@@ -87,6 +89,7 @@ class Wardrobe():
 	def clicked(self, event, tag, object, canvas, world_coordinates):
 		if self.state == 0: # wardrobe is closed, open it
 			self.state = 1
+			self.room_state.set_state_object("wardrobe",self.unique_id,1)
 			canvas.delete("wardrobe")
 			graphics.draw(canvas, self.wardrobe_coordinates_open, tag="wardrobe", object=self, shift_coordinates=self.shift_coordinates)
 			for knob in self.wardrobe_coordinates_knobes_open:

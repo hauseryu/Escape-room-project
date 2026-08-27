@@ -134,6 +134,7 @@ class Room(tkinter.Frame):
             player_door = self.room_data["door"][index][4] # player doors can be opened with own key
             can_be_opened = self.room_data["door"][index][5] # door can be opened
             next_room = self.room_data["door"][index][6] # next room
+            unique_id = self.room_data["door"][index][7] # unique identifier
             if direction == "front":
                 shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
             elif direction == "left":
@@ -143,8 +144,15 @@ class Room(tkinter.Frame):
             tag = self.room_data["door"][index][3]            
             obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
                        next_room_callback=self.next_room_callback,player_name=self.player_name,
-                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room)
+                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room,
+                       room_state=self.room_state,unique_id=unique_id)
             self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("door",unique_id)
+            if state=="OPEN":
+                obj.is_open = True
+            elif state=="CLOSED":
+                obj.is_open = False
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -184,15 +192,24 @@ class Room(tkinter.Frame):
         #create safes
         for index,safe in enumerate(self.room_data["safe"]):
             coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
-            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)            
+            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)       
+            unique_id = self.room_data["safe"][index][2]
             safe_created = False
             if(self.room_data["safe"][index][1]!=""):
                 for key in self.key:
                     if key.unique_id == self.room_data["safe"][index][1]:
-                        obj = Safe(key, shift_coordinates=shift_coord)
+                        obj = Safe(key, shift_coordinates=shift_coord,
+                                   room_state=self.room_state,unique_id=unique_id)
                         safe_created = True
             if not safe_created:
-                obj = Safe(None, shift_coordinates=shift_coord)
+                obj = Safe(None, shift_coordinates=shift_coord,
+                           room_state=self.room_state,unique_id=unique_id)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("safe",unique_id)
+            if state=="OPEN":
+                obj.state = 1
+            else:
+                obj.state = 0
             self.safe.append(obj)
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):
@@ -210,10 +227,17 @@ class Room(tkinter.Frame):
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
             coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
             direction = self.room_data["wardrobe"][index][1] # get wardrobe direction (right/left)
+            unique_id = self.room_data["wardrobe"][index][2] # unique identifier
             shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
-            obj = Wardrobe(direction,shift_coordinates=shift_coord)
+            obj = Wardrobe(direction,shift_coordinates=shift_coord,
+                           room_state=self.room_state,unique_id=unique_id)
+            # check for state if room is re-entered
+            state = self.room_state.get_state_object("wardrobe",unique_id)
+            if state==1:
+                obj.state = 1
+            else:
+                obj.state = 0
             self.wardrobe.append(obj)
-        
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -294,12 +318,20 @@ class Room(tkinter.Frame):
             bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
         # draw the wardrobes
         for wardrobe in self.wardrobe:
-            graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates, tag="wardrobe", object=wardrobe,
-                          shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0], tag="wardrobe", 
-                              shift_coordinates=wardrobe.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1], tag="wardrobe", 
-                              shift_coordinates=wardrobe.shift_coordinates)
+            if wardrobe.state == 0:
+                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates, tag="wardrobe", object=wardrobe,
+                            shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+            elif wardrobe.state == 1:
+                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates_open, tag="wardrobe", object=wardrobe,
+                            shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[0], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
+                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[1], tag="wardrobe", 
+                                shift_coordinates=wardrobe.shift_coordinates)
 
         # draw the safes
         for safe in self.safe:
