@@ -3,6 +3,7 @@
 # initial room (start room for game)
 start_room = {  
         "room_name": "start_room",
+        "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, "","door1"], # door1: not player door, can be opened
                  [(0, 0, 1.5), "green", "left", "green_door", True, True, 
@@ -31,9 +32,12 @@ start_room = {
 # from initial room -> left door 
 mystery_room = {  
         "room_name": "mystery_room",
+        "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(8, 0, 2.8), "black", "right", "black_door", True, 
-                  True, "start_room","door1"]   # door1: not player door, cannot be opened
+                  True, "start_room","door1"],   # door1: player door, can be opened
+                 [(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, "doorway","door2"],   # door2: player door, can be opened
                 ], 
         "light": [[(3.89, 3, 1.92),"light1"] # light1
                 ],
@@ -53,7 +57,34 @@ mystery_room = {
                 ]
 }
 
+# from mystery room -> front door 
+doorway = {  
+        "room_name": "doorway",
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, "doorway","door1"],   # door1: player door, can be opened
+                ], 
+        "light": [
+                ],
+        "table": [
+                ],
+        "chair": [
+                ],
+        "key": [
+                ],
+        "wardrobe": [
+                ],
+        "picture": [
+                ],
+        "bookshelf": [
+                ],
+        "safe": [
+                ]
+}
+
 all_rooms = {
         "start_room": start_room,
-        "mystery_room": mystery_room
+        "mystery_room": mystery_room,
+        "doorway": doorway,
 }

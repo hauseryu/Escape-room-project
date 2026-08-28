@@ -11,6 +11,7 @@ from escape_room import chat_panel
 from escape_room import globals
 from escape_room import room_data
 from escape_room.room_state import RoomState
+from escape_room.room_coordinates import room_coord
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
@@ -91,27 +92,8 @@ class Room(tkinter.Frame):
         self.coordinates = []
         
         # room coordinates in 3D space (x, y, z)
-        self.room_coordinates = [["#8B4513",
-                     (0,0,0), # front: corner left bottom (x/y/z coordinates)
-                     (8,0,0), # front: corner right bottom
-                     (8,0,4), # back: corner right bottom
-                     (0,0,4)], # back: corner left bottom
-                    ["white",
-                     (0,3,0), # front: corner left top (x/y/z coordinates)
-                     (8,3,0), # front: corner right top
-                     (8,3,4), # back: corner right top
-                     (0,3,4)], # back: corner left top                    
-                    ["white",
-                     (0,0,0), # wall left: corner left bottom (x/y/z coordinates)
-                     (0,3,0), # wall left: corner left top
-                     (0,3,4), # wall left: corner left top
-                     (0,0,4)], # wall left: corner left bottom                    
-                    ["white",
-                     (8,0,0), # wall right: corner right bottom (x/y/z coordinates)
-                     (8,3,0), # wall right: corner right top
-                     (8,3,4), # wall right: corner right top
-                     (8,0,4)] # wall right: corner right bottom                    
-                     ]
+        room_coord_name = self.room_data["room_coordinates"]
+        self.room_coordinates = room_coord[room_coord_name]
         self.image_path = os.path.join(
             os.path.dirname(__file__),
             "assets",
@@ -258,22 +240,20 @@ class Room(tkinter.Frame):
 
     # draw the room using world coordinates
     def draw_room(self):
-        back_wall_coordinates = ["white", (0, 0, 4), (8, 0, 4), (8, 3, 4), (0, 3, 4)]
 
-        # draw the floor and walls with textures
+        # draw room layout
         shift_coord = graphics.shift_coordinates(self.room_coordinates[0][1],self.room_data["room"])
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[0], FLOOR_TEXTURE,
-                                       shift_coordinates=shift_coord)
-        if hasattr(self.canvas_area, "tk"):
-            graphics.draw_textured_polygon(self.canvas_area, back_wall_coordinates, WALL_TEXTURE, "white",
-                                           shift_coordinates=shift_coord)
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[1], WALL_TEXTURE, "white",
-                                       shift_coordinates=shift_coord)
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[2], WALL_TEXTURE, "white",
-                                       shift_coordinates=shift_coord)
-        graphics.draw_textured_polygon(self.canvas_area, self.room_coordinates[3], WALL_TEXTURE, "white",
-                                       shift_coordinates=shift_coord)
-        
+        for polygon in self.room_coordinates:
+            # in case a tuple defines multiple attributes....
+            if type(polygon[0]) == tuple:
+                (color,texture) = polygon[0]
+            else:
+                color = polygon[0]
+                texture = WALL_TEXTURE # use wall texture as default
+            # draw the floor and walls with textures
+            graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
+                                        shift_coordinates=shift_coord)
+
         # draw the doors
         for index,door in enumerate(self.door):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
