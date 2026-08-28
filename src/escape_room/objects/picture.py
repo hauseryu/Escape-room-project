@@ -5,9 +5,11 @@ class Picture:
     """A picture frame on the back wall (``z = 4``).
     """
 
-    def __init__(self, image_path=None,shift_coordinates = (0,0,0)):
+    def __init__(self, image_path=None,shift_coordinates = (0,0,0),unique_id=None,room_state=None):
         self.image_path = image_path
         self.shift_coordinates = shift_coordinates
+        self.unique_id = unique_id
+        self.room_state = room_state
 
         self.coordinates_frame = [
             ["#4A2B18", (5.05, 2.35, 3.985), (6.45, 2.35, 3.985),
@@ -24,6 +26,16 @@ class Picture:
         
         self.riddles = []
         self.correct_answers = []
+        self.current_riddle = 0
+
+        # check if riddle was created for the picture object already before
+        riddle_in_room_state = self.room_state.get_state_object("picture",self.unique_id)
+        if riddle_in_room_state != None:
+            self.riddles = riddle_in_room_state[0:3]
+            self.correct_answers = riddle_in_room_state[3:6]
+            print("[GAME] Riddle answers: ", end="")
+            print(self.correct_answers)
+            return
 
         for _ in range(3):
             try:
@@ -35,9 +47,9 @@ class Picture:
             self.riddles.append(riddle)
             self.correct_answers.append(correct_answer)
         print("[GAME] Riddle answers: ", end="")
-        print(self.correct_answers)
-
-        self.current_riddle = 0
+        print(self.correct_answers)        
+        self.room_state.set_state_object("picture",self.unique_id,
+                                         self.riddles + self.correct_answers)
 
     def draw_image(self, canvas, tag):
         x1, y1, x2, y2 = canvas.bbox(tag)

@@ -20,7 +20,7 @@ start_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ],
-        "picture": [[(6.05, 2.35, 3.985)] # picture 1 (riddle)
+        "picture": [[(6.05, 2.35, 3.985),"picture1"] # picture 1 (riddle)
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
