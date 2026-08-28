@@ -71,6 +71,8 @@ class Room(tkinter.Frame):
         self.light = []
         self.picture = []
         self.safe = []
+        for door in self.door:
+            door.is_open = False        
 
     # initialize room with all relevant settings
     def init_room(self,game_client,room_data = room_data.start_room,next_room=False):
