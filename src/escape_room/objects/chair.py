@@ -31,17 +31,28 @@ class Chair():
         if self.direction == "right":
             # Backrest is on the left side of the chair (X = 4.45)
             # This makes the chair face towards the RIGHT
-            x_backrest = 4.45
-        else: # direction == "left"
+            x_backrest1 = 4.45
+            x_backrest2 = 4.45
+            z_backrest1 = 3.15
+            z_backrest2 = 2.6
+        elif self.direction == "left":
             # Backrest shifts to the right side of the chair (X = 5.05)
             # This makes the chair face towards the LEFT
-            x_backrest = 5.05
+            x_backrest1 = 5.05
+            x_backrest2 = 5.05
+            z_backrest1 = 3.15
+            z_backrest2 = 2.6
+        elif self.direction == "front":
+            x_backrest1 = 4.45
+            x_backrest2 = 5.05
+            z_backrest1 = 3.15
+            z_backrest2 = 3.15
 
-        # 3. Upper Parts: Mounted dynamically using 'x_backrest'
+        # 3. Upper Parts: Mounted dynamically using 'x_backrest' and 'z_backrest'
         self.coordinates_chairlegs_back = [
-            *self._create_leg_coordinates(x_backrest, 3.15-self.width_small, back=True),
-            *self._create_panel_coordinates(z1=2.6,z2=3.15,back=True, x_pos=x_backrest),
-            *self._create_leg_coordinates(x_backrest, 2.6, back=True),
+            *self._create_leg_coordinates(x_backrest1, z_backrest1-self.width_small, back=True),
+            *self._create_panel_coordinates(z1=z_backrest2,z2=z_backrest1,back=True, x_pos1=x_backrest1, x_pos2=x_backrest2),
+            *self._create_leg_coordinates(x_backrest2, z_backrest2, back=True),
         ]
 
         # 4. Master Assembly Sequence
@@ -66,7 +77,7 @@ class Chair():
             ["#7A4A22", (x, low, z), (x2, low, z), (x2, high, z), (x, high, z)],
         ]
 
-    def _create_panel_coordinates(self, z1=0, z2=0, back=False, x_pos=4.45):    
+    def _create_panel_coordinates(self, z1=0, z2=0, back=False, x_pos1=4.45, x_pos2=4.45):    
         if not back:
             width = self.width_large
             height1 = 0.4
@@ -77,30 +88,37 @@ class Chair():
             height2 = 0.91
             z2 -= self.width_small
             
+        width_x = width
+        width_z = width
+        if back==False or self.direction == "right" or self.direction == "left":
+            width_z = 0
+        elif self.direction == "front":
+            width_x = 0
+
         return [
             ["#5A3518",
-             (x_pos + width, height1, z2),
-             (x_pos, height1, z2),
-             (x_pos, height2, z2),
-             (x_pos + width, height2, z2)],
+             (x_pos1 + width_x, height1, z2+width_z),
+             (x_pos1, height1, z2),
+             (x_pos1, height2, z2),
+             (x_pos1 + width_x, height2, z2+width_z)],
             ["#6F4520",
-             (x_pos, height1, z2),
-             (x_pos, height1, z1),
-             (x_pos, height2, z1),
-             (x_pos, height2, z2)],
+             (x_pos1, height1, z2+width_z),
+             (x_pos2, height1, z1+width_z),
+             (x_pos2, height2, z1+width_z),
+             (x_pos1, height2, z2+width_z)],
             ["#6F4520",
-             (x_pos + width, height1, z1),
-             (x_pos + width, height1, z2),
-             (x_pos + width, height2, z2),
-             (x_pos + width, height2, z1)],
+             (x_pos1 + width_x, height1, z1),
+             (x_pos2 + width_x, height1, z2),
+             (x_pos2 + width_x, height2, z2),
+             (x_pos1 + width_x, height2, z1)],
             ["#8B5A2B",
-             (x_pos, height2, z1),
-             (x_pos + width, height2, z1),
-             (x_pos + width, height2, z2),
-             (x_pos, height2, z2)],
+             (x_pos1, height2, z1),
+             (x_pos1 + width_x, height2, z1+width_z),
+             (x_pos2 + width_x, height2, z2+width_z),
+             (x_pos2, height2, z2)],
             ["#7A4A22",
-             (x_pos, height1, z1),
-             (x_pos + width, height1, z1),
-             (x_pos + width, height2, z1),
-             (x_pos, height2, z1)],
+             (x_pos2, height1, z1),
+             (x_pos2 + width_x, height1, z1+width_z),
+             (x_pos2 + width_x, height2, z1+width_z),
+             (x_pos2, height2, z1)],
         ]
