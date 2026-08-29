@@ -5,7 +5,7 @@ start_room = {
         "room_name": "start_room",
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, "","door1"], # door1: not player door, can be opened
+        "door": [[(3.2, 0, 4), "brown", "front", "red_door", True, True, "living_room_221b","door1"], # door1: not player door, can be opened
                  [(0, 0, 1.5), "green", "left", "green_door", True, True, 
                   "mystery_room","door2"], # door2: player door, can be opened, next_room = mystery_room
                  [(8, 0, 3.1), "blue", "right", "blue_door", False, False, "","door3"]   # door3: not player door, cannot be opened
@@ -26,6 +26,10 @@ start_room = {
                 ],
         "safe": [[(5.0, 1.0, 4.0),"key1", "safe1"] # safe 1, contains key1, unique name is safe1
                 ],  
+        "letter":[
+                ],
+        "clock":[
+                ]
 }
 
 
@@ -54,7 +58,11 @@ mystery_room = {
         "bookshelf": [
                 ],
         "safe": [
-                ]
+                ],
+        "letter":[
+                ],
+        "clock":[
+                ]       
 }
 
 # from mystery room -> front door 
@@ -80,6 +88,39 @@ doorway = {
         "bookshelf": [
                 ],
         "safe": [
+                ],
+        "letter":[
+                ],
+        "clock":[
+                ]
+}
+
+# from mystery room -> front door 
+living_room_221b = {  
+        "room_name": "living_room_221b",
+        "room_coordinates": "normal_room",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(8, 0, 3.1), "brown", "right", "red_door", True, True, "start_room","door1"],
+                ], 
+        "light": [
+                ],
+        "table": [
+                ],
+        "chair": [ [(4.00,0,2.00),"front"]
+                ],
+        "key": [
+                ],
+        "wardrobe": [
+                ],
+        "picture": [
+                ],
+        "bookshelf": [
+                ],
+        "safe": [
+                ],
+        "letter":[[(3.7, 0.6, 2.3)]
+                ],
+        "clock":[[(5.15, 0.42, 4.00)]
                 ]
 }
 
@@ -87,4 +128,5 @@ all_rooms = {
         "start_room": start_room,
         "mystery_room": mystery_room,
         "doorway": doorway,
+        "living_room_221b": living_room_221b
 }

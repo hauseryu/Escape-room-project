@@ -20,6 +20,7 @@ from src.escape_room.objects.table import Table
 from src.escape_room.objects.wardrobe import Wardrobe
 from src.escape_room.objects.picture import Picture
 from src.escape_room.objects.bookshelf import Bookshelf
+from src.escape_room.objects.letter import Letter
 
 IMAGE_DIR = Path(__file__).resolve().parent 
 
@@ -133,6 +134,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
+        app.room.clock = [MagicMock()]
+        app.room.letter = [Letter()]
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
@@ -238,6 +241,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
+        app.room.clock = [MagicMock()]
+        app.room.letter = [Letter()]
         app.room.key = [FakeDrawable()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
