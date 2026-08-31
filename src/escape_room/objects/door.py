@@ -57,7 +57,7 @@ class Door:
     DOOR_HEIGHT = 2.0
     
     def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0),
-                 player_name=None, is_player_door=None,can_be_opened=None,next_room=None,
+                 player_name=None, is_player_door=None,can_be_opened=None,always_open=None,next_room=None,
                  next_room_callback=None,room_state=None,unique_id=None):
         self.position = tuple(position)
         self.color = color
@@ -72,7 +72,7 @@ class Door:
         self.unique_id = unique_id
         self.shift_coordinates = shift_coordinates
         self.next_room_callback = next_room_callback
-
+        self.always_open = always_open
         self.corners = self._create_corners()
 
     def _create_corners(self):
@@ -163,7 +163,7 @@ class Door:
             if self.is_open: # open doors can always be closed
                 self.toggle()
                 return True # True => redraw door
-            if self.door_can_be_opened(selected_object):
+            if self.door_can_be_opened(selected_object) or self.always_open:
                 self.toggle()
             else:
                 """dialog that the door is locked and requires a key to open"""
