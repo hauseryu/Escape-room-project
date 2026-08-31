@@ -22,6 +22,8 @@ from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
 from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
+from escape_room.objects.letter import Letter
+from escape_room.objects.clock import Clock
 from escape_room.menu import Menu
 
 IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
@@ -72,6 +74,8 @@ class Room(tkinter.Frame):
         self.light = []
         self.picture = []
         self.safe = []
+        self.letter = []
+        self.clock = []
         for door in self.door:
             door.is_open = False        
 
@@ -226,6 +230,18 @@ class Room(tkinter.Frame):
             else:
                 obj.state = 0
             self.wardrobe.append(obj)
+        # create clocks
+        for index,clock in enumerate(self.room_data["clock"]):
+            coord = self.room_data["clock"][index][0] # get clock coordinates (first element in list)
+            shift_coord = (coord[0]-5.15,coord[1]-0.42,coord[2]-4.00)
+            obj = Clock(time=1, shift_coordinates=shift_coord)
+            self.clock.append(obj)
+        # create letters
+        for index,letter in enumerate(self.room_data["letter"]):
+            coord = self.room_data["letter"][index][0] # get letter coordinates (first element in list)
+            shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
+            obj = Letter(shift_coordinates=shift_coord)
+            self.letter.append(obj)
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -326,6 +342,16 @@ class Room(tkinter.Frame):
                 graphics.draw(self.canvas_area, safe.safe_coordinates, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)    
             elif safe.state == 1:
                 graphics.draw(self.canvas_area, safe.safe_coordinates_open, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)
+
+        # draw the clocks
+        for clock in self.clock:
+            graphics.draw(self.canvas_area, clock.coordinates, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
+            graphics.draw(self.canvas_area, clock.coordinates_clock_hands, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
+
+        # draw the letter
+        for letter in self.letter:
+            graphics.draw(self.canvas_area,letter.coordinates,tag="letter",object=letter,shift_coordinates=letter.shift_coordinates)
+            graphics.draw_arc(self.canvas_area, *letter.coordinates_stamp[0], tag="letter", shift_coordinates=letter.shift_coordinates)
 
         # draw the key and inventory
         self.inventory.draw(self.canvas_area)
