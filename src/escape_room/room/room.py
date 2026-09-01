@@ -94,7 +94,8 @@ class Room(tkinter.Frame):
         self.room_state.add_room(self.room_data["room_name"])
         self.room_state.set_current_room(self.room_data["room_name"])
         ContextManager().set_room(self)
-        self.next_room = None
+        if not next_room:
+            self.next_room = None
 
         # UI-related coding
         self.coordinates = []
@@ -121,8 +122,9 @@ class Room(tkinter.Frame):
             tag = self.room_data["door"][index][3] # tags for door
             player_door = self.room_data["door"][index][4] # player doors can be opened with own key
             can_be_opened = self.room_data["door"][index][5] # door can be opened
-            next_room = self.room_data["door"][index][6] # next room
-            unique_id = self.room_data["door"][index][7] # unique identifier
+            always_open = self.room_data["door"][index][6] # door is always open
+            next_room = self.room_data["door"][index][7] # next room
+            unique_id = self.room_data["door"][index][8] # unique identifier
             if direction == "front":
                 shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
             elif direction == "left":
@@ -130,9 +132,9 @@ class Room(tkinter.Frame):
             elif direction == "right":
                 shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
             tag = self.room_data["door"][index][3]            
-            obj = Door(coord,color,direction,tag,shift_coordinates=shift_coord,
+            obj = Door(coord,color,direction,tag,
                        next_room_callback=self.next_room_callback,player_name=self.player_name,
-                       is_player_door=player_door,can_be_opened=can_be_opened,next_room=next_room,
+                       is_player_door=player_door,can_be_opened=can_be_opened,always_open=always_open,next_room=next_room,
                        room_state=self.room_state,unique_id=unique_id)
             self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
             # check for state if room is re-entered
