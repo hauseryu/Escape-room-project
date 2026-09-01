@@ -6,7 +6,7 @@ start_room = {
         "room_coordinates": "square room",
         "room": (2,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(6, 0, 2.8), "black", "right", "black_door", True, 
-                  True, True, "start_room","door1"],   # door1: player door, can be opened, always open
+                  True, True, "riddle_key_room","door1"],   # door1: player door, can be opened, always open
                  [(3.5, 0, 4), "white", "front", "white_door", True, 
                   True, True, "mystery_room","door2"], 
                  [(2, 0, 1.5), "red", "left", "red_door", True, 
@@ -22,7 +22,7 @@ start_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ], 
-        "picture": [
+        "picture": [[(2.5,2,4), "sherlock-holmes-logo.jpg", False, "picture1"],
                 ],
         "bookshelf": [
                 ],
@@ -126,14 +126,14 @@ living_room_221b = {
                 ]
 }
 
-# riddle key room (currently unused, but can be used for future expansion of the game)
+# from start_room -> riddle key room 
 riddle_key_room = {  
         "room_name": "riddle_key_room",
+        "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, "","door1"], # door1: not player door, can be opened
-                 [(0, 0, 1.5), "green", "left", "green_door", True, True, 
-                  "mystery_room","door2"], # door2: player door, can be opened, next_room = mystery_room
-                 [(8, 0, 3.1), "blue", "right", "blue_door", False, False, "","door3"]   # door3: not player door, cannot be opened
+        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, False,"","door1"], # door1: not player door, can be opened
+                 [(0, 0, 1.5), "green", "left", "green_door", True, True, True,"start_room","door2"], # door2: player door, can be opened, next_room = mystery_room
+                 [(8, 0, 3.1), "blue", "right", "blue_door", False, False, False, "","door3"]   # door3: not player door, cannot be opened
                 ], 
         "light": [[(3.88, 3, 1.92),"light1"] # light1 => global identifier for the light
                 ],
@@ -145,12 +145,16 @@ riddle_key_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ],
-        "picture": [[(6.05, 2.35, 3.985),"picture1"] # picture 1 (riddle)
+        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "picture1"] # picture 1 (riddle) # is_riddle = True
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
         "safe": [[(5.0, 1.0, 4.0),"key1", "safe1"] # safe 1, contains key1, unique name is safe1
                 ],  
+        "letter":[
+                ],
+        "clock":[
+                ]
 }
 
 all_rooms = {

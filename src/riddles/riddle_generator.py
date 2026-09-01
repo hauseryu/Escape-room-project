@@ -8,25 +8,33 @@ from dotenv import load_dotenv
 import random
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-THEMES_FILE = BASE_DIR / "themes.txt"
+RIDDLES_DIR = Path(__file__).resolve().parent
+THEMES_FILE = RIDDLES_DIR / "themes.txt"
 
 with open(THEMES_FILE, "r", encoding="utf-8") as file:
     THEMES = [line.strip() for line in file if line.strip()]
 
-load_dotenv()
+BASE_DIR = RIDDLES_DIR.parent.parent
+load_dotenv(dotenv_path=BASE_DIR / ".env")
+
 
 api_key = os.getenv("API_KEY")
 
-client = genai.Client(api_key=api_key) if api_key else None
+use_env_for_riddle_settings = os.getenv("USE_ENV_FOR_RIDDLE_SETTINGS")
+
+if use_env_for_riddle_settings == "True":    
+    deactivate_riddle = os.getenv("USE_RIDDLE")
+else:
+    deactivate_riddle = os.environ['RIDDLE']
 
 def generate_riddle():
+    client = genai.Client(api_key=api_key) if api_key else None
+
     selected_themes = random.sample(THEMES, 3)
     themes_text = ", ".join(selected_themes)
-
-    deactivate_riddle = os.environ['RIDDLE']
+    
     if deactivate_riddle == 'OFF':
-        print("[DEBUG] riddle is currently deactivated by system variable RIDDLE=OFF")
+        print("[DEBUG] riddle is currently deactivated by system/env variable RIDDLE=OFF")
         return ("riddle not available","1")
 
     config = types.GenerateContentConfig(

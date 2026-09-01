@@ -60,7 +60,6 @@ class Room(tkinter.Frame):
         # object-related coding
         self.room_state = RoomState()
         self.reset_objects()
-        # self.menu = Menu(self)
 
     # reset objects to initial state
     def reset_objects(self):
@@ -204,10 +203,12 @@ class Room(tkinter.Frame):
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):
             coord = self.room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
-            unique_id = self.room_data["picture"][index][1] # unique identifier
-            shift_coord = (coord[0]-5.05,coord[1]-2.35,coord[2]-3.985)
-            obj = Picture(IMAGE_DIR / "riddle_not_readable.png",shift_coordinates=shift_coord,
-                          unique_id=unique_id,room_state=self.room_state)
+            file_name = self.room_data["picture"][index][1] 
+            is_riddle = self.room_data["picture"][index][2]
+            unique_id = self.room_data["picture"][index][3] # unique identifier
+            shift_coord = (coord[0]-5.05,coord[1]-2.35,coord[2]-3.985)            
+            obj = Picture(IMAGE_DIR / file_name,shift_coordinates=shift_coord,
+                          is_riddle=is_riddle, unique_id=unique_id, room_state=self.room_state)
             self.picture.append(obj)
         # create bookshelves
         for index,bookshelf in enumerate(self.room_data["bookshelf"]):
