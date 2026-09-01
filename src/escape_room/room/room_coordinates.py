@@ -1,7 +1,8 @@
 
 from pathlib import Path
+from src.escape_room.application.context_manager import ContextManager
 
-IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+IMAGE_DIR = ContextManager.get_image_path()
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 

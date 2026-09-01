@@ -4,14 +4,14 @@ from pathlib import Path
 import queue
 import os
 
-from escape_room import graphics
-from escape_room import inventory
-from escape_room import player_panel
-from escape_room import chat_panel
-from escape_room import globals
-from escape_room import room_data
-from escape_room.room_state import RoomState
-from escape_room.room_coordinates import room_coord
+from src.escape_room.gui_utilities import graphics
+from src.escape_room.toolbar import inventory
+from src.escape_room.toolbar import player_panel
+from src.escape_room.toolbar import chat_panel
+from src.escape_room.application import globals
+from src.escape_room.room import room_data
+from src.escape_room.room.room_state import RoomState
+from src.escape_room.room.room_coordinates import room_coord
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
@@ -24,9 +24,10 @@ from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
-from escape_room.menu import Menu
+from src.escape_room.toolbar.menu import Menu
+from src.escape_room.application.context_manager import ContextManager
 
-IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+IMAGE_DIR = ContextManager().get_image_path()
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 
@@ -44,7 +45,7 @@ class Room(tkinter.Frame):
         self.network_queue = queue.Queue() # communication for server events
         self.icon_queue = queue.Queue() # communication for icon events     
         self.chat_queue = queue.Queue() # communication of chat messages
-           
+
         # bind network events to a processing event handler
         master.bind("<<NetworkEvent>>", self.on_network_event)
         master.bind("<<IconEvent>>", self.on_icon_event)
@@ -55,6 +56,7 @@ class Room(tkinter.Frame):
         self.canvas_area = tkinter.Canvas(self,
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
+        ContextManager().set_canvas(self.canvas_area)
         self.canvas_area.pack()
         self.pack()
         # object-related coding
@@ -76,6 +78,7 @@ class Room(tkinter.Frame):
         self.safe = []
         self.letter = []
         self.clock = []
+        self.figure = []
         for door in self.door:
             door.is_open = False        
 
@@ -90,6 +93,7 @@ class Room(tkinter.Frame):
         # keep room state in own object
         self.room_state.add_room(self.room_data["room_name"])
         self.room_state.set_current_room(self.room_data["room_name"])
+        ContextManager().set_room(self)
         self.next_room = None
 
         # UI-related coding
@@ -98,11 +102,7 @@ class Room(tkinter.Frame):
         # room coordinates in 3D space (x, y, z)
         room_coord_name = self.room_data["room_coordinates"]
         self.room_coordinates = room_coord[room_coord_name]
-        self.image_path = os.path.join(
-            os.path.dirname(__file__),
-            "assets",
-            "images",
-        )
+        self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()
         self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
@@ -232,13 +232,16 @@ class Room(tkinter.Frame):
         for index,clock in enumerate(self.room_data["clock"]):
             coord = self.room_data["clock"][index][0] # get clock coordinates (first element in list)
             shift_coord = (coord[0]-5.15,coord[1]-0.42,coord[2]-4.00)
-            obj = Clock(time=1, shift_coordinates=shift_coord)
+            obj = Clock(self.canvas_area, time=1, shift_coordinates=shift_coord)
             self.clock.append(obj)
+        ContextManager().set_clock(self.clock)
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
             coord = self.room_data["letter"][index][0] # get letter coordinates (first element in list)
+            text = self.room_data["letter"][index][1] # get letter text
+            choices = self.room_data["letter"][index][2] # get choices for letter
             shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
-            obj = Letter(shift_coordinates=shift_coord)
+            obj = Letter(self.canvas_area,shift_coordinates=shift_coord,text=text,choices=choices)
             self.letter.append(obj)
 
         # create the canvas area and draw the start screen
@@ -364,6 +367,10 @@ class Room(tkinter.Frame):
                 key.draw(self.canvas_area) 
             draw_key = True
 
+        # draw the figures (persons etc.)
+        for figure in self.figure:
+            picture.draw_image(self.canvas_area, tag="figure")
+
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(
             355, 1,                   # X and Y coordinates inside the canvas
@@ -412,6 +419,9 @@ class Room(tkinter.Frame):
         self.reset_objects()
         self.init_room(self.game_client,room_data=self.room_data,next_room=True)
         self.draw_room()
+
+    def add_figure(self,figure):
+        self.figure.append(figure)
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""

@@ -1,9 +1,11 @@
 import math
+from src.escape_room.gui_utilities import graphics
 
 class Clock():
-    def __init__(self, time, shift_coordinates=(0,0,0)):
+    def __init__(self, canvas, time, shift_coordinates=(0,0,0)):
         self.shift_coordinates = shift_coordinates
         self.time = time # on the hour only, e.g. 3, 4, 5, etc.
+        self.canvas = canvas
         self.coordinates = [       
             ["#3A2115",(5.15, 0.42, 4.00),(5.65, 0.42, 4.00),(5.65, 1.72, 4.00),(5.15, 1.72, 4.00)], # back of clock case
             ["#3A2115",(5.00, 0.00, 4.00),(5.80, 0.00, 4.00),(5.80, 0.28, 4.00),(5.00, 0.28, 4.00)], # back of clock base
@@ -40,11 +42,8 @@ class Clock():
             ["#4A2A1A",(5.08, 0.28, 3.55),(5.15, 0.42, 3.55),(5.15, 0.42, 4.00),(5.08, 0.28, 4.00)],
 
             ]
-        x_hour_hand, y_hour_hand = self.calculate_endpoints_clock_hand()
-        self.coordinates_clock_hands = [
-            ["#111111",(5.40, 1.80, 3.50), (5.40, 1.92, 3.50)], # minute hand          
-            ["#111111",(5.40, 1.80, 3.5),(x_hour_hand, y_hour_hand, 3.5)] # hour hand
-            ]
+        # calculate clock hands based on time
+        self.set_time(self.time)
 
     def calculate_endpoints_clock_hand(self):
         # Calculate the endpoint of the hour hand based on the time
@@ -54,3 +53,25 @@ class Clock():
         x = 5.40 + hand_length * math.sin(hour_radians)
         y = 1.80 + hand_length * math.cos(hour_radians)
         return x, y
+
+    def draw(self):
+        graphics.draw(self.canvas, self.coordinates, tag="clock", 
+                      object=self, shift_coordinates=self.shift_coordinates)
+        graphics.draw(self.canvas, self.coordinates_clock_hands, 
+                      tag="clock", object=self, shift_coordinates=self.shift_coordinates)
+
+    def draw_delete(self):
+        self.canvas.delete("clock")
+
+    def set_time(self,time):
+        self.time = time
+        x_hour_hand, y_hour_hand = self.calculate_endpoints_clock_hand()
+        self.coordinates_clock_hands = [
+            ["#111111",(5.40, 1.80, 3.50), (5.40, 1.92, 3.50)], # minute hand          
+            ["#111111",(5.40, 1.80, 3.5),(x_hour_hand, y_hour_hand, 3.5)] # hour hand
+            ]
+
+    def get_time(self):
+        return self.time
+
+    

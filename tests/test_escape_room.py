@@ -7,11 +7,11 @@ import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.escape_app import EscapeApp
-from src.escape_room.escape_app import StartScreen
-from src.escape_room.escape_app import EscapeClient
-from src.escape_room.escape_app import Room
-from src.escape_room import room_data
+from src.escape_room.application.escape_app import EscapeApp
+from src.escape_room.application.escape_app import StartScreen
+from src.escape_room.application.escape_app import EscapeClient
+from src.escape_room.application.escape_app import Room
+from src.escape_room.room import room_data
 
 from src.escape_room.objects.chair import Chair
 from src.escape_room.objects.door import Door
@@ -21,8 +21,9 @@ from src.escape_room.objects.wardrobe import Wardrobe
 from src.escape_room.objects.picture import Picture
 from src.escape_room.objects.bookshelf import Bookshelf
 from src.escape_room.objects.letter import Letter
+from src.escape_room.application.context_manager import ContextManager
 
-IMAGE_DIR = Path(__file__).resolve().parent 
+IMAGE_DIR = ContextManager.get_image_path()
 
 class FakeDrawable:
     def __init__(self):
@@ -131,7 +132,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.table = [Table()]
         app.room.chair = [Chair(4.85, 0,2.35, "right")]
         app.room.wardrobe = [Wardrobe("left")]
-        app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.picture = [MagicMock()] 
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
         app.room.clock = [MagicMock()]
@@ -238,7 +239,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.table = [Table()]
         app.room.chair = [Chair(4.85, 0,2.35, "right")]
         app.room.wardrobe = [Wardrobe("left")]
-        app.room.picture = [MagicMock()] #Picture(IMAGE_DIR / "../src/escape_room/assets/images/riddle_not_readable.png")
+        app.room.picture = [MagicMock()] 
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
         app.room.clock = [MagicMock()]

@@ -1,5 +1,5 @@
-from escape_room.graphics import compute_2d_coordinates
-from escape_room.confirmation_popup import ConfirmationPopup
+from src.escape_room.gui_utilities.graphics import compute_2d_coordinates
+from src.escape_room.gui_utilities.confirmation_popup import ConfirmationPopup
 from tkinter import messagebox  # Required import for native dialog popups
 import tkinter
 

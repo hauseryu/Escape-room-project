@@ -1,3 +1,6 @@
+
+from escape_room.objects import letter_data
+
 # the module defines layout and objects for each room
 
 # initial room (start room for game)
@@ -118,7 +121,7 @@ living_room_221b = {
                 ],
         "safe": [
                 ],
-        "letter":[[(3.7, 0.6, 2.3)]
+        "letter":[[(3.7, 0.6, 2.3),letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes]
                 ],
         "clock":[[(5.15, 0.42, 4.00)]
                 ]

@@ -2,9 +2,9 @@ import os
 import tkinter
 import winsound
 
-from escape_room import globals
-from escape_room import graphics
-
+from src.escape_room.application import globals
+from src.escape_room.gui_utilities import graphics
+from src.escape_room.application.context_manager import ContextManager
 
 class Key:
     def __init__(self, inventory,room_state,unique_id="",shift_coordinates=(0,0,0),room_placement=False):
@@ -17,9 +17,8 @@ class Key:
         self.shift_coordinates = shift_coordinates
         self.room_placement = room_placement
         self.room_state = room_state
-        package_dir = os.path.dirname(os.path.dirname(__file__))
-        self.image_path = os.path.join(package_dir, "assets", "images", "key_transparent.png")
-        self.sound_path = os.path.join(package_dir, "assets", "sounds", "grab_key.wav")
+        self.image_path = ContextManager.get_image_path().joinpath("key_transparent.png")
+        self.sound_path = ContextManager.get_sound_path().joinpath("grab_key.wav")
 
     def draw(self, canvas):
         self.canvas = canvas
