@@ -22,6 +22,7 @@ from src.escape_room.objects.picture import Picture
 from src.escape_room.objects.bookshelf import Bookshelf
 from src.escape_room.objects.letter import Letter
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.actions.action import ActionManager
 
 IMAGE_DIR = ContextManager.get_image_path()
 
@@ -124,6 +125,9 @@ class EscapeRoomTest(unittest.TestCase):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
+        action_manager = ActionManager()
+        ContextManager().set_action_manager(action_manager)
+
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
         app.room.room_data = room_data.start_room
@@ -136,8 +140,9 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
         app.room.clock = [MagicMock()]
-        app.room.letter = [Letter()]
+        app.room.letter = [Letter(app.room.canvas_area)]
         app.room.key = [FakeDrawable()]
+        app.room.figure = []
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 
@@ -195,6 +200,9 @@ class EscapeRoomTest(unittest.TestCase):
         )
 
     def test_show_start_screen_delegates_to_start_screen(self):
+        root = tkinter.Tk()
+        root.withdraw()
+
         # 1. Setup the empty app instance
         app = EscapeApp.__new__(EscapeApp)
         app.server = "mock_server_data"
@@ -202,7 +210,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.start_game = MagicMock()
 
         # 2. Patch the StartScreen class where it is USED (inside escape_app)
-        with patch('src.escape_room.escape_app.StartScreen') as mock_start_screen_class:
+        with patch('src.escape_room.application.escape_app.StartScreen') as mock_start_screen_class:
             
             # Create the mock instance that will be returned when StartScreen() is called
             mock_instance = MagicMock()
@@ -224,6 +232,7 @@ class EscapeRoomTest(unittest.TestCase):
             
             # C) Check if it was saved as an attribute in your app
             self.assertEqual(app.start_screen, mock_instance)    
+        root.destroy()
     
     @patch("escape_room.objects.picture.generate_riddle")
     @patch("escape_room.objects.picture.ImageTk.PhotoImage")
@@ -231,6 +240,9 @@ class EscapeRoomTest(unittest.TestCase):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
+        action_manager = ActionManager()
+        ContextManager().set_action_manager(action_manager)
+
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
         app.room.room_data = room_data.start_room
@@ -243,8 +255,9 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.bookshelf = [Bookshelf()]
         app.room.safe = [MagicMock()]
         app.room.clock = [MagicMock()]
-        app.room.letter = [Letter()]
+        app.room.letter = [Letter(app.room.canvas_area)]
         app.room.key = [FakeDrawable()]
+        app.room.figure = []
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 
