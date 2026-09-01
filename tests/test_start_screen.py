@@ -5,7 +5,7 @@ import tkinter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from src.escape_room.start_screen import StartScreen
+from src.escape_room.application.start_screen import StartScreen
 
 class FakeCanvas:
     def __init__(self):

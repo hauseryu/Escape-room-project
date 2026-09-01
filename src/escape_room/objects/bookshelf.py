@@ -1,6 +1,6 @@
 """Bookshelf object placed where the wardrobe previously stood."""
 
-from escape_room import graphics
+from src.escape_room.gui_utilities import graphics
 
 
 class Bookshelf:

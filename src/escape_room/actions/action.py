@@ -1,0 +1,57 @@
+from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects.clock import Clock
+from src.escape_room.objects.figure import Figure
+
+# specific actions
+def game_over():
+    print("[DEBUG] Game over!")
+    pass
+
+ELAPSE_TIME = 1500
+def time_elapse(time):
+    print(f"[DEBUG] Time elapses: {time} hours.")    
+    clock = ContextManager().get_clock()
+    canvas = ContextManager().get_canvas()
+    counter = time
+    if clock != None and canvas != None and counter>0:
+        canvas.after(ELAPSE_TIME,time_elapse_callback,counter-1,clock,canvas)
+    else:
+        ContextManager().get_action_manager().execute_next_action()
+
+def figure_appears(figure,image_name,x_xoord,y_coord,width,height):
+    print(f"[DEBUG] Person appears: {figure}")
+    image = ContextManager().get_image_path() / image_name
+    figure = Figure(figure,image,x_xoord,y_coord,width,height)
+    ContextManager().get_room().add_figure(figure)
+    figure.draw_image(ContextManager().get_canvas())
+    ContextManager().get_action_manager().execute_next_action()
+
+# helper functions
+def time_elapse_callback(counter,clock,canvas):
+    # push clock forward
+    for clck in clock:
+        clck.draw_delete()
+        current_time = clck.get_time()
+        clck.set_time(current_time+1)
+        clck.draw()
+    if counter>0:
+        canvas.after(ELAPSE_TIME,time_elapse_callback,counter-1,clock,canvas)
+    else:
+        ContextManager().get_action_manager().execute_next_action()
+
+# action evaluation
+class ActionManager():
+    def __init__(self):
+        self.action_sequence = []
+
+    def evaluate_choices(self,choices,choice):
+        print(f"[DEBUG] Evaluate choice {choice}")
+        self.action_sequence = choices[choice][1]
+        self.execute_next_action()
+
+    def execute_next_action(self):
+        if self.action_sequence == []:
+            print("[DEBUG] action sequence processing completed.")
+            return
+        action = self.action_sequence.pop(0) # get first element from list
+        action[0](*action[1:]) # call action with unknown number of parameters

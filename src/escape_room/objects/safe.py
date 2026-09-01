@@ -1,4 +1,4 @@
-from escape_room import graphics
+from src.escape_room.gui_utilities import graphics
 
 class Safe():
     def __init__(self, key = None, shift_coordinates=(0, 0, 0),room_state=None,unique_id=None):

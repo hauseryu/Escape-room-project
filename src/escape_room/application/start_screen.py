@@ -1,25 +1,18 @@
 import os
 import tkinter
 from PIL import Image, ImageTk
+from pathlib import Path
 
-from escape_room import globals
-from escape_room import icon_picker_popup
+from src.escape_room.application import globals
+from src.escape_room.gui_utilities import icon_picker_popup
+from src.escape_room.application.context_manager import ContextManager
 
 class StartScreen:
     def __init__(self, canvas, start_callback, server):
         self.canvas = canvas
         self.start_callback = start_callback
-        self.image_path = os.path.join(
-            os.path.dirname(__file__),
-            "assets",
-            "images",
-        )
-        self.image_path_start_screen = os.path.join(
-            os.path.dirname(__file__),
-            "assets",
-            "images",
-            "start_screen_moon.png",
-        )
+        self.image_path = ContextManager.get_image_path()
+        self.image_path_start_screen = self.image_path.joinpath("start_screen_moon.png")
         self.image = None
         self.display_image = None
         self.server_var = tkinter.IntVar() # 0 = off, 1 = on
@@ -137,15 +130,15 @@ class StartScreen:
         self.canvas.tag_bind("pic_select", "<Enter>", lambda e: self.canvas.config(cursor="hand2"))
         self.canvas.tag_bind("pic_select", "<Leave>", lambda e: self.canvas.config(cursor=""))
         # Liste aller verfügbaren Icons für das Popup
-        self.available_icons = ["\\playerpic_wonder_woman.png", 
-                                "\\playerpic_woman_thinking.png", 
-                                "\\playerpic_woman_happy.png", 
-                                "\\playerpic_spider_man.png",
-                                "\\playerpic_running_man.png",
-                                "\\playerpic_businessman.png",
+        self.available_icons = ["playerpic_wonder_woman.png", 
+                                "playerpic_woman_thinking.png", 
+                                "playerpic_woman_happy.png", 
+                                "playerpic_spider_man.png",
+                                "playerpic_running_man.png",
+                                "playerpic_businessman.png",
                                 ]
         # load & draw start icon
-        self.player_icon = tkinter.PhotoImage(file=self.image_path + self.available_icons[1])
+        self.player_icon = tkinter.PhotoImage(file=self.image_path.joinpath(self.available_icons[1]))
         self.current_icon = self.canvas.create_image(1050, 700, image=self.player_icon, tags="pic_select", anchor="nw")
 
     def on_icon_click(self, event):
@@ -161,14 +154,14 @@ class StartScreen:
         pos_y = event.y_root - (p_height // 2)
         popup.top.geometry(f"{p_width}x{p_height}+{pos_x}+{pos_y}")
 
-    def update_main_icon(self, gewaehltes_icon_pfad):
-        print(f"Main window has received the selection: {gewaehltes_icon_pfad}")
-        self.player_icon_number = self.available_icons.index(gewaehltes_icon_pfad)
+    def update_main_icon(self, selected_icon_path):
+        print(f"Main window has received the selection: {selected_icon_path}")
+        self.player_icon_number = self.available_icons.index(selected_icon_path)
         # Load new picture into main class (important for memory)
-        self.aktuelles_bild = tkinter.PhotoImage(file=self.image_path + gewaehltes_icon_pfad)
+        self.current_picture = tkinter.PhotoImage(file=self.image_path.joinpath(selected_icon_path))
         
         # Replace current picture on canvas with new picture
-        self.canvas.itemconfig(self.current_icon, image=self.aktuelles_bild)
+        self.canvas.itemconfig(self.current_icon, image=self.current_picture)
 
     def _draw_start_button(self):
         center_x = globals.canvas_width / 2

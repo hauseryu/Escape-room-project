@@ -4,18 +4,25 @@ import threading
 import time
 from tkinter import messagebox
 
-from escape_room.escape_server import EscapeServer
-from escape_room.escape_client import EscapeClient
-from escape_room.room import Room
-from escape_room import globals
-from escape_room.start_screen import StartScreen
+from src.network.escape_server import EscapeServer
+from src.network.escape_client import EscapeClient
+from src.escape_room.room.room import Room
+from src.escape_room.application import globals
+from src.escape_room.application.start_screen import StartScreen
+from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.actions.action import ActionManager
 
-IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+IMAGE_DIR = ContextManager.get_image_path()
 
 class EscapeApp():
 
     # create frame Objekt and drawing area (canvas)
     def __init__(self,master):
+
+        # get context manager instance (singleton)
+        self.context_manager = ContextManager()
+        self.action_manager = ActionManager()
+        self.context_manager.set_action_manager(self.action_manager)
 
         # create canvas frame
         self.room = Room(master)

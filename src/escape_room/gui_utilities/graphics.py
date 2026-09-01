@@ -1,4 +1,4 @@
-from escape_room import globals
+from src.escape_room.application import globals
 from PIL import Image, ImageDraw, ImageTk
 
 # Ermittelt den Ordner, in dem diese escape_room.py Datei liegt
