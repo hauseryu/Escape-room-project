@@ -22,10 +22,10 @@ class IconPickerPopup:
         grid_frame.pack(pady=10)
 
         # 2. Dynamically load and arrange icons in a grid layout
-        for index, dateiname in enumerate(icon_dateien):
+        for index, file_name in enumerate(icon_dateien):
             # Load image and keep it in memory
-            img = tk.PhotoImage(file=icon_image_path + dateiname)
-            self.loaded_icons[dateiname] = img
+            img = tk.PhotoImage(file=icon_image_path.joinpath(file_name))
+            self.loaded_icons[file_name] = img
             
             # Create a clickable label for each icon
             lbl = tk.Label(grid_frame, image=img, bd=2, relief="groove", cursor="hand2")
@@ -36,10 +36,10 @@ class IconPickerPopup:
             lbl.grid(row=zeile, column=spalte, padx=10, pady=10)
             
             # Bind click event using lambda to pass the selected icon name
-            lbl.bind("<Button-1>", lambda event, d=dateiname: self.on_icon_selected(d))
+            lbl.bind("<Button-1>", lambda event, d=file_name: self.on_icon_selected(d))
 
-    def on_icon_selected(self, dateiname):
+    def on_icon_selected(self, file_name):
         # Pass the selected icon back to the main application
-        self.callback(dateiname)
+        self.callback(file_name)
         # Close the popup window
         self.top.destroy()

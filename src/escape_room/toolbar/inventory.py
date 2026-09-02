@@ -1,9 +1,9 @@
 
 from pathlib import Path
 from PIL import Image, ImageTk
+from src.escape_room.application.context_manager import ContextManager
 
-
-IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+IMAGE_DIR = ContextManager.get_image_path()
 INVENTORY_TEXTURE = IMAGE_DIR / "inventory_wood.jpg"
 INVENTORY_ICON = IMAGE_DIR / "inventory_rucksack.png"
 

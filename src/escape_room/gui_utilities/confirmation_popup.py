@@ -1,4 +1,4 @@
-from escape_room.graphics import compute_2d_coordinates
+from src.escape_room.gui_utilities.graphics import compute_2d_coordinates
 from tkinter import messagebox  # Required import for native dialog popups
 import tkinter
 

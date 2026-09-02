@@ -1,8 +1,8 @@
 import tkinter
 import sys
 
-from escape_room import globals
-from escape_room.escape_app import EscapeApp
+from src.escape_room.application import globals
+from src.escape_room.application.escape_app import EscapeApp
 
 def main():
     root = tkinter.Tk()

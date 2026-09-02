@@ -2,8 +2,9 @@ import tkinter as tk
 import queue
 from pathlib import Path
 from PIL import Image, ImageTk
+from src.escape_room.application.context_manager import ContextManager
 
-IMAGE_DIR = Path(__file__).resolve().parent / "assets" / "images"
+IMAGE_DIR = ContextManager.get_image_path()
 CHAT_MESSAGING_ICON = IMAGE_DIR / "chat_messaging.png"
 
 class ChatPanel(tk.Frame):

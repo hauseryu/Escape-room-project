@@ -1,4 +1,4 @@
-from escape_room import graphics
+from src.escape_room.gui_utilities import graphics
 
 class Light():
     def __init__(self,room_state=None,unique_id=None,shift_coordinates=(0,0,0)):
