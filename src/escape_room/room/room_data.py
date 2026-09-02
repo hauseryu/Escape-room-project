@@ -25,7 +25,9 @@ start_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ], 
-        "picture": [[(2.5,2,4), "sherlock-holmes-logo.jpg", False, "picture1"],
+        "picture": [[(3.65,2.95,4.0), "sherlock-holmes-logo.jpg", False, "front", "picture1"],
+                    # [(2,2.95,1.65), "", False, "left", "picture2"],
+                    # [(6,2.95,2.65), "", False, "right", "picture3"],
                 ],
         "bookshelf": [
                 ],

@@ -28,8 +28,9 @@ https://npcap.com/#download
 Requirement: Python 3.
 
 ```bash
-python src/main.py
+python -B src/main.py
 ```
+(The -B flag tells python not to create __pycache__ folders)
 
 ## Run the Tests
 
