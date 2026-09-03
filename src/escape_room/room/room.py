@@ -371,7 +371,7 @@ class Room(tkinter.Frame):
 
         # draw the figures (persons etc.)
         for figure in self.figure:
-            picture.draw_image(self.canvas_area, tag="figure")
+            figure.draw_image(self.canvas_area)
 
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(

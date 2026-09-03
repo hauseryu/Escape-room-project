@@ -1,6 +1,7 @@
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.objects.clock import Clock
 from src.escape_room.objects.figure import Figure
+from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 
 # specific actions
 def game_over():
@@ -18,13 +19,24 @@ def time_elapse(time):
     else:
         ContextManager().get_action_manager().execute_next_action()
 
-def figure_appears(figure,image_name,x_xoord,y_coord,width,height):
+def figure_appears(figure,image_name,x_xoord,y_coord,width,height,figure_talk):
     print(f"[DEBUG] Person appears: {figure}")
     image = ContextManager().get_image_path() / image_name
-    figure = Figure(figure,image,x_xoord,y_coord,width,height)
+    figure = Figure(figure,image,x_xoord,y_coord,width,height,figure_talk)
     ContextManager().get_room().add_figure(figure)
     figure.draw_image(ContextManager().get_canvas())
     ContextManager().get_action_manager().execute_next_action()
+
+def figure_talks(figure,speech):
+    print(f"[DEBUG] Person talks: {figure}")
+    speech_bubble = SpeechBubble([speech])  # ([speech])
+    speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
+    speech_bubble2 = SpeechBubble(["Sherlock:"])
+    speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True)
+    ContextManager().get_action_manager().execute_next_action()
+
+def enter_message():
+    pass
 
 # helper functions
 def time_elapse_callback(counter,clock,canvas):
@@ -47,6 +59,11 @@ class ActionManager():
     def evaluate_choices(self,choices,choice):
         print(f"[DEBUG] Evaluate choice {choice}")
         self.action_sequence = choices[choice][1]
+        self.execute_next_action()
+
+    def execute_action_sequence(self,action_sequence):
+        print(f"[DEBUG] Execute action sequence {action_sequence}")
+        self.action_sequence = action_sequence
         self.execute_next_action()
 
     def execute_next_action(self):
