@@ -34,11 +34,12 @@ WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 class Room(tkinter.Frame):
     
     # create frame Objekt and drawing area (canvas)
-    def __init__(self,master):
+    def __init__(self,master, escape_app):
         super().__init__(master)
 
         # set GUI master
         self.master = master
+        self.escape_app = escape_app
 
         # multiplayer and data transfer related coding
         # using queues, which are thread-safe (no danger of different threads accessing same queue)
@@ -111,7 +112,7 @@ class Room(tkinter.Frame):
         self.chat_panel = chat_panel.ChatPanel(self.master, 
                                                message_queue=self.chat_queue,
                                                gui_master=self.master)
-        self.menu = Menu(self)
+        self.menu = Menu(self, self.escape_app)
 
         # create doors
         for index,door in enumerate(self.room_data["door"]):
