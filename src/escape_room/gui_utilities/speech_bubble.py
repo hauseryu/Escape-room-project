@@ -1,3 +1,4 @@
+import tkinter
 
 class SpeechBubble:
 
@@ -7,10 +8,10 @@ class SpeechBubble:
         self.choices = choices
         self.evaluate_choices_callback = evaluate_choices_callback
 
-    def show_bubble(self, canvas):
+    def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
 
             self.current_bubble = 0
-            self.draw_bubble(canvas)
+            self.draw_bubble(canvas, position, skip_overlay, entry_field)
 
             # keyboard navigation
             canvas.focus_set()
@@ -19,29 +20,38 @@ class SpeechBubble:
                 canvas.bind("<Right>", self.next_bubble)
             canvas.bind("<Escape>", lambda e: self.close_bubble(canvas))
 
-    def draw_bubble(self, canvas):
+    def draw_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
         # remove old bubble
-        canvas.delete("bubble")
+        # canvas.delete("bubble")
 
         w = canvas.winfo_width()
         h = canvas.winfo_height()
 
         # dark overlay
-        canvas.create_rectangle(
-            0,
-            0,
-            w,
-            h,
-            fill="black",
-            stipple="gray50",
-            tags="bubble"
-        )
+        if not skip_overlay:
+            canvas.create_rectangle(
+                0,
+                0,
+                w,
+                h,
+                fill="black",
+                stipple="gray50",
+                tags="bubble"
+            )
 
         # pergament
         margin_x = w * 0.2
 
-        top = h * 0.15 + 100
-        bottom = h - 50
+        if position == "bottom":
+            top = h * 0.15 + 700
+        elif position == "top":
+            top = h * 0.1 + 90
+        else:
+            top = h * 0.15 + 100
+        if position == "top":
+            bottom = h - 250
+        else:
+            bottom = h - 50
 
         canvas.create_rectangle(
             margin_x,
@@ -57,7 +67,7 @@ class SpeechBubble:
         arrow_space = 130
 
         text_x = margin_x + arrow_space
-        text_y = top + 100
+        text_y = top + 30
 
         text_width = w - 2 * margin_x - 2 * arrow_space
 
@@ -73,7 +83,28 @@ class SpeechBubble:
             fill="#3b281b",
             tags="bubble bubble_content"
         )
-        
+
+        # entry field?
+        if entry_field:
+            code_entry = tkinter.Entry(
+                canvas, 
+                font=("Arial", 20), 
+                justify="center", 
+                width=30,
+                bg="#f3ebd9",
+                fg="#3b281b"
+            )        
+            center_x = (margin_x + w-margin_x) / 2
+            center_y = (top + bottom) / 2               
+            # embed input field into canvas
+            canvas.create_window(
+                center_x, 
+                center_y, 
+                window=code_entry,  
+                anchor="center",    # center input field into middle
+                tags="bubble bubble_content"
+            )
+
         arrow_offset = 70
 
         # left arrow
