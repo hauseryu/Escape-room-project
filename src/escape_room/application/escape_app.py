@@ -25,7 +25,7 @@ class EscapeApp():
         self.context_manager.set_action_manager(self.action_manager)
 
         # create canvas frame
-        self.room = Room(master)
+        self.room = Room(master, self)
         self.init_network()
         # initialization complete!
         # create room and inventory bar
@@ -95,6 +95,19 @@ class EscapeApp():
         self.room.update_player_data(self.player_name,self.player_icon_number)
         # pass over control to room object => create and show room 
         self.room.draw_room()
+        
+    def return_to_start_screen(self):
+        # delete canvas content completely
+        self.room.canvas_area.delete("all")
+        
+        # seperate the network connection
+        if hasattr(self.game_client, "disconnect"):
+            self.game_client.disconnect()
 
+        # actualise network search
+        found_devices = self.game_client.get_devices_local_network()
+        self.server = self.game_client.check_server_port(found_devices,globals.SERVER_PORT)
+        
+        self.show_start_screen()
 
 

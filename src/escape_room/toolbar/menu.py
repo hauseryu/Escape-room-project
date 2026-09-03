@@ -3,7 +3,7 @@ import tkinter as tk
 
 class Menu(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, escape_app):
         super().__init__(
             parent,
             bg="#D4C8C8",
@@ -11,7 +11,7 @@ class Menu(tk.Frame):
             relief="solid"
         )
 
-
+        self.escape_app = escape_app
         self.create_menu()
 
     def create_menu(self):
@@ -29,8 +29,8 @@ class Menu(tk.Frame):
         ).pack(fill="x", padx=20, pady=20)
 
     def save_game(self):
-        self.app.save_game()
+        self.escape_app.save_game()
 
     def return_to_start_screen(self):
-        self.app.return_to_start_screen()
+        self.escape_app.return_to_start_screen()
         
