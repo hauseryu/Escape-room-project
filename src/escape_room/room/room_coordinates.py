@@ -5,6 +5,8 @@ from src.escape_room.application.context_manager import ContextManager
 IMAGE_DIR = ContextManager.get_image_path()
 FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
+SCRATCHED_WALL_TEXTURE = IMAGE_DIR / "scratched_wall_texture.jpg"
+STONE_FLOOR_TEXTURE = IMAGE_DIR / "stone_floor_texture.png"
 
 room_coord = {
     "normal_room": [[("white",FLOOR_TEXTURE),
@@ -93,27 +95,27 @@ room_coord = {
                      (2, 3, 4)]                     
                     ],
     "square room": [
-                    [("white", FLOOR_TEXTURE), # floor
+                    [("white", STONE_FLOOR_TEXTURE), # floor
                     (2, 0, 0),
                     (6, 0, 0),
                     (6, 0, 4),
                     (2, 0, 4)],
-                    ["white",
+                    [("white", SCRATCHED_WALL_TEXTURE), # ceiling
                     (2, 3, 0), # ceiling
                     (6, 3, 0),
                     (6, 3, 4),
                     (2, 3, 4)],
-                    ["white",
+                    [("white", SCRATCHED_WALL_TEXTURE),
                     (2,0,0),
                     (2,3,0), # wall left
                     (2,3,4),
                     (2,0,4)],
-                    ["white",
+                    [("white", SCRATCHED_WALL_TEXTURE),
                     (6,0,0), # wall right
                     (6,3,0),
                     (6,3,4),
                     (6,0,4)],
-                    ["white",
+                    [("white", SCRATCHED_WALL_TEXTURE),
                     (2, 0, 4), # back wall
                     (6, 0, 4),
                     (6, 3, 4),
