@@ -1,3 +1,5 @@
+from src.escape_room.objects.figure import Figure
+
 class RoomState():
     def __init__(self):
         self.room_state= {} # keep a room state for each room
@@ -19,7 +21,8 @@ class RoomState():
             "door": {},
             "safe": {},
             "wardrobe": {},
-            "picture": {}
+            "picture": {},
+            "figure": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
@@ -47,3 +50,20 @@ class RoomState():
             return state
         except KeyError:
             return None        
+
+    def get_objects(self,type):
+        if type=='figure':
+            figures = []
+            for figure_name,attribs in self.room_state[self.current_room]["figure"].items():
+                image = attribs[0]
+                x_coord,y_coord,width,height = attribs[1:5]
+                figure_talk = attribs[5]
+                figure = Figure(figure_name,image,x_coord,y_coord,width,height,figure_talk)
+                figures.append(figure)
+            return figures
+
+    def set_object(self,type,object):
+        if type=='figure':
+            self.room_state[self.current_room]["figure"][object.figure_name] = [ \
+                object.image_path, object.x_coord, object.y_coord, object.width, object.height, \
+                object.action_sequence_talk ]
