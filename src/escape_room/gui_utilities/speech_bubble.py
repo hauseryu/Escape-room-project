@@ -11,7 +11,10 @@ class SpeechBubble:
     def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
 
             self.current_bubble = 0
-            self.draw_bubble(canvas, position, skip_overlay, entry_field)
+            if entry_field:
+                code_entry = self.draw_bubble(canvas, position, skip_overlay, entry_field)
+            else:
+                self.draw_bubble(canvas, position, skip_overlay, entry_field)
 
             # keyboard navigation
             canvas.focus_set()
@@ -19,6 +22,8 @@ class SpeechBubble:
                 canvas.bind("<Left>", self.previous_bubble)
                 canvas.bind("<Right>", self.next_bubble)
             canvas.bind("<Escape>", lambda e: self.close_bubble(canvas))
+            if entry_field:
+                return code_entry
 
     def draw_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
         # remove old bubble
@@ -212,6 +217,8 @@ class SpeechBubble:
                 "<Button-1>",
                 lambda e: self.click_bubble(e, canvas)
             )
+        if entry_field:
+            return code_entry
 
     def next_bubble(self, event, canvas=None):
         if canvas is None:
@@ -250,3 +257,8 @@ class SpeechBubble:
         canvas.unbind("<Left>")
         canvas.unbind("<Right>")
         canvas.unbind("<Escape>")
+
+    def replace_bubble_text(self, canvas, new_text):
+        self.bubbles[self.current_bubble] = new_text
+        self.close_bubble(canvas)
+        self.draw_bubble(canvas)

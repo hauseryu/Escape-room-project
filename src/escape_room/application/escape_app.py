@@ -11,6 +11,7 @@ from src.escape_room.application import globals
 from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.actions.action import ActionManager
+from src.llm.llm_client import LlmClient
 
 IMAGE_DIR = ContextManager.get_image_path()
 
@@ -23,6 +24,10 @@ class EscapeApp():
         self.context_manager = ContextManager()
         self.action_manager = ActionManager()
         self.context_manager.set_action_manager(self.action_manager)
+
+        # create LLM client and pass it to context manager
+        self.llm_client = LlmClient()
+        self.context_manager.set_llm_client(self.llm_client)
 
         # create canvas frame
         self.room = Room(master, self)
