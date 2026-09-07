@@ -36,6 +36,8 @@ start_room = {
         "letter":[
                 ],
         "clock":[
+                ],
+        "sofa": [
                 ]
 }
 
@@ -69,7 +71,9 @@ mystery_room = {
         "letter":[
                 ],
         "clock":[
-                ]       
+                ],       
+        "sofa": [
+                ]
 }
 
 # from mystery room -> front door 
@@ -99,6 +103,8 @@ doorway = {
         "letter":[
                 ],
         "clock":[
+                ],
+        "sofa": [
                 ]
 }
 
@@ -128,6 +134,8 @@ living_room_221b = {
         "letter":[[(3.7, 0.6, 2.3),letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes]
                 ],
         "clock":[[(5.15, 0.42, 4.00)]
+                ],
+        "sofa": [[(0.0, 0.4, 3.2),"left","sofa1"]            
                 ]
 }
 
@@ -159,6 +167,8 @@ riddle_key_room = {
         "letter":[
                 ],
         "clock":[
+                ],
+        "sofa": [
                 ]
 }
 

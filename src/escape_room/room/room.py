@@ -24,6 +24,7 @@ from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
+from escape_room.objects.sofa import Sofa
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
 
@@ -79,6 +80,7 @@ class Room(tkinter.Frame):
         self.letter = []
         self.clock = []
         self.figure = []
+        self.sofa = []
         for door in self.door:
             door.is_open = False        
 
@@ -240,6 +242,15 @@ class Room(tkinter.Frame):
             obj = Clock(self.canvas_area, time=1, shift_coordinates=shift_coord)
             self.clock.append(obj)
         ContextManager().set_clock(self.clock)
+        # create sofas
+        for index,sofa in enumerate(self.room_data["sofa"]):
+            coord = self.room_data["sofa"][index][0] # get sofa coordinates (first element in list)
+            direction = self.room_data["sofa"][index][1] # get sofa direction (right/left)
+            unique_id = self.room_data["sofa"][index][2] # unique identifier
+            shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
+            obj = Sofa(direction, shift_coordinates=shift_coord, unique_id=unique_id)
+            self.sofa.append(obj)
+
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
             coord = self.room_data["letter"][index][0] # get letter coordinates (first element in list)
@@ -356,6 +367,10 @@ class Room(tkinter.Frame):
         for clock in self.clock:
             graphics.draw(self.canvas_area, clock.coordinates, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
             graphics.draw(self.canvas_area, clock.coordinates_clock_hands, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
+
+        # draw the sofas
+        for sofa in self.sofa:
+            graphics.draw(self.canvas_area, sofa.sofa_coordinates, tag="sofa", object=sofa, shift_coordinates=sofa.shift_coordinates)
 
         # draw the letter
         for letter in self.letter:
