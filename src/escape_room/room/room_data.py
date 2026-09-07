@@ -20,14 +20,15 @@ start_room = {
         "table": [
                 ],
         "chair": [  
+                
                 ],
         "key": [
                 ],
         "wardrobe": [  # no wardrobe
                 ], 
         "picture": [[(3.65,2.95,4.0), "harry-potter-logo.jpg", False, "front", "picture1"],
-                    # [(2,2.95,1.65), "", False, "left", "picture2"],
-                    # [(6,2.95,2.65), "", False, "right", "picture3"],
+                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2"],
+                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3"],
                 ],
         "bookshelf": [
                 ],
