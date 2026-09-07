@@ -6,13 +6,15 @@ class Picture:
     """A picture frame on the back wall (``z = 4``).
     """
 
-    def __init__(self, image_path=None,is_riddle=None,direction=None,shift_coordinates = (0,0,0),unique_id=None,room_state=None):
+    def __init__(self, image_path=None,is_riddle=None,direction=None,shift_coordinates = (0,0,0),unique_id=None,room_state=None,
+                 pic_move_coord=None):
         self.image_path = image_path
         self.is_riddle = is_riddle
         self.direction = direction
         self.shift_coordinates = shift_coordinates
         self.unique_id = unique_id
         self.room_state = room_state
+        self.pic_move_coord = pic_move_coord
         
         if self.direction == "front":
             self.coordinates_frame = [
@@ -90,7 +92,7 @@ class Picture:
         
         self.foto_image = ImageTk.PhotoImage(image, master=canvas)
         
-        self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
+        self.image_id = canvas.create_image(x1+self.pic_move_coord[0], y1+self.pic_move_coord[1], anchor="nw", image=self.foto_image)
         if self.is_riddle:
             canvas.tag_bind(
                 self.image_id,

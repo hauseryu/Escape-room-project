@@ -26,9 +26,9 @@ start_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ], 
-        "picture": [[(3.65,2.95,4.0), "harry-potter-logo.jpg", False, "front", "picture1"],
-                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2"],
-                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3"],
+        "picture": [[(3.65,2.95,4.0), "harry-potter-logo.jpg", False, "front", "picture1", (0,0)],
+                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2",(-70,-75)],
+                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3",(490,-76)],
                 ],
         "bookshelf": [
                 ],
