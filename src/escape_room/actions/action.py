@@ -2,6 +2,7 @@ from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.objects.clock import Clock
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
+from src.llm.dialog import Dialog
 
 # specific actions
 def game_over():
@@ -27,16 +28,23 @@ def figure_appears(figure,image_name,x_xoord,y_coord,width,height,figure_talk):
     figure.draw_image(ContextManager().get_canvas())
     ContextManager().get_action_manager().execute_next_action()
 
-def figure_talks(figure,speech):
+def figure_talks(figure,speech,figure_id,player_role):
     print(f"[DEBUG] Person talks: {figure}")
     speech_bubble = SpeechBubble([speech])  # ([speech])
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
-    speech_bubble2 = SpeechBubble(["Sherlock:"])
-    speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True)
-    ContextManager().get_action_manager().execute_next_action()
+    speech_bubble2 = SpeechBubble(["You:"])
+    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True)
+    bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
+    # ContextManager().get_action_manager().execute_next_action()
 
-def enter_message():
-    pass
+def process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role):
+    if not hasattr(process_entry, "dialog"):
+        process_entry.dialog = Dialog()
+    dialog = process_entry.dialog
+    player_message = event.widget.get()
+    event.widget.delete(0, len(event.widget.get()))
+    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message)
+    figure_talks(figure, npc_response, figure_id, player_role)
 
 # helper functions
 def time_elapse_callback(counter,clock,canvas):

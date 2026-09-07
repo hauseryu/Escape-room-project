@@ -3,8 +3,8 @@ from src.escape_room.objects import speech_data
 
 # specific action sequences
 sherlock_client_talk = [
-    [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson],
-    [action.enter_message]
+    [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],
+    # [action.process_entry]
 ]
 
 sherlock_client_appears = [
