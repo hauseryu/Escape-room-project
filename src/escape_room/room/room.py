@@ -248,6 +248,10 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
             obj = Letter(self.canvas_area,shift_coordinates=shift_coord,text=text,choices=choices)
             self.letter.append(obj)
+        # create figures
+        # check for state if figure has appeared
+        if self.figure == []:
+            self.figure = self.room_state.get_objects("figure")
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -266,7 +270,6 @@ class Room(tkinter.Frame):
 
     # draw the room using world coordinates
     def draw_room(self):
-
         # draw room layout
         shift_coord = graphics.shift_coordinates(self.room_coordinates[0][1],self.room_data["room"])
         for polygon in self.room_coordinates:
@@ -427,6 +430,7 @@ class Room(tkinter.Frame):
 
     def add_figure(self,figure):
         self.figure.append(figure)
+        self.room_state.set_object("figure",figure)
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
