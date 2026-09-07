@@ -87,8 +87,6 @@ class Picture:
         image_width = x2 - x1
         image_heigth = y2 - y1
         image = Image.open(self.image_path)
-        if self.direction == "front":
-            image = image.resize((image_width, image_heigth), Image.Resampling.LANCZOS)
         
         self.foto_image = ImageTk.PhotoImage(image, master=canvas)
         

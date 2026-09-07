@@ -27,8 +27,8 @@ start_room = {
         "wardrobe": [  # no wardrobe
                 ], 
         "picture": [[(3.65,2.95,4.0), "harry-potter-logo.jpg", False, "front", "picture1", (0,0)],
-                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2",(-70,-75)],
-                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3",(490,-76)],
+                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2",(-10,-10)],
+                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3",(600,20)],
                 ],
         "bookshelf": [
                 ],
@@ -151,7 +151,7 @@ riddle_key_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ],
-        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "picture1"] # picture 1 (riddle) # is_riddle = True
+        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "picture1", (0,0)] # picture 1 (riddle) # is_riddle = True
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
