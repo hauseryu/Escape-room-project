@@ -18,6 +18,7 @@ class ContextManager():
             self.initialized = True
             self.action_manager = None
             self.room = None
+            self.llm_client = None
 
     @staticmethod
     def get_image_path() -> Path:
@@ -35,6 +36,12 @@ class ContextManager():
 
     def set_action_manager(self,action_manager):
         self.action_manager = action_manager
+
+    # llm client access
+    def get_llm_client(self):
+        return self.llm_client
+    def set_llm_client(self,llm_client):
+        self.llm_client = llm_client
 
     # clock object set/get
     def set_clock(self,clock):

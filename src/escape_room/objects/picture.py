@@ -1,5 +1,5 @@
 from PIL import Image, ImageTk
-from riddles.riddle_generator import generate_riddle
+from llm.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 
 class Picture:
