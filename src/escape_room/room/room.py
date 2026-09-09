@@ -24,6 +24,7 @@ from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
+from src.escape_room.objects.revolver import Revolver
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
 
@@ -79,6 +80,7 @@ class Room(tkinter.Frame):
         self.letter = []
         self.clock = []
         self.figure = []
+        self.revolver = []
         for door in self.door:
             door.is_open = False        
 
@@ -250,6 +252,16 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
             obj = Letter(self.canvas_area,shift_coordinates=shift_coord,text=text,choices=choices)
             self.letter.append(obj)
+        # create revolver
+        for index,revolver in enumerate(self.room_data["revolver"]):
+            coord = self.room_data["revolver"][index][0] # get revolver coordinates (first element in list)
+            unique_id = self.room_data["revolver"][index][1] # unique identifier for the revolver
+            if self.room_state.object_is_removed("revolver",unique_id):
+                continue
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
+            obj = Revolver(self.inventory,self.room_state,
+                           shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
+            self.revolver.append(obj)
         # create figures
         # check for state if figure has appeared
         if self.figure == []:
@@ -376,6 +388,10 @@ class Room(tkinter.Frame):
             if draw_key:
                 key.draw(self.canvas_area) 
             draw_key = True
+            
+        # draw the revolver
+        for revolver in self.revolver:
+            revolver.draw(self.canvas_area)
 
         # draw the figures (persons etc.)
         for figure in self.figure:
