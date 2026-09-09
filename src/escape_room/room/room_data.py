@@ -37,7 +37,7 @@ start_room = {
                 ],
         "clock":[
                 ],
-        "sofa": [
+        "bench": [
                 ]
 }
 
@@ -72,7 +72,7 @@ mystery_room = {
                 ],
         "clock":[
                 ],       
-        "sofa": [
+        "bench": [
                 ]
 }
 
@@ -104,7 +104,7 @@ doorway = {
                 ],
         "clock":[
                 ],
-        "sofa": [
+        "bench": [
                 ]
 }
 
@@ -113,13 +113,13 @@ living_room_221b = {
         "room_name": "living_room_221b",
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "door": [[(8, 0, 3.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
+        "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
                 ], 
         "light": [
                 ],
         "table": [
                 ],
-        "chair": [ [(4.00,0,2.00),"front"]
+        "chair": [[(4.00,0,2.00),"front"]
                 ],
         "key": [
                 ],
@@ -135,7 +135,7 @@ living_room_221b = {
                 ],
         "clock":[[(5.15, 0.42, 4.00)]
                 ],
-        "sofa": [[(0.0, 0.4, 3.2),"left","sofa1"]            
+        "bench": [[(1, 0.4, 1.8),"left","bench1"]            
                 ]
 }
 
@@ -168,7 +168,7 @@ riddle_key_room = {
                 ],
         "clock":[
                 ],
-        "sofa": [
+        "bench": [
                 ]
 }
 
