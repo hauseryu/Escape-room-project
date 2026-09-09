@@ -208,9 +208,11 @@ class Room(tkinter.Frame):
             is_riddle = self.room_data["picture"][index][2]
             direction = self.room_data["picture"][index][3]
             unique_id = self.room_data["picture"][index][4] # unique identifier
+            pic_move_coord = self.room_data["picture"][index][5]
             shift_coord = (coord[0]-5.05,coord[1]-2.35,coord[2]-4.0)            
             obj = Picture(IMAGE_DIR / file_name,shift_coordinates=shift_coord,
-                          is_riddle=is_riddle, direction=direction, unique_id=unique_id, room_state=self.room_state)
+                          is_riddle=is_riddle, direction=direction, unique_id=unique_id, room_state=self.room_state,
+                          pic_move_coord=pic_move_coord)
             self.picture.append(obj)
         # create bookshelves
         for index,bookshelf in enumerate(self.room_data["bookshelf"]):
