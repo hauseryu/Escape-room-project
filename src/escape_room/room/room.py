@@ -25,6 +25,7 @@ from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
 from src.escape_room.objects.revolver import Revolver
+from src.escape_room.objects.bench import Bench
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
 
@@ -81,6 +82,7 @@ class Room(tkinter.Frame):
         self.clock = []
         self.figure = []
         self.revolver = []
+        self.bench = []
         for door in self.door:
             door.is_open = False        
 
@@ -244,6 +246,15 @@ class Room(tkinter.Frame):
             obj = Clock(self.canvas_area, time=1, shift_coordinates=shift_coord)
             self.clock.append(obj)
         ContextManager().set_clock(self.clock)
+        # create benchs
+        for index,bench in enumerate(self.room_data["bench"]):
+            coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)
+            direction = self.room_data["bench"][index][1] # get bench direction (right/left)
+            unique_id = self.room_data["bench"][index][2] # unique identifier
+            shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
+            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, unique_id=unique_id)
+            self.bench.append(obj)
+
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
             coord = self.room_data["letter"][index][0] # get letter coordinates (first element in list)
@@ -392,6 +403,20 @@ class Room(tkinter.Frame):
         # draw the revolver
         for revolver in self.revolver:
             revolver.draw(self.canvas_area)
+
+        # draw the benchs
+        for bench in self.bench:
+            for polygon in bench.bench_coordinates:
+                # in case a tuple defines multiple attributes....
+                if type(polygon[0]) == tuple:
+                    (color,texture) = polygon[0]
+                    # draw the bench element with textures
+                    graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
+                                                tag="bench", 
+                                                object=bench,shift_coordinates=bench.shift_coordinates)
+                else:
+                    graphics.draw(self.canvas_area, [polygon], tag="bench", 
+                                  object=bench, shift_coordinates=bench.shift_coordinates)
 
         # draw the figures (persons etc.)
         for figure in self.figure:

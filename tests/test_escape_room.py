@@ -144,6 +144,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.key = [FakeDrawable()]
         app.room.revolver = [FakeDrawable()]
         app.room.figure = []
+        app.room.bench = [MagicMock()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 
@@ -260,6 +261,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.key = [FakeDrawable()]
         app.room.revolver = [FakeDrawable()]
         app.room.figure = []
+        app.room.bench = [MagicMock()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 

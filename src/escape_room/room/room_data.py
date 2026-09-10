@@ -39,6 +39,8 @@ start_room = {
         "clock":[
                 ],
         "revolver":[
+                ],
+        "bench": [
                 ]
 }
 
@@ -73,8 +75,10 @@ mystery_room = {
                 ],
         "clock":[
                 ],
-        "revolver":[
-                ]              
+        "revolver":[             
+                ],       
+        "bench": [
+                ]
 }
 
 # from mystery room -> front door 
@@ -106,6 +110,8 @@ doorway = {
         "clock":[
                 ],
         "revolver":[
+                ],
+        "bench": [
                 ]
 }
 
@@ -114,13 +120,13 @@ living_room_221b = {
         "room_name": "living_room_221b",
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "door": [[(8, 0, 3.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
+        "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
                 ], 
         "light": [
                 ],
         "table": [
                 ],
-        "chair": [ [(4.00,0,2.00),"front"]
+        "chair": [[(4.00,0,2.00),"front"]
                 ],
         "key": [
                 ],
@@ -136,8 +142,9 @@ living_room_221b = {
                 ],
         "clock":[[(5.15, 0.42, 4.00)]
                 ],
-        "revolver":[
-                [(3.7,0, 2.0), "revolver1"]
+        "revolver":[[(3.7,0, 2.0), "revolver1"]
+                ],
+        "bench": [[(1, 0.4, 1.8),"left","bench1"]            
                 ]
 }
 
@@ -171,6 +178,8 @@ riddle_key_room = {
         "clock":[
                 ],
         "revolver":[
+                ],
+        "bench": [
                 ]
 }
 
