@@ -277,6 +277,8 @@ class Room(tkinter.Frame):
         # check for state if figure has appeared
         if self.figure == []:
             self.figure = self.room_state.get_objects("figure")
+        # pass over player data to the room object
+        self.update_player_data(self.player_name,self.player_icon_number)
 
         # create the canvas area and draw the start screen
         self.canvas_area.pack()        
@@ -292,6 +294,9 @@ class Room(tkinter.Frame):
             key.object_owner = self.player_name
         for door in self.door:
             door.player_name = self.player_name
+        for revolver in self.revolver:
+            revolver.object_owner = self.player_name
+
 
     # draw the room using world coordinates
     def draw_room(self):
