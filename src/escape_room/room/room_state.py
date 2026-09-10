@@ -22,7 +22,8 @@ class RoomState():
             "safe": {},
             "wardrobe": {},
             "picture": {},
-            "figure": {}
+            "figure": {},
+            "revolver": {},
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
