@@ -3,6 +3,7 @@ import tkinter
 from pathlib import Path
 import queue
 import os
+import random
 
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.toolbar import inventory
@@ -62,6 +63,8 @@ class Room(tkinter.Frame):
                                           width=globals.canvas_width,
                                           height=globals.canvas_height)
         ContextManager().set_canvas(self.canvas_area)
+        self.chat_panel = None
+        self.player_panel = None
         self.canvas_area.pack()
         self.pack()
         # object-related coding
@@ -95,6 +98,7 @@ class Room(tkinter.Frame):
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
+            self.role = ""
         self.game_client = game_client
         # get room data that determines the room layout + objects
         self.room_data = room_data
@@ -114,13 +118,32 @@ class Room(tkinter.Frame):
         self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()
-        self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
-                                                     icon_queue=self.icon_queue,
-                                                     gui_master=self.master)
-        self.chat_panel = chat_panel.ChatPanel(self.master, 
-                                               message_queue=self.chat_queue,
-                                               gui_master=self.master)
+        if self.player_panel == None:
+            self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
+                                                        icon_queue=self.icon_queue,
+                                                        gui_master=self.master)
+        if self.chat_panel == None:
+            self.chat_panel = chat_panel.ChatPanel(self.master, 
+                                                message_queue=self.chat_queue,
+                                                gui_master=self.master)
         self.menu = Menu(self, self.escape_app)
+
+        # process roles
+        try:
+            # determine own role based on random
+            roles = self.room_data["role"]
+            free_roles = self.player_panel.get_free_roles(roles)
+            number_roles = len(free_roles)
+            random_role = random.randint(1,number_roles)
+            self.role = free_roles[random_role-1]
+            self.player_panel.update_current_player(self.player_name,
+                                                    globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"),
+                                                    self.role)
+            self.game_client.role = self.role
+            action_type = "update_player_list"
+            self.game_client.send_action(action_type) # all players need to know the role assignment
+        except: # in case no roles are defined for the room, just pass on
+            pass
 
         # create doors
         for index,door in enumerate(self.room_data["door"]):
@@ -470,7 +493,8 @@ class Room(tkinter.Frame):
             height=202                 # Optional: Explicitly force height
         )        
         self.player_panel.update_current_player(self.player_name, 
-                                                globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"))
+                                                globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"),
+                                                self.role)
         # draw chat frame
         self.chat_panel_canvas_id = self.canvas_area.create_window(
             355+900, 1,                   # X and Y coordinates inside the canvas
@@ -536,8 +560,8 @@ class Room(tkinter.Frame):
                     connected_players = [
                         {
                             "name": player["name"], 
-                            # .get() sorgt für ein Fallback-Bild, falls eine unbekannte Nummer kommt
-                            "icon": globals.icon_mapping.get(player["icon"], "playerpic_running_man.png") 
+                            "icon": globals.icon_mapping.get(player["icon"], "playerpic_running_man.png"), # 2nd option: fallback
+                            "role": player["role"]
                         } 
                         for player in players
                         if player["name"] != self.player_name

@@ -154,6 +154,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.menu = MagicMock()
         app.room.player_name = ""
         app.room.player_icon_number = 1
+        app.room.role = MagicMock()
         app.room.room_coordinates = [
             ["#8B4513", (0, 0, 0), (8, 0, 0), (8, 0, 4), (0, 0, 4)],
             ["white", (0, 3, 0), (8, 3, 0), (8, 3, 4), (0, 3, 4)],
@@ -273,6 +274,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.menu = MagicMock()
         app.room.player_name = ""
         app.room.player_icon_number = 1
+        app.room.role = MagicMock()
 
         canvas = FakeCanvas()
         canvas.master = tkinter.Tk() 
