@@ -25,6 +25,7 @@ from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
 from src.escape_room.objects.revolver import Revolver
+from src.escape_room.objects.fireplace import Fireplace
 from src.escape_room.objects.bench import Bench
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -83,6 +84,7 @@ class Room(tkinter.Frame):
         self.figure = []
         self.revolver = []
         self.bench = []
+        self.fireplace = []
         for door in self.door:
             door.is_open = False        
 
@@ -254,6 +256,13 @@ class Room(tkinter.Frame):
             shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
             obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, unique_id=unique_id)
             self.bench.append(obj)
+        # create fireplaces
+        for index,fireplace in enumerate(self.room_data["fireplace"]):
+            obj = None
+            coord = self.room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
+            shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
+            obj = Fireplace(shift_coordinates=shift_coord)
+            self.fireplace.append(obj)
 
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
@@ -341,6 +350,13 @@ class Room(tkinter.Frame):
             graphics.draw(self.canvas_area,picture.coordinates_image,tag="picture",
                           shift_coordinates=picture.shift_coordinates)
             picture.draw_image(self.canvas_area, tag="picture")
+
+        # draw the fireplaces
+        for fireplace in self.fireplace:
+            graphics.draw(self.canvas_area,fireplace.fireplace_coordinates,shift_coordinates=fireplace.shift_coordinates)
+            fire_x, fire_y, fire_z = fireplace.fire_coordinate
+            x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, fireplace.shift_coordinates)
+            fireplace.draw_fire(self.canvas_area, x_pos, y_pos)
 
         # draw the table
         for table in self.table:
