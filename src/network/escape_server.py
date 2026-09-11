@@ -56,6 +56,12 @@ class EscapeServer():
                                 "text": text}
                     json_string = json.dumps(payload)
                     self.broadcast_message(json_string,sent_from)
+
+                if action == "update_player_list":
+                    player_name = game_data.get("player_name")       # who changed?
+                    role = game_data.get("role")                     # which role?
+                    active_players[player_name]["role"] = role
+                    self.broadcast_player_list()
                             
             except json.JSONDecodeError:
                 print(f"[FEHLER] invalid data format from {player_name}")
@@ -92,6 +98,7 @@ class EscapeServer():
             reg_data = json.loads(client_socket.recv(1024).decode("utf-8"))
             player_name = reg_data.get("name", "").strip()
             icon_num = reg_data.get("icon", 1) # Standard-Icon 1, if nothing is passed
+            role = reg_data.get("role", "") # standard: no role assigned
             
             player_queue = queue.Queue()
             
@@ -104,7 +111,8 @@ class EscapeServer():
                 # store player data in dictionary
                 active_players[player_name] = {
                     "queue": player_queue,
-                    "icon": icon_num
+                    "icon": icon_num,
+                    "role": role
                 }
             # send player list to all players (incl. new player)
             self.broadcast_player_list() 
@@ -128,7 +136,7 @@ class EscapeServer():
         """send current player list to all clients."""
         with players_lock:
             player_info_list = [
-                {"name": name, "icon": data["icon"]} 
+                {"name": name, "icon": data["icon"], "role": data["role"]} 
                 for name, data in active_players.items()
             ]            
         payload = {

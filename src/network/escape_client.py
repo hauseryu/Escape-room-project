@@ -9,6 +9,7 @@ class EscapeClient:
         self.port = port
         self.player_name = player_name
         self.player_icon_number = player_icon_number
+        self.role = "" # initially, no role assigned
         self.network_queue = network_queue  # Waiting queue in main app
         self.chat_queue = chat_queue # for incoming chat messages
         self.client_socket = None
@@ -29,7 +30,8 @@ class EscapeClient:
             # 3. register own player name & get player list
             reg_payload = {
                 "name": self.player_name,
-                "icon": self.player_icon_number
+                "icon": self.player_icon_number,
+                "role": self.role
             }
             self.client_socket.sendall(json.dumps(reg_payload).encode("utf-8"))
             print(f"[CLIENT] Registered successfully as '{self.player_name}'.")
@@ -97,6 +99,12 @@ class EscapeClient:
             
         if action_type == "chat_message":
             payload = json_payload
+        elif action_type == "update_player_list":
+            payload = {
+                "action": action_type,
+                "player_name": self.player_name,
+                "role": self.role
+            }
         else:
             payload = {
                 "action": action_type,
@@ -104,10 +112,10 @@ class EscapeClient:
                 "inventory": inventory,
                 "owner": owner
             }
-
         try:
             json_string = json.dumps(payload)
             self.client_socket.sendall(json_string.encode("utf-8"))
+            print(f"[DEBUG] Client->Server [action:{action_type}]")
         except Exception as e:
             print(f"error during sending: {e}")
 

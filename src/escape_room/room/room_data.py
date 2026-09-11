@@ -120,6 +120,7 @@ living_room_221b = {
         "room_name": "living_room_221b",
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "role": ["sherlock","watson"],
         "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
                 ], 
         "light": [

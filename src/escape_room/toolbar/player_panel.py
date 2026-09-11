@@ -5,7 +5,9 @@ class PlayerPanel(tk.Frame):
     def __init__(self, parent_widget, image_path,icon_queue,gui_master):
         # Initialize as a Tkinter Frame without hardcoded size limits
         super().__init__(parent_widget, bd=2, relief="groove", padx=10, pady=10)
-        
+
+        self.players_list = []
+        self.player_role = ""
         self.image_path = image_path
         self.loaded_icons = {}  # Cache to hold active photo references
 
@@ -19,11 +21,11 @@ class PlayerPanel(tk.Frame):
 
         # Placeholder label for the current player's icon
         self.current_icon_label = tk.Label(self.current_player_frame)
-        self.current_icon_label.pack(side="left", padx=(0, 10))
+        self.current_icon_label.pack(side="top", padx=(0, 10))
 
         # Label for the current player's name
         self.current_name_label = tk.Label(self.current_player_frame, text="", font=("Arial", 11, "bold"))
-        self.current_name_label.pack(side="left")
+        self.current_name_label.pack(side="top", pady=(2,0))
 
         # --- Section 2: Other Active Players ---
         # CHANGED: Added side="left" and fill="y" to place it right next to Section 1
@@ -34,7 +36,11 @@ class PlayerPanel(tk.Frame):
         self.players_list_frame = tk.Frame(self.others_frame)
         self.players_list_frame.pack(fill="both", expand=True)
         
-    def update_current_player(self, player_name, icon_name):
+    def update_current_player(self, player_name, icon_name, role):
+
+        # update player role
+        self.player_role = role
+
         """Updates the local profile display of the active user."""
         full_path = f"{self.image_path}/{icon_name}"
         img = tk.PhotoImage(file=full_path)
@@ -43,9 +49,25 @@ class PlayerPanel(tk.Frame):
         self.loaded_icons["current_player"] = img
         
         self.current_icon_label.config(image=img)
-        self.current_name_label.config(text=player_name)
+        if role=="":
+            self.current_name_label.config(text=player_name)
+        else:
+            self.current_name_label.config(text=player_name+"("+role+")")
 
+    def get_free_roles(self,room_roles):
+        free_roles = room_roles
+        if self.player_role != "":
+            return [] # if current player only has a role, no further role is possible        
+        for player in self.players_list:
+            if player["role"] in room_roles:
+                free_roles.remove(player["role"])
+        return free_roles
+    
     def update_players_list(self, players_data_list):
+
+        # update own list
+        self.players_list = players_data_list
+
         """Clears and redraws the list of other active players horizontally."""
         # 1. Clear previous widget elements
         for child in self.players_list_frame.winfo_children():
@@ -70,7 +92,10 @@ class PlayerPanel(tk.Frame):
             icon_lbl = tk.Label(player_card_frame, image=img)
             icon_lbl.pack(side="top")
 
-            name_lbl = tk.Label(player_card_frame, text=player["name"], font=("Arial", 10))
+            if player["role"]!="":
+                name_lbl = tk.Label(player_card_frame, text=player["name"]+"("+player["role"]+")", font=("Arial", 10))
+            else:
+                name_lbl = tk.Label(player_card_frame, text=player["name"], font=("Arial", 10))
             name_lbl.pack(side="top", pady=(2, 0))
 
             # 3. CONNECT THE EVENT HANDLER
