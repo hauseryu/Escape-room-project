@@ -42,6 +42,8 @@ start_room = {
                 ],
         "bench": [
                 ],
+        "fireplace":[            
+                ],
         "magnifier":[
                 ]
 }
@@ -81,6 +83,8 @@ mystery_room = {
                 ],       
         "bench": [
                 ],
+        "fireplace":[
+                ],
         "magnifier":[
                 ]
 }
@@ -117,6 +121,8 @@ doorway = {
                 ],
         "bench": [
                 ],
+        "fireplace":[
+                ],
         "magnifier":[
                 ]
 }
@@ -146,11 +152,13 @@ living_room_221b = {
                 ],
         "letter":[[(3.7, 0.6, 2.3),letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes]
                 ],
-        "clock":[[(5.15, 0.42, 4.00)]
+        "clock":[[(6, 0.42, 4.00)]
                 ],
         "revolver":[[(3.7,0, 2.0), "revolver1"]
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1"]            
+                ],
+        "fireplace":[[(3.2, 0, 4)]
                 ],
         "magnifier":[[(4.2,0,2.0), "magnifier1"]
                 ]
@@ -188,6 +196,8 @@ riddle_key_room = {
         "revolver":[
                 ],
         "bench": [
+                ],
+        "fireplace":[
                 ],
         "magnifier":[
                 ]
