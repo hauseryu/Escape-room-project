@@ -41,6 +41,8 @@ start_room = {
         "revolver":[
                 ],
         "bench": [
+                ],
+        "magnifier":[
                 ]
 }
 
@@ -78,6 +80,8 @@ mystery_room = {
         "revolver":[             
                 ],       
         "bench": [
+                ],
+        "magnifier":[
                 ]
 }
 
@@ -112,6 +116,8 @@ doorway = {
         "revolver":[
                 ],
         "bench": [
+                ],
+        "magnifier":[
                 ]
 }
 
@@ -145,6 +151,8 @@ living_room_221b = {
         "revolver":[[(3.7,0, 2.0), "revolver1"]
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1"]            
+                ],
+        "magnifier":[[(4.2,0,2.0), "magnifier1"]
                 ]
 }
 
@@ -180,6 +188,8 @@ riddle_key_room = {
         "revolver":[
                 ],
         "bench": [
+                ],
+        "magnifier":[
                 ]
 }
 

@@ -25,6 +25,7 @@ from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
 from src.escape_room.objects.revolver import Revolver
+from src.escape_room.objects.magnifier import Magnifier
 from src.escape_room.objects.bench import Bench
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -83,6 +84,7 @@ class Room(tkinter.Frame):
         self.figure = []
         self.revolver = []
         self.bench = []
+        self.magnifier = []
         for door in self.door:
             door.is_open = False        
 
@@ -273,6 +275,16 @@ class Room(tkinter.Frame):
             obj = Revolver(self.inventory,self.room_state,
                            shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
             self.revolver.append(obj)
+        # create magnifier
+        for index,magnifier in enumerate(self.room_data["magnifier"]):
+            coord = self.room_data["magnifier"][index][0] # get magnifier coordinates (first element in list)
+            unique_id = self.room_data["magnifier"][index][1] # unique identifier for the magnifier
+            if self.room_state.object_is_removed("magnifier",unique_id):
+                continue
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
+            obj = Magnifier(self.inventory,self.room_state,
+                           shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
+            self.revolver.append(obj)
         # create figures
         # check for state if figure has appeared
         if self.figure == []:
@@ -294,6 +306,8 @@ class Room(tkinter.Frame):
             key.object_owner = self.player_name
         for door in self.door:
             door.player_name = self.player_name
+        for magnifier in self.magnifier:
+            magnifier.player_name = self.player_name        
         for revolver in self.revolver:
             revolver.object_owner = self.player_name
 
@@ -408,6 +422,10 @@ class Room(tkinter.Frame):
         # draw the revolver
         for revolver in self.revolver:
             revolver.draw(self.canvas_area)
+            
+        # draw the magnifier
+        for magnifier in self.magnifier:
+            magnifier.draw(self.canvas_area)
 
         # draw the benchs
         for bench in self.bench:
