@@ -19,6 +19,7 @@ class ContextManager():
             self.action_manager = None
             self.room = None
             self.llm_client = None
+            self.escape_app = None
 
     @staticmethod
     def get_image_path() -> Path:
@@ -63,4 +64,11 @@ class ContextManager():
 
     def get_room(self):
         return self.room
+
+    # escape_app
+    def set_escape_app(self,escape_app):
+        self.escape_app = escape_app
+        
+    def get_escape_app(self):
+        return self.escape_app
     
