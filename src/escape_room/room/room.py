@@ -279,7 +279,13 @@ class Room(tkinter.Frame):
             direction = self.room_data["bench"][index][1] # get bench direction (right/left)
             unique_id = self.room_data["bench"][index][2] # unique identifier
             shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
-            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, unique_id=unique_id)
+            movement_vector=None
+            try:
+                movement_vector = self.room_data["bench"][index][3]
+            except:
+                pass
+            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, 
+                        unique_id=unique_id, canvas=self.canvas_area, movement_vector=movement_vector)
             self.bench.append(obj)
         # create fireplaces
         for index,fireplace in enumerate(self.room_data["fireplace"]):
@@ -468,17 +474,7 @@ class Room(tkinter.Frame):
 
         # draw the benchs
         for bench in self.bench:
-            for polygon in bench.bench_coordinates:
-                # in case a tuple defines multiple attributes....
-                if type(polygon[0]) == tuple:
-                    (color,texture) = polygon[0]
-                    # draw the bench element with textures
-                    graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
-                                                tag="bench", 
-                                                object=bench,shift_coordinates=bench.shift_coordinates)
-                else:
-                    graphics.draw(self.canvas_area, [polygon], tag="bench", 
-                                  object=bench, shift_coordinates=bench.shift_coordinates)
+            bench.draw()
 
         # draw the figures (persons etc.)
         for figure in self.figure:

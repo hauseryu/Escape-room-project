@@ -157,7 +157,7 @@ living_room_221b = {
                 ],
         "revolver":[[(3.7,0, 2.0), "revolver1"]
                 ],
-        "bench": [[(1, 0.4, 1.8),"left","bench1"]            
+        "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
         "fireplace":[[(3.2, 0, 4)]
                 ],
