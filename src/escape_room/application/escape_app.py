@@ -10,6 +10,7 @@ from src.escape_room.room.room import Room
 from src.escape_room.application import globals
 from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.application.game_over_screen import GameOverScreen
 from src.escape_room.actions.action import ActionManager
 from src.llm.llm_client import LlmClient
 
@@ -28,6 +29,7 @@ class EscapeApp():
         # create LLM client and pass it to context manager
         self.llm_client = LlmClient()
         self.context_manager.set_llm_client(self.llm_client)
+        self.context_manager.set_escape_app(self)
 
         # create canvas frame
         self.room = Room(master, self)
@@ -101,13 +103,14 @@ class EscapeApp():
         # pass over control to room object => create and show room 
         self.room.draw_room()
         
-    def return_to_start_screen(self):
+    def return_to_start_screen(self, event=None):
         # delete canvas content completely
         self.room.canvas_area.delete("all")
         
         # seperate the network connection
         if hasattr(self.game_client, "disconnect"):
             self.game_client.disconnect()
+            print("[CLLIENT] Client has been disconnected")
 
         # actualise network search
         found_devices = self.game_client.get_devices_local_network()
