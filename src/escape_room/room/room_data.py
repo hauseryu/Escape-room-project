@@ -155,13 +155,13 @@ living_room_221b = {
                 ],
         "clock":[[(6, 0.42, 4.00)]
                 ],
-        "revolver":[[(3.7,0, 2.0), "revolver1"]
+        "revolver":[[(-1,0, 3.1), "revolver1","watson"] # revolver only available for role watson
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
         "fireplace":[[(3.2, 0, 4)]
                 ],
-        "magnifier":[[(4.2,0,2.0), "magnifier1"]
+        "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
                 ]
 }
 
