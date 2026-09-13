@@ -1,4 +1,5 @@
 
+from ast import In
 import tkinter
 from pathlib import Path
 import queue
@@ -17,7 +18,6 @@ from src.escape_room.room.room_coordinates import room_coord
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
 from escape_room.objects.light import Light
-from escape_room.objects.key import Key
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
 from escape_room.objects.picture import Picture
@@ -25,10 +25,9 @@ from escape_room.objects.bookshelf import Bookshelf
 from escape_room.objects.safe import Safe
 from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
-from src.escape_room.objects.revolver import Revolver
 from src.escape_room.objects.fireplace import Fireplace
-from src.escape_room.objects.magnifier import Magnifier
 from src.escape_room.objects.bench import Bench
+from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
 
@@ -90,6 +89,7 @@ class Room(tkinter.Frame):
         self.bench = []
         self.fireplace = []
         self.magnifier = []
+        self.water_glass = []
         for door in self.door:
             door.is_open = False        
 
@@ -206,9 +206,9 @@ class Room(tkinter.Frame):
             unique_id = self.room_data["key"][index][1] # unique identifier for the key
             if self.room_state.object_is_removed("key",unique_id):
                 continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
-            obj = Key(self.inventory,self.room_state,
-                      shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
+            obj = InventoryItem("key","key_transparent.png",self.inventory,self.room_state,unique_id=unique_id,
+                                shift_coordinates=shift_coord,room_placement=True)
             self.key.append(obj)
         #create safes
         for index,safe in enumerate(self.room_data["safe"]):
@@ -301,9 +301,9 @@ class Room(tkinter.Frame):
                 pass
             if self.room_state.object_is_removed("revolver",unique_id):
                 continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
-            obj = Revolver(self.inventory,self.room_state,
-                           shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
+            obj = InventoryItem("revolver","revolver.png",self.inventory,self.room_state,unique_id=unique_id,
+                                shift_coordinates=shift_coord,room_placement=True, resize_inventory=(50, 25))
             self.revolver.append(obj)
         # create magnifier
         for index,magnifier in enumerate(self.room_data["magnifier"]):
@@ -317,10 +317,20 @@ class Room(tkinter.Frame):
                 pass
             if self.room_state.object_is_removed("magnifier",unique_id):
                 continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)
-            obj = Magnifier(self.inventory,self.room_state,
-                           shift_coordinates=shift_coord,unique_id=unique_id,room_placement=True)
-            self.revolver.append(obj)
+            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
+            obj = InventoryItem("magnifier","magnifier.png",self.inventory,self.room_state,unique_id=unique_id,
+                                shift_coordinates=shift_coord,room_placement=True, resize_inventory=(100, 50))
+            self.magnifier.append(obj)
+        # create glass of water
+        for index,water_glass in enumerate(self.room_data["water_glass"]):
+            coord = self.room_data["water_glass"][index][0] # get glass of water coordinates (first element in list)
+            unique_id = self.room_data["water_glass"][index][1] # unique identifier for the glass of water
+            if self.room_state.object_is_removed("water_glass",unique_id):
+                continue
+            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-3.0)
+            obj = InventoryItem("water_glass","water_glass.png",self.inventory,self.room_state,unique_id=unique_id,
+                           shift_coordinates=shift_coord,room_placement=True, resize_room=(50, 100), resize_inventory=(40, 80))
+            self.water_glass.append(obj)
         # create benchs
         for index,bench in enumerate(self.room_data["bench"]):
             coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)
@@ -335,6 +345,7 @@ class Room(tkinter.Frame):
             obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, 
                         unique_id=unique_id, canvas=self.canvas_area, movement_vector=movement_vector)
             self.bench.append(obj)
+
         # create figures
         # check for state if figure has appeared
         if self.figure == []:
@@ -357,10 +368,11 @@ class Room(tkinter.Frame):
         for door in self.door:
             door.player_name = self.player_name
         for magnifier in self.magnifier:
-            magnifier.player_name = self.player_name        
+            magnifier.object_owner = self.player_name        
         for revolver in self.revolver:
             revolver.object_owner = self.player_name
-
+        for water_glass in self.water_glass:
+            water_glass.object_owner = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -413,10 +425,6 @@ class Room(tkinter.Frame):
             x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, fireplace.shift_coordinates)
             fireplace.draw_fire(self.canvas_area, x_pos, y_pos)
 
-        # draw the table
-        for table in self.table:
-            graphics.draw(self.canvas_area,table.coordinates_table,shift_coordinates=table.shift_coordinates)
-
         # draw the chair
         for chair in self.chair:
             graphics.draw(self.canvas_area,chair.coordinates_chair,shift_coordinates=chair.shift_coordinates)
@@ -428,6 +436,7 @@ class Room(tkinter.Frame):
             graphics.draw(self.canvas_area,bookshelf.coordinates_books,
                           shift_coordinates=bookshelf.shift_coordinates)
             bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
+        
         # draw the wardrobes
         for wardrobe in self.wardrobe:
             if wardrobe.state == 0:
@@ -458,6 +467,10 @@ class Room(tkinter.Frame):
             graphics.draw(self.canvas_area, clock.coordinates, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
             graphics.draw(self.canvas_area, clock.coordinates_clock_hands, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
 
+        # draw the table
+        for table in self.table:
+            graphics.draw(self.canvas_area,table.coordinates_table,shift_coordinates=table.shift_coordinates)
+
         # draw the letter
         for letter in self.letter:
             graphics.draw(self.canvas_area,letter.coordinates,tag="letter",object=letter,shift_coordinates=letter.shift_coordinates)
@@ -483,6 +496,10 @@ class Room(tkinter.Frame):
         # draw the magnifier
         for magnifier in self.magnifier:
             magnifier.draw(self.canvas_area)
+
+        # draw the glass of water
+        for water_glass in self.water_glass:
+            water_glass.draw(self.canvas_area)
 
         # draw the benchs
         for bench in self.bench:
@@ -582,7 +599,7 @@ class Room(tkinter.Frame):
                     owner = event_data.get("owner")
                     print(f"[GUI Event] event-based passing of inventory {inventory},",
                            f"owner {owner} from player {player}")
-                    key = Key(self.inventory)
+                    key = InventoryItem("key","key_transparent.png",self.inventory,self.room_state)
                     key.object_owner = owner
                     self.inventory.addObject("key",key.object_owner,key)
                     # draw the key and inventory

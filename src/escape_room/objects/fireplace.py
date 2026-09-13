@@ -1,4 +1,5 @@
 from PIL import Image, ImageTk, ImageOps
+from src.escape_room.application.context_manager import ContextManager
 
 class Fireplace():
     def __init__(self, shift_coordinates=(0, 0, 0)):
@@ -38,7 +39,7 @@ class Fireplace():
 
     def draw_fire(self, canvas, x_pos, y_pos):
         # Load the fire image
-        fire_image_path = "src/escape_room/assets/images/fire.png"
+        fire_image_path = ContextManager.get_image_path().joinpath("fire.png")
         fire_image = Image.open(fire_image_path)
         resized_image = ImageOps.contain(fire_image, (90, 90))  # Resize while maintaining aspect ratio
         self.fire_image_tk = ImageTk.PhotoImage(resized_image)
