@@ -169,7 +169,8 @@ living_room_221b = {
                 ],
         "magnifier":[[(4.2,0,2.0), "magnifier1"]
                 ],
-        "water_glass":[(5.5,0.6,2.4), "water_glass1"],
+        "water_glass":[[(5.5,0.6,2.4), "water_glass1"],
+                ],
         "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
                 ]
 }

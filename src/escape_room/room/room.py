@@ -368,10 +368,11 @@ class Room(tkinter.Frame):
         for door in self.door:
             door.player_name = self.player_name
         for magnifier in self.magnifier:
-            magnifier.player_name = self.player_name        
+            magnifier.object_owner = self.player_name        
         for revolver in self.revolver:
             revolver.object_owner = self.player_name
-
+        for water_glass in self.water_glass:
+            water_glass.object_owner = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
