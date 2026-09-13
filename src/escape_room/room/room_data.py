@@ -184,7 +184,7 @@ riddle_key_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ],
-        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "picture1", (0,0)] # picture 1 (riddle) # is_riddle = True
+        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "front","picture1", (0,0)] # picture 1 (riddle) # is_riddle = True
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
