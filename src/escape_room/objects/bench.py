@@ -6,7 +6,8 @@ CLOTH_TEXTURE = IMAGE_DIR / "Texturelabs_Fabric.jpg"
 
 class Bench():
     # def __init__(self,direction,shift_coordinates=(0,0,0),unique_id=None):
-    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0),unique_id=None):
+    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0),unique_id=None,
+                 canvas=None,movement_vector=None):
         self.x = x
         self.y = y
         self.z = z
@@ -14,6 +15,9 @@ class Bench():
         self.width_large = 1.7
         self.direction = direction
         self.shift_coordinates = shift_coordinates
+        self.movement_vector = movement_vector
+        self.state="initial"
+        self.canvas = canvas
 
         # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
         self.coordinates_benchseat = self._create_panel_coordinates(direction,x_pos1=3.45, x_pos2=5.05+self.width_small,
@@ -139,6 +143,35 @@ class Bench():
         elif direction=="left":
             #return[right,front,left,surface,backpart]
             return[backpart,right,front,left,surface]
+
+    def draw(self):
+        for polygon in self.bench_coordinates:
+            # in case a tuple defines multiple attributes....
+            if type(polygon[0]) == tuple:
+                (color,texture) = polygon[0]
+                # draw the bench element with textures
+                graphics.draw_textured_polygon(self.canvas, polygon, texture, color,
+                                            tag="bench", 
+                                            object=self,shift_coordinates=self.shift_coordinates)
+            else:
+                graphics.draw(self.canvas, [polygon], tag="bench", 
+                                object=self, shift_coordinates=self.shift_coordinates)
+
+    def clicked(self, event, tag, object, canvas, world_coordinates):
+        if tag=="bench" and self.state=="initial":
+            print("[DEBUG] bench clicked!")
+            self.state = "moved"
+            canvas.delete(tag)
+            (a,b,c) = self.shift_coordinates
+            if self.movement_vector[0]=="x":
+                a+=self.movement_vector[1]
+            elif self.movement_vector[0]=="y":
+                b+=self.movement_vector[1]
+            elif self.movement_vector[0]=="z":
+                c+=self.movement_vector[1]
+            self.shift_coordinates = (a,b,c)
+            self.draw()
+
 
 
 

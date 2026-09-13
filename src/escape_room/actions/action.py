@@ -1,4 +1,6 @@
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.application.game_over_screen import GameOverScreen
+from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.objects.clock import Clock
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
@@ -6,8 +8,10 @@ from src.llm.dialog import Dialog
 
 # specific actions
 def game_over():
+    canvas = ContextManager().get_canvas()
+    game_over_screen = GameOverScreen(canvas,None,None)
+    game_over_screen.draw()
     print("[DEBUG] Game over!")
-    pass
 
 ELAPSE_TIME = 1500
 def time_elapse(time):

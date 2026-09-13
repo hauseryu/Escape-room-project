@@ -273,14 +273,6 @@ class Room(tkinter.Frame):
             obj = Clock(self.canvas_area, time=1, shift_coordinates=shift_coord)
             self.clock.append(obj)
         ContextManager().set_clock(self.clock)
-        # create benchs
-        for index,bench in enumerate(self.room_data["bench"]):
-            coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)
-            direction = self.room_data["bench"][index][1] # get bench direction (right/left)
-            unique_id = self.room_data["bench"][index][2] # unique identifier
-            shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
-            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, unique_id=unique_id)
-            self.bench.append(obj)
         # create fireplaces
         for index,fireplace in enumerate(self.room_data["fireplace"]):
             obj = None
@@ -301,6 +293,12 @@ class Room(tkinter.Frame):
         for index,revolver in enumerate(self.room_data["revolver"]):
             coord = self.room_data["revolver"][index][0] # get revolver coordinates (first element in list)
             unique_id = self.room_data["revolver"][index][1] # unique identifier for the revolver
+            try:
+                role_assign = self.room_data["revolver"][index][2] # availability of object for role?
+                if self.role != role_assign:
+                    continue # role mismatch => object not relevant for player!
+            except:
+                pass
             if self.room_state.object_is_removed("revolver",unique_id):
                 continue
             shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
@@ -311,6 +309,12 @@ class Room(tkinter.Frame):
         for index,magnifier in enumerate(self.room_data["magnifier"]):
             coord = self.room_data["magnifier"][index][0] # get magnifier coordinates (first element in list)
             unique_id = self.room_data["magnifier"][index][1] # unique identifier for the magnifier
+            try:
+                role_assign = self.room_data["magnifier"][index][2] # availability of object for role?
+                if self.role != role_assign:
+                    continue # role mismatch => object not relevant for player!
+            except:
+                pass
             if self.room_state.object_is_removed("magnifier",unique_id):
                 continue
             shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
@@ -327,6 +331,20 @@ class Room(tkinter.Frame):
             obj = InventoryItem("water_glass","water_glass.png",self.inventory,self.room_state,unique_id=unique_id,
                            shift_coordinates=shift_coord,room_placement=True, resize_room=(50, 100), resize_inventory=(40, 80))
             self.water_glass.append(obj)
+        # create benchs
+        for index,bench in enumerate(self.room_data["bench"]):
+            coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)
+            direction = self.room_data["bench"][index][1] # get bench direction (right/left)
+            unique_id = self.room_data["bench"][index][2] # unique identifier
+            shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
+            movement_vector=None
+            try:
+                movement_vector = self.room_data["bench"][index][3]
+            except:
+                pass
+            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, 
+                        unique_id=unique_id, canvas=self.canvas_area, movement_vector=movement_vector)
+            self.bench.append(obj)
 
         # create figures
         # check for state if figure has appeared
@@ -484,17 +502,7 @@ class Room(tkinter.Frame):
 
         # draw the benchs
         for bench in self.bench:
-            for polygon in bench.bench_coordinates:
-                # in case a tuple defines multiple attributes....
-                if type(polygon[0]) == tuple:
-                    (color,texture) = polygon[0]
-                    # draw the bench element with textures
-                    graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
-                                                tag="bench", 
-                                                object=bench,shift_coordinates=bench.shift_coordinates)
-                else:
-                    graphics.draw(self.canvas_area, [polygon], tag="bench", 
-                                  object=bench, shift_coordinates=bench.shift_coordinates)
+            bench.draw()
 
         # draw the figures (persons etc.)
         for figure in self.figure:
