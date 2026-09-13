@@ -45,6 +45,8 @@ start_room = {
         "fireplace":[            
                 ],
         "magnifier":[
+                ],
+        "water_glass":[
                 ]
 }
 
@@ -86,6 +88,8 @@ mystery_room = {
         "fireplace":[
                 ],
         "magnifier":[
+                ],
+        "water_glass":[
                 ]
 }
 
@@ -124,6 +128,8 @@ doorway = {
         "fireplace":[
                 ],
         "magnifier":[
+                ],
+        "water_glass":[
                 ]
 }
 
@@ -137,7 +143,7 @@ living_room_221b = {
                 ], 
         "light": [
                 ],
-        "table": [
+        "table": [[(8, 0, 4)]
                 ],
         "chair": [[(4.00,0,2.00),"front"]
                 ],
@@ -162,6 +168,8 @@ living_room_221b = {
         "fireplace":[[(3.2, 0, 4)]
                 ],
         "magnifier":[[(4.2,0,2.0), "magnifier1"]
+                ],
+        "water_glass":[[(5.5,0.6,2.4), "water_glass1"]
                 ]
 }
 
@@ -201,6 +209,8 @@ riddle_key_room = {
         "fireplace":[
                 ],
         "magnifier":[
+                ],
+        "water_glass":[
                 ]
 }
 

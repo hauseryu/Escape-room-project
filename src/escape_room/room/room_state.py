@@ -25,6 +25,7 @@ class RoomState():
             "figure": {},
             "revolver": {},
             "magnifier": {},
+            "water_glass": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
