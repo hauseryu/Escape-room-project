@@ -161,7 +161,7 @@ living_room_221b = {
                 ],
         "fireplace":[[(3.2, 0, 4)]
                 ],
-        "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
+        "magnifier":[[(-1,0,3.1), "magnifier1","watson"]  # magnifier only available for role sherlock
                 ]
 }
 
