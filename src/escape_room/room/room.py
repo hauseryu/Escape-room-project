@@ -590,7 +590,7 @@ class Room(tkinter.Frame):
                     owner = event_data.get("owner")
                     print(f"[GUI Event] event-based passing of inventory {inventory},",
                            f"owner {owner} from player {player}")
-                    key = Key(self.inventory)
+                    key = InventoryItem("key","key_transparent.png",self.inventory,self.room_state)
                     key.object_owner = owner
                     self.inventory.addObject("key",key.object_owner,key)
                     # draw the key and inventory
