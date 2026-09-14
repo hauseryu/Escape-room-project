@@ -423,7 +423,7 @@ class Room(tkinter.Frame):
             graphics.draw(self.canvas_area,fireplace.fireplace_coordinates,shift_coordinates=fireplace.shift_coordinates)
             fire_x, fire_y, fire_z = fireplace.fire_coordinate
             x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, fireplace.shift_coordinates)
-            fireplace.draw_fire(self.canvas_area, x_pos, y_pos)
+            fireplace.draw_fire(self.canvas_area, x_pos, y_pos, self.inventory, self.player_name)
 
         # draw the chair
         for chair in self.chair:
