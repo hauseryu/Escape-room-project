@@ -563,6 +563,24 @@ class Room(tkinter.Frame):
         self.figure.append(figure)
         self.room_state.set_object("figure",figure)
 
+    def removeObject(self,object):
+        if object.name == "key":
+            for index,key in enumerate(self.key):
+                if key == object:
+                    del self.key[index]
+        if object.name == "revolver":
+            for index,revolver in enumerate(self.revolver):
+                if revolver == object:
+                    del self.revolver[index]
+        if object.name == "water_glass":
+            for index,water_glass in enumerate(self.water_glass):
+                if water_glass == object:
+                    del self.water_glass[index]
+        if object.name == "magnifier":
+            for index,magnifier in enumerate(self.magnifier):
+                if magnifier == object:
+                    del self.magnifier[index]
+
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
 

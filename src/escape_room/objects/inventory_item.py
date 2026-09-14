@@ -93,6 +93,7 @@ class InventoryItem:
             self.inventory.addObject(self.name, self.object_owner, self)
             self.room_state.remove(self.name, self.unique_id)
             self.room_placement = False
+            ContextManager().get_room().removeObject(self)
         else:
             self.inventory.selectObject(self.name, self.object_owner)
         self.draw(self.canvas)
