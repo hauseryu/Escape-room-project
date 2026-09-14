@@ -37,11 +37,19 @@ class Fireplace():
         ]
         self.fire_coordinate = (3.55, 0.8, 3.9)
 
-    def draw_fire(self, canvas, x_pos, y_pos):
+    def draw_fire(self, canvas, x_pos, y_pos, inventory, player_name):
         # Load the fire image
         fire_image_path = ContextManager.get_image_path().joinpath("fire.png")
         fire_image = Image.open(fire_image_path)
         resized_image = ImageOps.contain(fire_image, (90, 90))  # Resize while maintaining aspect ratio
         self.fire_image_tk = ImageTk.PhotoImage(resized_image)
         # Draw the fire image on the canvas
-        self.fire_image_id = canvas.create_image(x_pos, y_pos, image=self.fire_image_tk, anchor="nw")
+        self.fire_image_id = canvas.create_image(x_pos, y_pos, image=self.fire_image_tk, anchor="nw", tags="fire")
+        canvas.tag_bind("fire","<Button-1>", lambda event: self.clicked(canvas, inventory, player_name))
+
+    def clicked(event, canvas, inventory, player_name):
+        if inventory.objectIsSelected("water_glass", player_name) == True:
+            canvas.delete("fire")            
+            inventory.remove_inventory_pictures()
+            inventory.delObject("water_glass",player_name)
+            inventory.redraw_inventory()
