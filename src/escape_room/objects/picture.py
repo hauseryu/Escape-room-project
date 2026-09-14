@@ -89,8 +89,10 @@ class Picture:
         image = Image.open(self.image_path)
         
         self.foto_image = ImageTk.PhotoImage(image, master=canvas)
-        
-        self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], anchor="nw", image=self.foto_image)
+        if self.is_riddle:
+            self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
+        else:
+            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], anchor="nw", image=self.foto_image)
         if self.is_riddle:
             canvas.tag_bind(
                 self.image_id,

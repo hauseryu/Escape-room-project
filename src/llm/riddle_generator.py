@@ -35,7 +35,7 @@ def generate_riddle():
     selected_themes = random.sample(THEMES, 3)
     themes_text = ", ".join(selected_themes)
     
-    if ContextManager.get_llm_client().deactivate_llm == 'OFF':
+    if ContextManager().get_llm_client().deactivate_llm == 'OFF':
         print("[DEBUG] riddle is currently deactivated by system/env variable RIDDLE=OFF")
         return ("riddle not available","1")
 
