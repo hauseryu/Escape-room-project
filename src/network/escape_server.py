@@ -14,12 +14,13 @@ players_lock = threading.Lock() # protects dictionary against competing access f
 class EscapeServer():
     def client_receive_loop(self,client_socket, player_name, outgoing_queue):
         """ receives actions of player and processes escape room logic."""
-        print(f"[ROOM] {player_name} has entered the room.")
+        print(f"[SERVER] {player_name} has entered the room.")
         
         while True:
             try:
                 data = client_socket.recv(1024)
                 if not data:
+                    print(f"[SERVER] Player {player_name} has closed the connection.")
                     break
                     
                 # we use JSON for structured game data
@@ -62,11 +63,14 @@ class EscapeServer():
                     role = game_data.get("role")                     # which role?
                     active_players[player_name]["role"] = role
                     self.broadcast_player_list()
-                            
+
             except json.JSONDecodeError:
                 print(f"[FEHLER] invalid data format from {player_name}")
             except Exception as excp:
                 break
+            except (ConnectionResetError, BrokenPipeError):
+                # Fall B: Client-App wurde abrupt beendet (z.B. Task-Manager oder Absturz)
+                print(f"connection to player {player_name} unexpectedly broken.")
 
         # player leaves the game
         print(f"[ROOM] {player_name} has left the game.")
@@ -76,7 +80,15 @@ class EscapeServer():
         
         # terminate also the sending thread
         outgoing_queue.put("SHUTDOWN")
+        try:
+            client_socket.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
         client_socket.close()
+        print(f"[SERVER] connection to player {player_name} was closed.")
+
+        # inform all players about the change
+        self.broadcast_player_list()
 
     def client_send_loop(self,client_socket, outgoing_queue):
         """ take data from the queue of the player and to the player's PC."""

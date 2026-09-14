@@ -108,9 +108,8 @@ class EscapeApp():
         self.room.canvas_area.delete("all")
         
         # seperate the network connection
-        if hasattr(self.game_client, "disconnect"):
-            self.game_client.disconnect()
-            print("[CLLIENT] Client has been disconnected")
+        self.game_client.disconnect()
+        print("[CLIENT] Client has been disconnected")
 
         # actualise network search
         found_devices = self.game_client.get_devices_local_network()
