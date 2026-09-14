@@ -71,9 +71,11 @@ class EscapeClient:
         """runs asynchronously in background. Receives data and puts it into the GUI queue."""
         while True:
             try:
+                if not self.client_socket:
+                    break                
                 data = self.client_socket.recv(1024)
                 if not data:
-                    print("[CLIENT] Verbindung vom Server geschlossen.")
+                    print("[CLIENT] connection closed by server.")
                     # put specific event into queue, so GUI gets knowledge about it
                     self.network_queue.put({"event": "system", "msg": "lost connection."})
                     break
@@ -84,7 +86,15 @@ class EscapeClient:
                 self.network_queue.put(game_event)
                 # fire event for the canvas master window
                 self.gui_master.event_generate("<<NetworkEvent>>", when="tail")
-                
+
+            except (ConnectionAbortedError, OSError):
+                # happens if disconnect() is called, while recv() is blocked
+                print("[CLIENT] receive loop is closed (socket closed).")
+                break
+            except Exception as e:
+                print(f"[CLIENT] error in client receive loop: {e}")
+                break
+                        
             except Exception:
                 break
         
@@ -183,3 +193,18 @@ class EscapeClient:
             if found:
                 return device['ip']
         return ""
+
+    def disconnect(self):
+        """called when player leaves the game"""
+        if self.client_socket:
+            try:
+                # 1. Signal to server that client leaves (SHUT_RDWR closes send & receive)
+                self.client_socket.shutdown(socket.SHUT_RDWR)
+            except Exception:
+                pass
+            finally:
+                # 2. close socket resource
+                self.client_socket.close()
+                self.client_socket = None
+                print("[CLIENT] client socket closed!")
+    
