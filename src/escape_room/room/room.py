@@ -68,6 +68,7 @@ class Room(tkinter.Frame):
         self.pack()
         # object-related coding
         self.room_state = RoomState()
+        ContextManager().set_room_state(self.room_state)
         self.reset_objects()
 
     # reset objects to initial state

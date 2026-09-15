@@ -116,5 +116,9 @@ class EscapeApp():
         self.server = self.game_client.check_server_port(found_devices,globals.SERVER_PORT)
         
         self.show_start_screen()
+        
+    def save_game(self):
+        room_state = self.context_manager.get_room_state()
+        room_state.save_to_db()
 
 
