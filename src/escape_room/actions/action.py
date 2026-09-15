@@ -4,6 +4,7 @@ from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.objects.clock import Clock
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
+from src.escape_room.actions import action_data 
 from src.llm.dialog import Dialog
 
 # specific actions
@@ -32,14 +33,20 @@ def figure_appears(figure,image_name,x_xoord,y_coord,width,height,figure_talk):
     figure.draw_image(ContextManager().get_canvas())
     ContextManager().get_action_manager().execute_next_action()
 
+def figure_disappears(figure):
+    print(f"[DEBUG] Person disappears: {figure}")
+    obj = ContextManager().get_room().get_figure(figure)
+    obj.remove_image(ContextManager().get_canvas())
+    ContextManager().get_room().remove_figure(figure)
+                   
 def figure_talks(figure,speech,figure_id,player_role):
     print(f"[DEBUG] Person talks: {figure}")
     speech_bubble = SpeechBubble([speech])  # ([speech])
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
     speech_bubble2 = SpeechBubble(["You:"])
-    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True)
+    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True,
+                                              button_text="End dialog",action_data=action_data.sherlock_client_disappears)
     bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
-    # ContextManager().get_action_manager().execute_next_action()
 
 def process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role):
     if not hasattr(process_entry, "dialog"):

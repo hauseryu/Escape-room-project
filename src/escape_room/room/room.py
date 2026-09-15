@@ -581,6 +581,18 @@ class Room(tkinter.Frame):
         self.figure.append(figure)
         self.room_state.set_object("figure",figure)
 
+    def remove_figure(self,figure_name):
+        for index,figure in enumerate(self.figure):
+            if figure.figure_name == figure_name:
+                del self.figure[index]
+                break
+
+    def get_figure(self,figure_name):
+        for figure in self.figure:
+            if figure.figure_name == figure_name:
+                return figure
+        return None
+
     def removeObject(self,object):
         if object.name == "key":
             for index,key in enumerate(self.key):
