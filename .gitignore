@@ -6,3 +6,5 @@ __pycache__/
 .vscode/
 
 .env
+
+src/escape_room/assets/mydata.db

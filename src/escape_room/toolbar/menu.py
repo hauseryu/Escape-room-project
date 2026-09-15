@@ -1,6 +1,5 @@
 import tkinter as tk
 
-
 class Menu(tk.Frame):
 
     def __init__(self, parent, escape_app):
