@@ -1,4 +1,5 @@
 import tkinter
+from src.escape_room.application.context_manager import ContextManager
 
 class SpeechBubble:
 
@@ -8,13 +9,13 @@ class SpeechBubble:
         self.choices = choices
         self.evaluate_choices_callback = evaluate_choices_callback
 
-    def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
+    def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False, button_text=None, action_data=None):
 
             self.current_bubble = 0
             if entry_field:
-                code_entry = self.draw_bubble(canvas, position, skip_overlay, entry_field)
+                code_entry = self.draw_bubble(canvas, position, skip_overlay, entry_field, button_text,action_data)
             else:
-                self.draw_bubble(canvas, position, skip_overlay, entry_field)
+                self.draw_bubble(canvas, position, skip_overlay, entry_field, button_text,action_data)
 
             # keyboard navigation
             canvas.focus_set()
@@ -25,9 +26,7 @@ class SpeechBubble:
             if entry_field:
                 return code_entry
 
-    def draw_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False):
-        # remove old bubble
-        # canvas.delete("bubble")
+    def draw_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False, button_text=None, action_data=None):
 
         w = canvas.winfo_width()
         h = canvas.winfo_height()
@@ -108,6 +107,27 @@ class SpeechBubble:
                 window=code_entry,  
                 anchor="center",    # center input field into middle
                 tags="bubble bubble_content"
+            )
+
+        if button_text!=None:
+            button = tkinter.Button(
+                canvas, 
+                text=button_text, 
+                font=("Arial", 20), 
+                justify="right", 
+                width=10,
+                bg="#f3ebd9",
+                fg="#3b281b",
+                command=lambda: self.on_button_click(canvas, action_data))
+            right_x = w - margin_x - 30
+            center_y = (top + bottom) / 2           
+            # embed input field into canvas
+            canvas.create_window(
+                right_x, 
+                center_y, 
+                window=button,  
+                anchor="e",    # button on right side
+                tags="bubble"
             )
 
         arrow_offset = 70
@@ -250,6 +270,13 @@ class SpeechBubble:
         choice=int(tag[6:]) # get choice number
         self.close_bubble(canvas) # after selection close the bubble
         self.evaluate_choices_callback(self.choices,choice) # call callback to further evaluate the choice action sequence
+
+    def on_button_click(self, canvas, action_data=None):
+        print("[DEBUG] button clicked!")
+        self.close_bubble(canvas)
+        if action_data!=None:
+            ContextManager().get_action_manager().execute_action_sequence(action_data)
+        pass
 
     def close_bubble(self, canvas):
         canvas.delete("bubble")
