@@ -149,14 +149,8 @@ class Room(tkinter.Frame):
         # create doors
         for index,door in enumerate(self.room_data["door"]):
             coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
-            color = self.room_data["door"][index][1]
             direction = self.room_data["door"][index][2]
             tag = self.room_data["door"][index][3] # tags for door
-            player_door = self.room_data["door"][index][4] # player doors can be opened with own key
-            can_be_opened = self.room_data["door"][index][5] # door can be opened
-            always_open = self.room_data["door"][index][6] # door is always open
-            next_room = self.room_data["door"][index][7] # next room
-            unique_id = self.room_data["door"][index][8] # unique identifier
             if direction == "front":
                 shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
             elif direction == "left":
@@ -164,29 +158,16 @@ class Room(tkinter.Frame):
             elif direction == "right":
                 shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
             tag = self.room_data["door"][index][3]            
-            obj = Door(coord,color,direction,tag,
-                       next_room_callback=self.next_room_callback,player_name=self.player_name,
-                       is_player_door=player_door,can_be_opened=can_be_opened,always_open=always_open,next_room=next_room,
-                       room_state=self.room_state,unique_id=unique_id)
+            obj = Door(room_data,index,
+                       coord,direction,tag,
+                       next_room_callback=self.next_room_callback,player_name=self.player_name,                       
+                       room_state=self.room_state)
             self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
-            # check for state if room is re-entered
-            state = self.room_state.get_state_object("door",unique_id)
-            if state=="OPEN":
-                obj.is_open = True
-            elif state=="CLOSED":
-                obj.is_open = False
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
-            coord = self.room_data["light"][index][0] # get light coordinates (first element in list)
-            unique_id = self.room_data["light"][index][1] # unique id for the light
-            shift_coord = (coord[0]-3.88,coord[1]-3.0,coord[2]-1.92)
-            obj = Light(room_state=self.room_state,unique_id=unique_id,shift_coordinates=shift_coord)
-            # check for state if room is re-entered
-            state = self.room_state.get_state_object("light",unique_id)
-            if state!=None:
-                obj.state = state
-            self.light.append(obj)
+            obj = Light(self.room_data,index,room_state=self.room_state)
+            self.light.append(obj)            
         # create tables 
         for index,table in enumerate(self.room_data["table"]):
             coord = self.room_data["table"][index][0] # get table coordinates (first element in list)

@@ -1,10 +1,18 @@
 from src.escape_room.gui_utilities import graphics
 
 class Light():
-    def __init__(self,room_state=None,unique_id=None,shift_coordinates=(0,0,0)):
+    def __init__(self,room_data,index,room_state=None):
+        coord = room_data["light"][index][0] # get light coordinates (first element in list)
+        unique_id = room_data["light"][index][1] # unique id for the light
+        shift_coordinates = (coord[0]-3.88,coord[1]-3.0,coord[2]-1.92)
         self.shift_coordinates = shift_coordinates
         self.unique_id = unique_id
         self.room_state = room_state
+        # check for state if room is re-entered
+        state = self.room_state.get_state_object("light",unique_id)
+        if state!=None:
+            self.state = state
+
         self.coordinates_lampshade = [
             ["#30251F",
              (3.88, 3, 1.92),

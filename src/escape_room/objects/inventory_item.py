@@ -8,7 +8,8 @@ from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
 
 class InventoryItem:
-    def __init__(self, name, image, inventory, room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, resize_room = None, resize_inventory = None):
+    def __init__(self, name, image, inventory, room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
+            resize_room = None, resize_inventory = None):
         self.canvas = None
         self.object_owner = ""
         self.name = name

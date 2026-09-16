@@ -56,15 +56,33 @@ class Door:
     DOOR_WIDTH = 1.0
     DOOR_HEIGHT = 2.0
     
-    def __init__(self, position, color, direction, tag,shift_coordinates = (0,0,0),
-                 player_name=None, is_player_door=None,can_be_opened=None,always_open=None,next_room=None,
-                 next_room_callback=None,room_state=None,unique_id=None):
+    def __init__(self, room_data, index,
+                 position, direction, tag,shift_coordinates = (0,0,0),
+                 player_name=None, 
+                 next_room_callback=None,room_state=None):
+        # coord = room_data["door"][index][0] # get door coordinates (first element in list)
+        color = room_data["door"][index][1]
+        # direction = room_data["door"][index][2]
+        # tag = room_data["door"][index][3] # tags for door
+        player_door = room_data["door"][index][4] # player doors can be opened with own key
+        can_be_opened = room_data["door"][index][5] # door can be opened
+        always_open = room_data["door"][index][6] # door is always open
+        next_room = room_data["door"][index][7] # next room
+        unique_id = room_data["door"][index][8] # unique identifier
+        # if direction == "front":
+        #     shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
+        # elif direction == "left":
+        #     shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
+        # elif direction == "right":
+        #     shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
+        # tag = room_data["door"][index][3]            
+
         self.position = tuple(position)
         self.color = color
         self.direction = direction
         self.tag = tag
         self.player_name = player_name
-        self.is_player_door = is_player_door        
+        self.is_player_door = player_door        
         self.can_be_opened = can_be_opened
         self.next_room = next_room
         self.is_open = False
@@ -74,6 +92,13 @@ class Door:
         self.next_room_callback = next_room_callback
         self.always_open = always_open
         self.corners = self._create_corners()
+
+        # check for state if room is re-entered
+        state = self.room_state.get_state_object("door",unique_id)
+        if state=="OPEN":
+            self.is_open = True
+        elif state=="CLOSED":
+            self.is_open = False
 
     def _create_corners(self):
         x, y, z = self.position
