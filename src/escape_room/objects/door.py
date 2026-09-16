@@ -1,5 +1,6 @@
 from src.escape_room.gui_utilities.graphics import compute_2d_coordinates
 from src.escape_room.gui_utilities.confirmation_popup import ConfirmationPopup
+from src.escape_room.application.context_manager import ContextManager
 from tkinter import messagebox  # Required import for native dialog popups
 import tkinter
 
@@ -57,13 +58,13 @@ class Door:
     DOOR_HEIGHT = 2.0
     
     def __init__(self, room_data, index,
-                 position, direction, tag,shift_coordinates = (0,0,0),
+                 shift_coordinates = (0,0,0),
                  player_name=None, 
                  next_room_callback=None,room_state=None):
-        # coord = room_data["door"][index][0] # get door coordinates (first element in list)
+        coord = room_data["door"][index][0] # get door coordinates (first element in list)
         color = room_data["door"][index][1]
-        # direction = room_data["door"][index][2]
-        # tag = room_data["door"][index][3] # tags for door
+        direction = room_data["door"][index][2]
+        tag = room_data["door"][index][3] # tags for door
         player_door = room_data["door"][index][4] # player doors can be opened with own key
         can_be_opened = room_data["door"][index][5] # door can be opened
         always_open = room_data["door"][index][6] # door is always open
@@ -74,10 +75,9 @@ class Door:
         # elif direction == "left":
         #     shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
         # elif direction == "right":
-        #     shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
-        # tag = room_data["door"][index][3]            
+        #     shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)       
 
-        self.position = tuple(position)
+        self.position = tuple(coord)
         self.color = color
         self.direction = direction
         self.tag = tag
@@ -99,6 +99,8 @@ class Door:
             self.is_open = True
         elif state=="CLOSED":
             self.is_open = False
+        ContextManager().get_canvas().tag_bind(tag, "<Button-1>", 
+                                               ContextManager().get_room().handle_door_click)
 
     def _create_corners(self):
         x, y, z = self.position

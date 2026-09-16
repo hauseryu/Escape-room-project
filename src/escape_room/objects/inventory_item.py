@@ -8,8 +8,31 @@ from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
 
 class InventoryItem:
-    def __init__(self, name, image, inventory, room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
+    # normal constructor should not be called directly => see below create method
+    def __init__(self, name, room_data, index, image, inventory, 
+                 room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
             resize_room = None, resize_inventory = None):
+        (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
+        unique_id = room_data[name][index][1] # unique identifier for the key
+        room_placement = True
+        # key
+        if name=="key":
+            image = "key_transparent.png"
+            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+        # revolver
+        if name=="revolver":
+            image = "revolver.png"
+            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+        # magnifier        
+        if name == "magnifier":
+            image = "magnifier.png"
+            shift_coordinates = (x-6.5,y-0.78,z-3.0)   
+        # water glass
+        if name == "water_glass":
+            image = "water_glass.png"
+            shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+
+        # set attributes
         self.canvas = None
         self.object_owner = ""
         self.name = name
@@ -25,6 +48,22 @@ class InventoryItem:
         self.image_path = ContextManager.get_image_path().joinpath(image)
         self.sound_path = ContextManager.get_sound_path().joinpath(sound) if sound else None
 
+    # class method create has to be used to create objects, if based on preconditions
+    @classmethod
+    def create(cls, name, room_data, index, image, inventory, 
+                room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
+        resize_room = None, resize_inventory = None):
+        unique_id = room_data[name][index][1] # unique identifier for the object
+        try:
+            role_assign = room_data[name][index][2] # availability of object for role?
+            if ContextManager().get_room().role != role_assign:
+                return None # role mismatch => object not relevant for player!
+        except:
+            pass
+        if room_state.object_is_removed(name,unique_id):
+            return None
+        return cls(name, room_data, index, image, inventory, room_state, unique_id, 
+                    shift_coordinates, room_placement, sound, resize_room, resize_inventory)
 
     def draw(self, canvas):
         self.canvas = canvas

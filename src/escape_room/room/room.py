@@ -148,21 +148,9 @@ class Room(tkinter.Frame):
 
         # create doors
         for index,door in enumerate(self.room_data["door"]):
-            coord = self.room_data["door"][index][0] # get door coordinates (first element in list)
-            direction = self.room_data["door"][index][2]
-            tag = self.room_data["door"][index][3] # tags for door
-            if direction == "front":
-                shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
-            elif direction == "left":
-                shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
-            elif direction == "right":
-                shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)
-            tag = self.room_data["door"][index][3]            
             obj = Door(room_data,index,
-                       coord,direction,tag,
                        next_room_callback=self.next_room_callback,player_name=self.player_name,                       
                        room_state=self.room_state)
-            self.canvas_area.tag_bind(tag, "<Button-1>", self.handle_door_click)
             self.door.append(obj)        
         # create lights
         for index,light in enumerate(self.room_data["light"]):
@@ -170,28 +158,18 @@ class Room(tkinter.Frame):
             self.light.append(obj)            
         # create tables 
         for index,table in enumerate(self.room_data["table"]):
-            coord = self.room_data["table"][index][0] # get table coordinates (first element in list)
-            shift_coord = (coord[0]-7.55,coord[1]-0.67,coord[2]-3.75)
-            obj = Table(shift_coordinates=shift_coord)
+            obj = Table(room_data,index)
             self.table.append(obj)
         # create chairs
         for index,chair in enumerate(self.room_data["chair"]):
-            coord = self.room_data["chair"][index][0] # get chair coordinates (first element in list)
-            direction = self.room_data["chair"][index][1] # get chair direction (right/left)
-            shift_coord = (coord[0]-5.00,coord[1]-0,coord[2]-2.35) 
-            obj = Chair(coord[0],coord[1],coord[2],direction,shift_coordinates=shift_coord)
-            # obj = Chair(direction,shift_coordinates=shift_coord)
+            obj = Chair(room_data,index)
             self.chair.append(obj)        
         # create keys
-        for index,key in enumerate(self.room_data["key"]):
-            coord = self.room_data["key"][index][0] # get key coordinates (first element in list)
-            unique_id = self.room_data["key"][index][1] # unique identifier for the key
-            if self.room_state.object_is_removed("key",unique_id):
-                continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
-            obj = InventoryItem("key","key_transparent.png",self.inventory,self.room_state,unique_id=unique_id,
-                                shift_coordinates=shift_coord,room_placement=True)
-            self.key.append(obj)
+        for index,key in enumerate(self.room_data["key"]):        
+            obj = InventoryItem.create("key",room_data,index,
+                                "key_transparent.png",self.inventory,self.room_state)
+            if obj!=None:
+                self.key.append(obj)
         #create safes
         for index,safe in enumerate(self.room_data["safe"]):
             coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
@@ -270,49 +248,25 @@ class Room(tkinter.Frame):
             choices = self.room_data["letter"][index][2] # get choices for letter
             shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
             obj = Letter(self.canvas_area,shift_coordinates=shift_coord,text=text,choices=choices)
-            self.letter.append(obj)
+            self.letter.append(obj)   
         # create revolver
-        for index,revolver in enumerate(self.room_data["revolver"]):
-            coord = self.room_data["revolver"][index][0] # get revolver coordinates (first element in list)
-            unique_id = self.room_data["revolver"][index][1] # unique identifier for the revolver
-            try:
-                role_assign = self.room_data["revolver"][index][2] # availability of object for role?
-                if self.role != role_assign:
-                    continue # role mismatch => object not relevant for player!
-            except:
-                pass
-            if self.room_state.object_is_removed("revolver",unique_id):
-                continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
-            obj = InventoryItem("revolver","revolver.png",self.inventory,self.room_state,unique_id=unique_id,
-                                shift_coordinates=shift_coord,room_placement=True, resize_inventory=(50, 25))
-            self.revolver.append(obj)
+        for index,revolver in enumerate(self.room_data["revolver"]):    
+            obj = InventoryItem.create("revolver",room_data,index,
+                                "revolver.png",self.inventory,self.room_state, resize_inventory=(50, 25))
+            if obj!=None:
+                self.revolver.append(obj)
         # create magnifier
         for index,magnifier in enumerate(self.room_data["magnifier"]):
-            coord = self.room_data["magnifier"][index][0] # get magnifier coordinates (first element in list)
-            unique_id = self.room_data["magnifier"][index][1] # unique identifier for the magnifier
-            try:
-                role_assign = self.room_data["magnifier"][index][2] # availability of object for role?
-                if self.role != role_assign:
-                    continue # role mismatch => object not relevant for player!
-            except:
-                pass
-            if self.room_state.object_is_removed("magnifier",unique_id):
-                continue
-            shift_coord = (coord[0]-6.5,coord[1]-0.78,coord[2]-3.0)            
-            obj = InventoryItem("magnifier","magnifier.png",self.inventory,self.room_state,unique_id=unique_id,
-                                shift_coordinates=shift_coord,room_placement=True, resize_inventory=(100, 50))
-            self.magnifier.append(obj)
+            obj = InventoryItem.create("magnifier",room_data,index,
+                                "magnifier.png",self.inventory,self.room_state, resize_inventory=(100, 50))
+            if obj!=None:
+                self.magnifier.append(obj)
         # create glass of water
         for index,water_glass in enumerate(self.room_data["water_glass"]):
-            coord = self.room_data["water_glass"][index][0] # get glass of water coordinates (first element in list)
-            unique_id = self.room_data["water_glass"][index][1] # unique identifier for the glass of water
-            if self.room_state.object_is_removed("water_glass",unique_id):
-                continue
-            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-3.0)
-            obj = InventoryItem("water_glass","water_glass.png",self.inventory,self.room_state,unique_id=unique_id,
-                           shift_coordinates=shift_coord,room_placement=True, resize_room=(50, 100), resize_inventory=(40, 80))
-            self.water_glass.append(obj)
+            obj = InventoryItem.create("water_glass",room_data,index,
+                                "water_glass.png",self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
+            if obj!=None:
+                self.water_glass.append(obj)
         # create benchs
         for index,bench in enumerate(self.room_data["bench"]):
             coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)

@@ -7,14 +7,17 @@ WOOD_HIGHLIGHT = "#7A4A22"
 WOOD_TOP = "#8B5A2B"
 
 class Chair():
-    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0)):
+    def __init__(self, room_data, index):
+        (x,y,z) = room_data["chair"][index][0] # get chair coordinates (first element in list)
+        direction = room_data["chair"][index][1] # get chair direction (right/left)
+        shift_coord = (x-5.00,y-0,z-2.35) 
         self.x = x
         self.y = y
         self.z = z
         self.width_small = 0.1
         self.width_large = 0.7
         self.direction = direction
-        self.shift_coordinates = shift_coordinates
+        self.shift_coordinates = shift_coord
 
         # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
         self.coordinates_chairseat = self._create_panel_coordinates(z1=2.6,z2=3.15,back=False)
