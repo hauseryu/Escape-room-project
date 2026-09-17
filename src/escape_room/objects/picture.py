@@ -1,14 +1,26 @@
 from PIL import Image, ImageTk
 from llm.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
+from src.escape_room.gui_utilities import graphics
 
 class Picture:
     """A picture frame on the back wall (``z = 4``).
     """
 
-    def __init__(self, image_path=None,is_riddle=None,direction=None,shift_coordinates = (0,0,0),unique_id=None,room_state=None,
-                 pic_move_coord=None):
-        self.image_path = image_path
+    def __init__(self, room_data,index,image_path,room_state):
+
+        # evaluate room data
+        (x,y,z) = room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
+        file_name = room_data["picture"][index][1] 
+        image_location = image_path / file_name
+        is_riddle = room_data["picture"][index][2]
+        direction = room_data["picture"][index][3]
+        unique_id = room_data["picture"][index][4] # unique identifier
+        pic_move_coord = room_data["picture"][index][5]
+        shift_coordinates = (x-5.05,y-2.35,z-4.0)            
+
+        # set attributes
+        self.image_location = image_location
         self.is_riddle = is_riddle
         self.direction = direction
         self.shift_coordinates = shift_coordinates
@@ -82,11 +94,16 @@ class Picture:
             self.room_state.set_state_object("picture",self.unique_id,
                                             self.riddles + self.correct_answers)
 
-    def draw_image(self, canvas, tag):
+    def draw(self, canvas, tag):
+        # draw outline
+        graphics.draw(canvas,self.coordinates_frame,shift_coordinates=self.shift_coordinates)
+        graphics.draw(canvas,self.coordinates_image,tag="picture",
+                        shift_coordinates=self.shift_coordinates)
+        # draw image
         x1, y1, x2, y2 = canvas.bbox(tag)
         image_width = x2 - x1
         image_heigth = y2 - y1
-        image = Image.open(self.image_path)
+        image = Image.open(self.image_location)
         
         self.foto_image = ImageTk.PhotoImage(image, master=canvas)
         if self.is_riddle:

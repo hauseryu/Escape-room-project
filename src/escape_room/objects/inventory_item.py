@@ -66,6 +66,20 @@ class InventoryItem:
                     shift_coordinates, room_placement, sound, resize_room, resize_inventory)
 
     def draw(self, canvas):
+
+        # part 1: check preconditions (in some cases inventory item may be hidden)
+        if self.name == "key": # key may be hidden in safe
+            draw_key = True
+            for safe in ContextManager().get_room().safe: # look for associated safe
+                if (self.unique_id == safe.key.unique_id and safe.state == 1): # safe is open
+                    break
+                elif (self.unique_id == safe.key.unique_id and safe.state == 0): # safe is closed
+                    draw_key = False
+                    break
+            if not draw_key:
+                return # key is hidden => do not draw it!
+
+        # part 2: actually draw the inventory item
         self.canvas = canvas
         img = Image.open(self.image_path)
         if self.resize_room_tuple is not None:

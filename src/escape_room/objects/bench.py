@@ -5,9 +5,20 @@ IMAGE_DIR = ContextManager().get_image_path()
 CLOTH_TEXTURE = IMAGE_DIR / "Texturelabs_Fabric.jpg"
 
 class Bench():
-    # def __init__(self,direction,shift_coordinates=(0,0,0),unique_id=None):
-    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0),unique_id=None,
-                 canvas=None,movement_vector=None):
+    def __init__(self, room_data, index, canvas):
+
+        # evaluate room data
+        (x,y,z) = room_data["bench"][index][0] # get bench coordinates (first element in list)
+        direction = room_data["bench"][index][1] # get bench direction (right/left)
+        unique_id = room_data["bench"][index][2] # unique identifier
+        shift_coordinates = (x-0.0,y-0.4,z-4.00) # (0.2, 0.4, 4.0)
+        movement_vector=None
+        try:
+            movement_vector = room_data["bench"][index][3]
+        except:
+            pass
+
+        # set attributes
         self.x = x
         self.y = y
         self.z = z

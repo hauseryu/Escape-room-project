@@ -1,3 +1,5 @@
+from src.escape_room.gui_utilities import graphics
+
 LEG_SHADOW = "#4A2C14"
 LEG_MIDTONE = "#6F4520"
 LEG_HIGHLIGHT = "#7A4A22"
@@ -125,3 +127,6 @@ class Chair():
              (x_pos2 + width_x, height2, z1+width_z),
              (x_pos2, height2, z1)],
         ]
+
+    def draw(self,canvas):
+        graphics.draw(canvas,self.coordinates_chair,shift_coordinates=self.shift_coordinates)

@@ -172,82 +172,32 @@ class Room(tkinter.Frame):
                 self.key.append(obj)
         #create safes
         for index,safe in enumerate(self.room_data["safe"]):
-            coord = self.room_data["safe"][index][0] # get safe coordinates (first element in list)
-            shift_coord = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)       
-            unique_id = self.room_data["safe"][index][2]
-            safe_created = False
-            if(self.room_data["safe"][index][1]!=""):
-                for key in self.key:
-                    if key.unique_id == self.room_data["safe"][index][1]:
-                        obj = Safe(key, shift_coordinates=shift_coord,
-                                   room_state=self.room_state,unique_id=unique_id)
-                        safe_created = True
-            if not safe_created:
-                obj = Safe(None, shift_coordinates=shift_coord,
-                           room_state=self.room_state,unique_id=unique_id)
-            # check for state if room is re-entered
-            state = self.room_state.get_state_object("safe",unique_id)
-            if state=="OPEN":
-                obj.state = 1
-            else:
-                obj.state = 0
+            obj = Safe(room_data,index,self.room_state)
             self.safe.append(obj)
         # create pictures
         for index,picture in enumerate(self.room_data["picture"]):
-            coord = self.room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
-            file_name = self.room_data["picture"][index][1] 
-            is_riddle = self.room_data["picture"][index][2]
-            direction = self.room_data["picture"][index][3]
-            unique_id = self.room_data["picture"][index][4] # unique identifier
-            pic_move_coord = self.room_data["picture"][index][5]
-            shift_coord = (coord[0]-5.05,coord[1]-2.35,coord[2]-4.0)            
-            obj = Picture(IMAGE_DIR / file_name,shift_coordinates=shift_coord,
-                          is_riddle=is_riddle, direction=direction, unique_id=unique_id, room_state=self.room_state,
-                          pic_move_coord=pic_move_coord)
+            obj = Picture(room_data,index,IMAGE_DIR,self.room_state)
             self.picture.append(obj)
         # create bookshelves
         for index,bookshelf in enumerate(self.room_data["bookshelf"]):
-            coord = self.room_data["bookshelf"][index][0] # get bookshelf coordinates (first element in list)
-            shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
-            obj = Bookshelf(shift_coordinates=shift_coord)
+            obj = Bookshelf(room_data,index)
             self.bookshelf.append(obj)
         # create wardrobes
         for index,wardrobe in enumerate(self.room_data["wardrobe"]):
-            coord = self.room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
-            direction = self.room_data["wardrobe"][index][1] # get wardrobe direction (right/left)
-            unique_id = self.room_data["wardrobe"][index][2] # unique identifier
-            shift_coord = (coord[0]-0,coord[1]-0,coord[2]-4)
-            obj = Wardrobe(direction,shift_coordinates=shift_coord,
-                           room_state=self.room_state,unique_id=unique_id)
-            # check for state if room is re-entered
-            state = self.room_state.get_state_object("wardrobe",unique_id)
-            if state==1:
-                obj.state = 1
-            else:
-                obj.state = 0
+            obj = Wardrobe(room_data,index,self.room_state)
             self.wardrobe.append(obj)
         # create clocks
         for index,clock in enumerate(self.room_data["clock"]):
-            coord = self.room_data["clock"][index][0] # get clock coordinates (first element in list)
-            shift_coord = (coord[0]-5.15,coord[1]-0.42,coord[2]-4.00)
-            obj = Clock(self.canvas_area, time=1, shift_coordinates=shift_coord)
+            obj = Clock(room_data,index,self.canvas_area, time=1)
             self.clock.append(obj)
         ContextManager().set_clock(self.clock)
         # create fireplaces
         for index,fireplace in enumerate(self.room_data["fireplace"]):
-            obj = None
-            coord = self.room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
-            shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
-            obj = Fireplace(shift_coordinates=shift_coord)
+            obj = Fireplace(room_data,index)
             self.fireplace.append(obj)
-
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
-            coord = self.room_data["letter"][index][0] # get letter coordinates (first element in list)
-            text = self.room_data["letter"][index][1] # get letter text
-            choices = self.room_data["letter"][index][2] # get choices for letter
-            shift_coord = (coord[0]-3.5,coord[1]-0,coord[2]-2)
-            obj = Letter(self.canvas_area,shift_coordinates=shift_coord,text=text,choices=choices)
+            obj = Letter(room_data,index,self.canvas_area)
             self.letter.append(obj)   
         # create revolver
         for index,revolver in enumerate(self.room_data["revolver"]):    
@@ -269,17 +219,7 @@ class Room(tkinter.Frame):
                 self.water_glass.append(obj)
         # create benchs
         for index,bench in enumerate(self.room_data["bench"]):
-            coord = self.room_data["bench"][index][0] # get bench coordinates (first element in list)
-            direction = self.room_data["bench"][index][1] # get bench direction (right/left)
-            unique_id = self.room_data["bench"][index][2] # unique identifier
-            shift_coord = (coord[0]-0.0,coord[1]-0.4,coord[2]-4.00) # (0.2, 0.4, 4.0)
-            movement_vector=None
-            try:
-                movement_vector = self.room_data["bench"][index][3]
-            except:
-                pass
-            obj = Bench(coord[0],coord[1],coord[2],direction, shift_coordinates=shift_coord, 
-                        unique_id=unique_id, canvas=self.canvas_area, movement_vector=movement_vector)
+            obj = Bench(room_data,index,self.canvas_area)
             self.bench.append(obj)
 
         # create figures
@@ -331,99 +271,47 @@ class Room(tkinter.Frame):
         
         # draw the lights
         for light in self.light:
-            graphics.draw(self.canvas_area,light.coordinates_lampshade,shift_coordinates=light.shift_coordinates)
-            if light.state == 0 or light.state == -1:
-                graphics.draw(self.canvas_area,light.coordinates_light_switch_off,tag="light_switch",object=light,
-                            arc_coordinates=light.arc_coordinates,
-                            shift_coordinates=light.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[0], tag="light_bulb",
-                                  shift_coordinates=light.shift_coordinates)
-            elif light.state == 1:
-                graphics.draw(self.canvas_area,light.coordinates_light_switch_on,tag="light_switch",object=light,
-                            arc_coordinates=light.arc_coordinates,
-                            shift_coordinates=light.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[1], tag="light_bulb",
-                                  shift_coordinates=light.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *light.arc_coordinates[2], tag="light_shine",
-                                  shift_coordinates=light.shift_coordinates)
+            light.draw(self.canvas_area)
         
         # draw the pictures
         for picture in self.picture:
-            graphics.draw(self.canvas_area,picture.coordinates_frame,shift_coordinates=picture.shift_coordinates)
-            graphics.draw(self.canvas_area,picture.coordinates_image,tag="picture",
-                          shift_coordinates=picture.shift_coordinates)
-            picture.draw_image(self.canvas_area, tag="picture")
+            picture.draw(self.canvas_area, tag="picture")
 
         # draw the fireplaces
         for fireplace in self.fireplace:
-            graphics.draw(self.canvas_area,fireplace.fireplace_coordinates,shift_coordinates=fireplace.shift_coordinates)
-            fire_x, fire_y, fire_z = fireplace.fire_coordinate
-            x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, fireplace.shift_coordinates)
-            fireplace.draw_fire(self.canvas_area, x_pos, y_pos, self.inventory, self.player_name)
+            fireplace.draw(self.canvas_area, self.inventory, self.player_name)
 
         # draw the chair
         for chair in self.chair:
-            graphics.draw(self.canvas_area,chair.coordinates_chair,shift_coordinates=chair.shift_coordinates)
+            chair.draw(self.canvas_area)
 
         # draw the bookshelves
         for bookshelf in self.bookshelf:
-            graphics.draw(self.canvas_area,bookshelf.coordinates_shelf,
-                          shift_coordinates=bookshelf.shift_coordinates)
-            graphics.draw(self.canvas_area,bookshelf.coordinates_books,
-                          shift_coordinates=bookshelf.shift_coordinates)
-            bookshelf.draw_titles(self.canvas_area, globals.canvas_width, globals.canvas_height)
+            bookshelf.draw(self.canvas_area)
         
         # draw the wardrobes
         for wardrobe in self.wardrobe:
-            if wardrobe.state == 0:
-                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates, tag="wardrobe", object=wardrobe,
-                            shift_coordinates=wardrobe.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[0], tag="wardrobe", 
-                                shift_coordinates=wardrobe.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes[1], tag="wardrobe", 
-                                shift_coordinates=wardrobe.shift_coordinates)
-            elif wardrobe.state == 1:
-                graphics.draw(self.canvas_area,wardrobe.wardrobe_coordinates_open, tag="wardrobe", object=wardrobe,
-                            shift_coordinates=wardrobe.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[0], tag="wardrobe", 
-                                shift_coordinates=wardrobe.shift_coordinates)
-                graphics.draw_arc(self.canvas_area, *wardrobe.wardrobe_coordinates_knobes_open[1], tag="wardrobe", 
-                                shift_coordinates=wardrobe.shift_coordinates)
+            wardrobe.draw(self.canvas_area)
 
         # draw the safes
         for safe in self.safe:
-            if safe.state == 0:
-                safe.set_password(picture.correct_answers)
-                graphics.draw(self.canvas_area, safe.safe_coordinates, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)    
-            elif safe.state == 1:
-                graphics.draw(self.canvas_area, safe.safe_coordinates_open, tag = "safe", object = safe, shift_coordinates=safe.shift_coordinates)
+            safe.draw(self.canvas_area)
 
         # draw the clocks
         for clock in self.clock:
-            graphics.draw(self.canvas_area, clock.coordinates, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
-            graphics.draw(self.canvas_area, clock.coordinates_clock_hands, tag="clock", object=clock, shift_coordinates=clock.shift_coordinates)
+            clock.draw()
 
         # draw the table
         for table in self.table:
-            graphics.draw(self.canvas_area,table.coordinates_table,shift_coordinates=table.shift_coordinates)
+            table.draw(self.canvas_area)
 
         # draw the letter
         for letter in self.letter:
-            graphics.draw(self.canvas_area,letter.coordinates,tag="letter",object=letter,shift_coordinates=letter.shift_coordinates)
-            graphics.draw_arc(self.canvas_area, *letter.coordinates_stamp[0], tag="letter", shift_coordinates=letter.shift_coordinates)
+            letter.draw(self.canvas_area)
 
-        # draw the key and inventory
-        self.inventory.draw(self.canvas_area)
-        draw_key = True
+        # draw the key
         for key in self.key:
-            for safe in self.safe:
-                if (key.unique_id == safe.key.unique_id and safe.state == 1):
-                    key.draw(self.canvas_area)
-                elif (key.unique_id == safe.key.unique_id and safe.state == 0):
-                    draw_key = False
-            if draw_key:
-                key.draw(self.canvas_area) 
-            draw_key = True
+            key.draw(self.canvas_area)
             
         # draw the revolver
         for revolver in self.revolver:
@@ -444,6 +332,14 @@ class Room(tkinter.Frame):
         # draw the figures (persons etc.)
         for figure in self.figure:
             figure.draw_image(self.canvas_area)
+
+        # draw top bar (inventory, player panel etc.)
+        self.draw_top_bar()
+
+    def draw_top_bar(self):
+
+        # draw the inventory
+        self.inventory.draw(self.canvas_area)
 
         # draw player frame
         self.panel_canvas_id = self.canvas_area.create_window(
@@ -472,7 +368,6 @@ class Room(tkinter.Frame):
             width=150,                 # Optional: Explicitly force width
             height=202                 # Optional: Explicitly force height
         )     
-        
         
     def handle_door_click(self, event):
         for door in self.door:

@@ -100,6 +100,23 @@ class Light():
 
         self.state = -1 # -1 = uninitialized, 0 = off, 1 = on
 
+    def draw(self,canvas):
+        graphics.draw(canvas,self.coordinates_lampshade,shift_coordinates=self.shift_coordinates)
+        if self.state == 0 or self.state == -1:
+            graphics.draw(canvas,self.coordinates_light_switch_off,tag="light_switch",object=self,
+                        arc_coordinates=self.arc_coordinates,
+                        shift_coordinates=self.shift_coordinates)
+            graphics.draw_arc(canvas, *self.arc_coordinates[0], tag="light_bulb",
+                                shift_coordinates=self.shift_coordinates)
+        elif self.state == 1:
+            graphics.draw(canvas,self.coordinates_light_switch_on,tag="light_switch",object=self,
+                        arc_coordinates=self.arc_coordinates,
+                        shift_coordinates=self.shift_coordinates)
+            graphics.draw_arc(canvas, *self.arc_coordinates[1], tag="light_bulb",
+                                shift_coordinates=self.shift_coordinates)
+            graphics.draw_arc(canvas, *self.arc_coordinates[2], tag="light_shine",
+                                shift_coordinates=self.shift_coordinates)
+
     def clicked(self,event,tag,object,canvas,world_coordinates,arc_coordinates):
         if tag == "light_switch":
             if not hasattr(Light.clicked, "count_light"):
