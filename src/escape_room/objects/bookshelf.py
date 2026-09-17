@@ -1,7 +1,7 @@
 """Bookshelf object placed where the wardrobe previously stood."""
 
 from src.escape_room.gui_utilities import graphics
-
+from src.escape_room.application import globals
 
 class Bookshelf:
     """A filled bookshelf for the left, back corner of the room.
@@ -10,7 +10,13 @@ class Bookshelf:
     x=0..1.8, y=0..2 and z=3.5..4.
     """
 
-    def __init__(self,shift_coordinates=(0,0,0)):
+    def __init__(self,room_data,index):
+
+        # evaluate room data
+        (x,y,z) = room_data["bookshelf"][index][0] # get bookshelf coordinates (first element in list)
+        shift_coordinates = (x-0,y-0,z-4)
+
+        # set attributes
         self.shift_coordinates = shift_coordinates
         # Wooden carcass, back panel, three shelf boards and the two side walls.
         self.coordinates_shelf = [
@@ -46,6 +52,13 @@ class Bookshelf:
             "Die Tür", "Python", "Sternenpfad", "Das Rätsel", "Nacht", "Schlüssel",
             "Alchemie", "Wolken", "Geheimnis", "Der Turm", "Zeit", "Ausweg",
         ]
+
+    def draw(self, canvas):
+        graphics.draw(canvas,self.coordinates_shelf,
+                        shift_coordinates=self.shift_coordinates)
+        graphics.draw(canvas,self.coordinates_books,
+                        shift_coordinates=self.shift_coordinates)
+        self.draw_titles(canvas, globals.canvas_width, globals.canvas_height)
 
     def draw_titles(self, canvas, canvas_width, canvas_height):
         for book, title in zip(self.coordinates_books, self.books_titles):

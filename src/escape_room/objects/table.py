@@ -1,6 +1,10 @@
+from src.escape_room.gui_utilities import graphics
+
 class Table():
-    def __init__(self,shift_coordinates=(0,0,0)):
-        self.shift_coordinates = shift_coordinates
+    def __init__(self,room_data,index):
+        coord = room_data["table"][index][0] # get table coordinates (first element in list)
+        shift_coord = (coord[0]-7.55,coord[1]-0.67,coord[2]-3.75)        
+        self.shift_coordinates = shift_coord
         self.coordinates_tabletop = [
             ["#5A3518",
              (7.55, 0.67, 3.75),
@@ -63,5 +67,8 @@ class Table():
              (x, 0, z),
              (x2, 0, z),
              (x2, 0.67, z),
-             (x, 0.67, z)],
+             (x, 0.67, z)]
         ]
+
+    def draw(self,canvas):
+        graphics.draw(canvas,self.coordinates_table,shift_coordinates=self.shift_coordinates)

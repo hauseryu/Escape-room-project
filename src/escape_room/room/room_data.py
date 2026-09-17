@@ -206,7 +206,7 @@ riddle_key_room = {
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],
-        "safe": [[(5.0, 1.0, 4.0),"key1", "safe1"] # safe 1, contains key1, unique name is safe1
+        "safe": [[(5.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],  
         "letter":[
                 ],

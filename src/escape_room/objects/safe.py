@@ -1,14 +1,39 @@
 from src.escape_room.gui_utilities import graphics
+from src.escape_room.application.context_manager import ContextManager
 
 class Safe():
-    def __init__(self, key = None, shift_coordinates=(0, 0, 0),room_state=None,unique_id=None):
+    def __init__(self,room_data,index,room_state):
+        # evaluate room data
+        coord = room_data["safe"][index][0] # get safe coordinates (first element in list)
+        shift_coordinates = (coord[0]-5.0,coord[1]-1.0,coord[2]-4.0)       
+        unique_id = room_data["safe"][index][3]
+        safe_created = False
+        included_key_id = room_data["safe"][index][1]       
+        associated_picture = room_data["safe"][index][2] 
+        key_found=False
+        # is some key included?
+        if(included_key_id!=""):
+            # try to find the key object via the ID
+            for key in ContextManager().get_room().key:
+                if key.unique_id == included_key_id:
+                    key_found=True
+                    break
+        if not key_found:
+            key=None
+        # check for state if room is re-entered
+        self.state = 0  # 0 = closed, 1 = open
+        state = room_state.get_state_object("safe",unique_id)
+        if state=="OPEN":
+            self.state = 1
+
+        # set attributes
         self.shift_coordinates = shift_coordinates
         self.password = "" # correct password, set using set_password method
         self.input_password = ""
-        self.state = 0  # 0 = closed, 1 = open
         self.key = key  # key object that can be placed inside the safe
         self.room_state = room_state
         self.unique_id = unique_id
+        self.associated_picture = associated_picture
         self.safe_coordinates = [
         ["#333333",(5.00, 0.90, 4.00),(5.70, 0.90, 4.00),(5.70, 1.30, 4.00),(5.00, 1.30, 4.00)],
         ["#AAAAAA",(5.04, 0.94, 3.99),(5.66, 0.94, 3.99),(5.66, 1.26, 3.99),(5.04, 1.26, 3.99)],
@@ -114,6 +139,21 @@ class Safe():
     def close_safe_input(self, event, canvas):
         canvas.delete("safe_input")
 
+    def draw(self,canvas):
+        # determine associated picture
+        picture=None
+        for picture in ContextManager().get_room().picture:
+            if picture.unique_id == self.associated_picture:
+                break
+        if self.state == 0:
+            if picture==None or picture.correct_answers==[]:
+                self.set_password(['1','1','1']) # default password
+            else:
+                self.set_password(picture.correct_answers)
+            graphics.draw(canvas, self.safe_coordinates, tag = "safe", object = self, shift_coordinates=self.shift_coordinates)    
+        elif self.state == 1:
+            graphics.draw(canvas, self.safe_coordinates_open, tag = "safe", object = self, shift_coordinates=self.shift_coordinates)
+                
     def handle_key_press(self, event, key, canvas):     
         if key == "C":
             self.input_password = ""

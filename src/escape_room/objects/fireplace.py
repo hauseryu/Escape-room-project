@@ -1,8 +1,16 @@
 from PIL import Image, ImageTk, ImageOps
+from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.application import globals
 
 class Fireplace():
-    def __init__(self, shift_coordinates=(0, 0, 0)):
+    def __init__(self, room_data, index):
+
+        # evaluate room data
+        (x,y,z) = room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
+        shift_coordinates = (x-3.2,y-0,z-4)
+
+        # set attributes
         self.shift_coordinates = shift_coordinates
         self.fireplace_coordinates = [
             ["#4A3429",(3.2, 0, 4),(4.8, 0, 4),(4.8, 1.05, 4),(3.2, 1.05, 4)], # bottom of the fireplace (back)
@@ -37,7 +45,12 @@ class Fireplace():
         ]
         self.fire_coordinate = (3.55, 0.8, 3.9)
 
-    def draw_fire(self, canvas, x_pos, y_pos, inventory, player_name):
+    def draw(self, canvas, inventory, player_name):
+        # draw outline
+        graphics.draw(canvas,self.fireplace_coordinates,shift_coordinates=self.shift_coordinates)
+        fire_x, fire_y, fire_z = self.fire_coordinate
+        x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, self.shift_coordinates)
+
         # Load the fire image
         fire_image_path = ContextManager.get_image_path().joinpath("fire.png")
         fire_image = Image.open(fire_image_path)
