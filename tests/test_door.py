@@ -6,6 +6,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from src.escape_room.objects.door import Door, _mix_color
 
+test_room = {  
+        "room_name": "test_room",
+        "room_coordinates": "normal_room",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, False,"","door1"], # door1: not player door, can be opened
+                ], 
+        "wardrobe": [ [(0, 0, 4)] 
+                ],              
+}
+
+room_state = {test_room: {
+            "key": {},
+            "light": {},
+            "door": {},
+            "safe": {},
+            "wardrobe": {},
+            "picture": {},
+            "figure": {},
+            "revolver": {},
+            "magnifier": {},
+            "water_glass": {}
+        } }
 
 class FakeCanvas:
     def __init__(self):
@@ -42,7 +64,7 @@ class DoorTest(unittest.TestCase):
         ]
 
     def test_stores_four_corner_points(self):
-        door = Door(position = (0, 0, 0), color="#6f3f20", direction="left", tag="test_door")
+        door = Door(test_room,0)
 
         self.assertEqual(door.corners, self.corners)
         self.assertEqual(door.tag, "test_door")
