@@ -4,7 +4,7 @@ from src.escape_room.application.database_manager import DatabaseManager
 
 class RoomStateRepository(DatabaseManager):
     def __init__(self, db_path="src/escape_room/assets/mydata.db"):
-        super().__init__(db_path)
+        self.db = DatabaseManager(db_path)
         self._init_db()
     
     def _init_db(self):
@@ -15,36 +15,39 @@ class RoomStateRepository(DatabaseManager):
             state_json TEXT NOT NULL
         )
         """
-        self.execute(query)
+        self.db.execute(query)
         
             
     def load_all_rooms(self):
         """loads all rooms and converts them into a python dict"""
-        self.cursor.execute("""
-                        SELECT room_name, state_json FROM room_states
-                        """)
-        rows = self.cursor.fetchall()
+        # self.cursor.execute("""
+        #                 SELECT room_name, state_json FROM room_states
+        #                 """)
+        # rows = self.cursor.fetchall()
+        query = "SELECT room_name, state_json FROM room_states"
+        rows = self.db.fetch_all(query)
         result = {}
+        
         for row in rows:
             room_name = row["room_name"]
-            result[room_name] = json.loads("state_json")
+            result[room_name] = json.loads(row["state_json"])
         return result
         
     def save_all_rooms(self, room_state):
         """Stores und updates the room states"""
         try:
-            self.cursor.execute("DELETE FROM room_states") # empty the table 
+            self.db.execute("DELETE FROM room_states") # empty the table 
             
             data_to_insert = [
                 (room_name, json.dumps(state))
                 for room_name, state in room_state.items()
             ]
             
-            self.cursor.executemany(
+            self.db.cursor.executemany(
                 "INSERT INTO room_states (room_name, state_json) VALUES (?,?)",
                 data_to_insert
             )
-            self.connection.commit()
+            self.db.connection.commit()
         except Exception as e:
-            self.connection.rollback() 
+            self.db.connection.rollback() 
             raise e
