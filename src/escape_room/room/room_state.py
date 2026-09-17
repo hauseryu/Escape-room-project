@@ -1,9 +1,12 @@
 from src.escape_room.objects.figure import Figure
+from src.escape_room.room.room_state_repository import RoomStateRepository
 
 class RoomState():
     def __init__(self):
         self.room_state= {} # keep a room state for each room
         self.current_room = None
+        self.repo = RoomStateRepository()
+        self.room_state = self.repo.load_all_rooms()
 
     # when entering room, new room state is added
     def add_room(self,room_name = ""):
@@ -70,3 +73,10 @@ class RoomState():
             self.room_state[self.current_room]["figure"][object.figure_name] = [ \
                 object.image_path, object.x_coord, object.y_coord, object.width, object.height, \
                 object.action_sequence_talk ]
+    
+    def save_to_db(self):
+        """Stores the corrent state of every room in the database"""
+        self.repo.save_all_rooms(self.room_state)
+    
+    def close(self):
+        self.repo.close()
