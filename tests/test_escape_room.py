@@ -22,6 +22,7 @@ from src.escape_room.objects.picture import Picture
 from src.escape_room.objects.bookshelf import Bookshelf
 from src.escape_room.objects.letter import Letter
 from src.escape_room.objects.fireplace import Fireplace
+from src.escape_room.objects.window import Window
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.actions.action import ActionManager
 from src.escape_room.room.room_state import RoomState
@@ -175,6 +176,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.figure = []
         app.room.bench = [MagicMock()]
         app.room.fireplace = [MagicMock()] # [Fireplace()]
+        app.room.window = [Window()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 
@@ -291,6 +293,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.figure = []
         app.room.bench = [MagicMock()]
         app.room.fireplace = [MagicMock()]
+        app.room.window = [Window()]
         app.room.inventory = FakeDrawable()
         app.room.player_panel = MagicMock() 
         app.room.chat_panel = MagicMock() 

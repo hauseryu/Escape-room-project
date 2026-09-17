@@ -47,6 +47,8 @@ start_room = {
         "magnifier":[
                 ],
         "water_glass":[
+                ],
+        "window":[
                 ]
 }
 
@@ -90,6 +92,8 @@ mystery_room = {
         "magnifier":[
                 ],
         "water_glass":[
+                ],
+        "window":[
                 ]
 }
 
@@ -130,6 +134,8 @@ doorway = {
         "magnifier":[
                 ],
         "water_glass":[
+                ],
+        "window":[
                 ]
 }
 
@@ -143,7 +149,7 @@ living_room_221b = {
                 ], 
         "light": [
                 ],
-        "table": [[(8, 0, 4)]
+        "table": [[(8, 0, 3)]
                 ],
         "chair": [[(4.00,0,2.00),"front"]
                 ],
@@ -172,6 +178,8 @@ living_room_221b = {
         "water_glass":[[(5.5,0.6,2.4), "water_glass1"],
                 ],
         "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
+                ],
+        "window":[[(0, 1, 1.8)]
                 ]
 }
 
@@ -213,6 +221,8 @@ riddle_key_room = {
         "magnifier":[
                 ],
         "water_glass":[
+                ],
+        "window":[
                 ]
 }
 

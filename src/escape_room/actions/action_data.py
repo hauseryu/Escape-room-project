@@ -13,6 +13,11 @@ sherlock_client_appears = [
         880,660,160,300,sherlock_client_talk] # client of Sherlock! x + y coordinates, width, height
 ]
 
+sherlock_client_disappears = [
+    [action.time_elapse,1], # 1 hour to pass until client disappears
+    [action.figure_disappears,"Mortimer Jackson"] # client of Sherlock! 
+]
+
 game_over = [
     [action.game_over]
 ]

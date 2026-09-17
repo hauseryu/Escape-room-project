@@ -27,6 +27,7 @@ from escape_room.objects.letter import Letter
 from escape_room.objects.clock import Clock
 from src.escape_room.objects.fireplace import Fireplace
 from src.escape_room.objects.bench import Bench
+from src.escape_room.objects.window import Window
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -91,6 +92,7 @@ class Room(tkinter.Frame):
         self.fireplace = []
         self.magnifier = []
         self.water_glass = []
+        self.window = []
         for door in self.door:
             door.is_open = False        
 
@@ -156,6 +158,12 @@ class Room(tkinter.Frame):
         for index,light in enumerate(self.room_data["light"]):
             obj = Light(self.room_data,index,room_state=self.room_state)
             self.light.append(obj)            
+        # create windows
+        for index,window in enumerate(self.room_data["window"]):
+            coord = self.room_data["window"][index][0] # get window coordinates (first element in list)
+            shift_coord = (coord[0]-0,coord[1]-1,coord[2]-1.8)
+            obj = Window(shift_coordinates=shift_coord)
+            self.window.append(obj)
         # create tables 
         for index,table in enumerate(self.room_data["table"]):
             obj = Table(room_data,index)
@@ -273,6 +281,16 @@ class Room(tkinter.Frame):
         for light in self.light:
             light.draw(self.canvas_area)
         
+        # draw the windows
+        for window in self.window:
+            window_corners = []
+            for sky_coordinate in window.sky_coordinates:
+                (window_x, window_y, window_z) = sky_coordinate
+                x_corner, y_corner = graphics.compute_2d_coordinates(window_x, window_y, window_z, globals.canvas_width, globals.canvas_height, window.shift_coordinates)
+                window_corners.append((x_corner, y_corner))
+            window.draw_sky(self.canvas_area, window_corners)
+            graphics.draw(self.canvas_area,window.window_coordinates,shift_coordinates=window.shift_coordinates)
+
         # draw the pictures
         for picture in self.picture:
             picture.draw(self.canvas_area, tag="picture")
@@ -393,6 +411,18 @@ class Room(tkinter.Frame):
     def add_figure(self,figure):
         self.figure.append(figure)
         self.room_state.set_object("figure",figure)
+
+    def remove_figure(self,figure_name):
+        for index,figure in enumerate(self.figure):
+            if figure.figure_name == figure_name:
+                del self.figure[index]
+                break
+
+    def get_figure(self,figure_name):
+        for figure in self.figure:
+            if figure.figure_name == figure_name:
+                return figure
+        return None
 
     def removeObject(self,object):
         if object.name == "key":
