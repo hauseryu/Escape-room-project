@@ -34,7 +34,7 @@ test_room = {
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, False,"","door1"]], # door1: not player door, can be opened
-        "chair": [[(5.00,0,2.35),"right"]
+        "chair": [[(5.00,0,2.35),"right","chair1"]
                 ], 
         "wardrobe": [ [(0, 0, 4),"left","wardrobe1"] 
                 ],              
@@ -155,6 +155,8 @@ class EscapeRoomTest(unittest.TestCase):
         app = EscapeApp.__new__(EscapeApp)
         action_manager = ActionManager()
         ContextManager().set_action_manager(action_manager)
+        room_state = RoomState()
+
 
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
@@ -162,7 +164,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.door = []
         app.room.light = [MagicMock()]
         app.room.table = [MagicMock()]
-        app.room.chair = [Chair(test_room,0)]
+        app.room.chair = [Chair(test_room,0,room_state)]
         app.room.wardrobe = [MagicMock()] # [Wardrobe(test_room,0,room_state)]
         app.room.picture = [MagicMock()] 
         app.room.bookshelf = [MagicMock()] # [Bookshelf()]
@@ -272,6 +274,7 @@ class EscapeRoomTest(unittest.TestCase):
         app = EscapeApp.__new__(EscapeApp)
         action_manager = ActionManager()
         ContextManager().set_action_manager(action_manager)
+        room_state = RoomState()
 
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
@@ -279,7 +282,7 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.door = []
         app.room.light = [MagicMock()]
         app.room.table = [MagicMock()]
-        app.room.chair = [Chair(test_room,0)]
+        app.room.chair = [Chair(test_room,0,room_state)]
         app.room.wardrobe = [MagicMock()]
         app.room.picture = [MagicMock()] 
         app.room.bookshelf = [MagicMock()]
@@ -322,10 +325,11 @@ class EscapeRoomTest(unittest.TestCase):
         self.assertIs(app.room.key[0].drawn_on, app.room.canvas_area)
 
     def test_chair_can_face_different_directions(self):
-        right_chair = Chair(test_room,0)
-        left_chair = Chair(test_room,0)
-        front_chair = Chair(test_room,0)
-        back_chair = Chair(test_room,0)
+        room_state = RoomState()
+        right_chair = Chair(test_room,0,room_state)
+        left_chair = Chair(test_room,0,room_state)
+        front_chair = Chair(test_room,0,room_state)
+        back_chair = Chair(test_room,0,room_state)
 
         self.assertEqual(right_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
         self.assertEqual(left_chair.coordinates_chairseat[0][2], (4.45, 0.4, 3.15))
@@ -335,14 +339,16 @@ class EscapeRoomTest(unittest.TestCase):
         self.assertEqual(back_chair.coordinates_chairseat[0][3], (4.45, 0.51, 3.15))
 
     def test_chair_legs_are_drawn_like_table_legs(self):
-        chair = Chair(test_room,0)
+        room_state = RoomState()
+        chair = Chair(test_room,0,room_state)
 
         self.assertEqual(len(chair.coordinates_chairlegs), 16)
         for leg_surface in chair.coordinates_chairlegs:
             self.assertEqual(len(leg_surface), 5)
 
     def test_chair_legs_fit_under_seat(self):
-        chair = Chair(test_room,0)
+        room_state = RoomState()
+        chair = Chair(test_room,0,room_state)
         leg_points = [
             point
             for polygon in chair.coordinates_chairlegs
@@ -354,7 +360,8 @@ class EscapeRoomTest(unittest.TestCase):
         self.assertEqual(max(point[1] for point in leg_points), 0.4)
 
     def test_back_legs_align_with_backrest_posts(self):
-        chair = Chair(test_room,0)
+        room_state = RoomState()
+        chair = Chair(test_room,0,room_state)
         right_back_leg_points = [
             point
             for polygon in chair.coordinates_chairlegs[:5]
@@ -372,7 +379,8 @@ class EscapeRoomTest(unittest.TestCase):
         self.assertEqual(max(point[2] for point in right_back_leg_points), 3.15)
 
     def test_chair_parts_include_top_and_four_sides(self):
-        chair = Chair(test_room,0)
+        room_state = RoomState()
+        chair = Chair(test_room,0,room_state)
 
         self.assertEqual(len(chair.coordinates_chairseat), 5)
         self.assertEqual(len(chair.coordinates_chairlegs_back), 13)

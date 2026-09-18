@@ -166,11 +166,11 @@ class Room(tkinter.Frame):
             self.window.append(obj)
         # create tables 
         for index,table in enumerate(self.room_data["table"]):
-            obj = Table(room_data,index)
+            obj = Table(room_data,index,self.room_state)
             self.table.append(obj)
         # create chairs
         for index,chair in enumerate(self.room_data["chair"]):
-            obj = Chair(room_data,index)
+            obj = Chair(room_data,index,self.room_state)
             self.chair.append(obj)        
         # create keys
         for index,key in enumerate(self.room_data["key"]):        
