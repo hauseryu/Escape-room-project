@@ -34,7 +34,7 @@ test_room = {
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, False,"","door1"]], # door1: not player door, can be opened
-        "chair": [[(5.00,0,2.35),"right"]
+        "chair": [[(5.00,0,2.35),"right","chair1"]
                 ], 
         "wardrobe": [ [(0, 0, 4),"left","wardrobe1"] 
                 ],              
