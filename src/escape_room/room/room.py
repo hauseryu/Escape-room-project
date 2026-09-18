@@ -227,7 +227,7 @@ class Room(tkinter.Frame):
                 self.water_glass.append(obj)
         # create benchs
         for index,bench in enumerate(self.room_data["bench"]):
-            obj = Bench(room_data,index,self.canvas_area)
+            obj = Bench(room_data,index,self.canvas_area,self.room_state)
             self.bench.append(obj)
 
         # create figures
