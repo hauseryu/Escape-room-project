@@ -67,7 +67,7 @@ mystery_room = {
                 ],
         "table": [[(4.75, 0.67, 2.75)] # table 1 7.55
                 ],
-        "chair": [ [(1.50,0,1.35),"right"] #  
+        "chair": [ [(1.50,0,1.35),"right","chair1"] #  
                 ],
         "key": [
                 ],
@@ -151,7 +151,7 @@ living_room_221b = {
                 ],
         "table": [[(8, 0, 3)]
                 ],
-        "chair": [[(4.00,0,2.00),"front"]
+        "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
         "key": [
                 ],
@@ -194,9 +194,9 @@ riddle_key_room = {
                 ], 
         "light": [[(3.88, 3, 1.92),"light1"] # light1 => global identifier for the light
                 ],
-        "table": [[(7.55, 0.67, 3.75)] # table 1 7.55
+        "table": [[(7.55, 0.67, 3.75),"table1",("z",-1)] # movement vector in z-direction
                 ],
-        "chair": [ [(5.00,0,2.35),"right"] #  
+        "chair": [ [(5.00,0,2.35),"right","chair1",("x",-1)] # movement vector in x-direction
                 ],
         "key": [[(5.3,1.25,5.0),"key1"] # key 1 => key1 is a global identifier of the key!
                 ],

@@ -182,15 +182,15 @@ class Bench():
             self.draw()
 
     def move_bench(self):
-            self.state = "moved"
-            (a,b,c) = self.shift_coordinates
-            if self.movement_vector[0]=="x":
-                a+=self.movement_vector[1]
-            elif self.movement_vector[0]=="y":
-                b+=self.movement_vector[1]
-            elif self.movement_vector[0]=="z":
-                c+=self.movement_vector[1]
-            self.shift_coordinates = (a,b,c)
+        self.state = "moved"
+        (a,b,c) = self.shift_coordinates
+        if self.movement_vector[0]=="x":
+            a+=self.movement_vector[1]
+        elif self.movement_vector[0]=="y":
+            b+=self.movement_vector[1]
+        elif self.movement_vector[0]=="z":
+            c+=self.movement_vector[1]
+        self.shift_coordinates = (a,b,c)
 
 
 
