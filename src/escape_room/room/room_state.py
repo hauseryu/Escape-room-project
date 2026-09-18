@@ -28,7 +28,8 @@ class RoomState():
             "figure": {},
             "revolver": {},
             "magnifier": {},
-            "water_glass": {}
+            "water_glass": {},
+            "bench": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered
@@ -39,6 +40,10 @@ class RoomState():
     def remove(self,object,unique_id):
         self.room_state[self.current_room][object].update({unique_id:"removed"})
 
+    # status change: object removed from room
+    def move(self,object,unique_id):
+        self.room_state[self.current_room][object].update({unique_id:"moved"})
+
     def object_is_removed(self,object,unique_id):
         try:
             if self.room_state[self.current_room][object][unique_id] == "removed":
@@ -47,6 +52,14 @@ class RoomState():
             pass
         return False
 
+    def object_is_moved(self,object,unique_id):
+        try:
+            if self.room_state[self.current_room][object][unique_id] == "moved":
+                return True
+        except KeyError:
+            pass
+        return False
+    
     def set_state_object(self,object,unique_id,state):
         self.room_state[self.current_room][object].update({unique_id:state})
 

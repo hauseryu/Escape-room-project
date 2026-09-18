@@ -5,7 +5,7 @@ IMAGE_DIR = ContextManager().get_image_path()
 CLOTH_TEXTURE = IMAGE_DIR / "Texturelabs_Fabric.jpg"
 
 class Bench():
-    def __init__(self, room_data, index, canvas):
+    def __init__(self, room_data, index, canvas, room_state):
 
         # evaluate room data
         (x,y,z) = room_data["bench"][index][0] # get bench coordinates (first element in list)
@@ -29,6 +29,11 @@ class Bench():
         self.movement_vector = movement_vector
         self.state="initial"
         self.canvas = canvas
+        self.room_state = room_state
+        self.unique_id = unique_id
+        # consider room state (bench is moved)
+        if room_state.object_is_moved("bench",unique_id):
+            self.move_bench()
 
         # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
         self.coordinates_benchseat = self._create_panel_coordinates(direction,x_pos1=3.45, x_pos2=5.05+self.width_small,
@@ -171,8 +176,13 @@ class Bench():
     def clicked(self, event, tag, object, canvas, world_coordinates):
         if tag=="bench" and self.state=="initial":
             print("[DEBUG] bench clicked!")
-            self.state = "moved"
             canvas.delete(tag)
+            self.move_bench()
+            self.room_state.move("bench",self.unique_id)
+            self.draw()
+
+    def move_bench(self):
+            self.state = "moved"
             (a,b,c) = self.shift_coordinates
             if self.movement_vector[0]=="x":
                 a+=self.movement_vector[1]
@@ -181,8 +191,6 @@ class Bench():
             elif self.movement_vector[0]=="z":
                 c+=self.movement_vector[1]
             self.shift_coordinates = (a,b,c)
-            self.draw()
-
 
 
 
