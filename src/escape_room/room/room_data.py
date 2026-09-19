@@ -1,5 +1,6 @@
 
 from escape_room.objects import letter_data
+from src.escape_room.actions import action_data
 
 # the module defines layout and objects for each room
 
@@ -146,6 +147,8 @@ living_room_221b = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "role": ["sherlock","watson"],
         "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
+                 [(0, 0, 1), "green", "left", "green_door", True, True, False, # door2: player door, can be opened
+                  "","door2",action_data.postman_appears], # door2: no next_room, trigger action sequence 
                 ], 
         "light": [
                 ],
@@ -153,17 +156,18 @@ living_room_221b = {
                 ],
         "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
-        "key": [
+        "key": [[(0.5,1.25,5.0),"key1"] # key 1 => key1 is a global identifier of the key!
                 ],
         "wardrobe": [
                 ],
-        "picture": [
+        "picture": [[(1.35, 2.35, 3.985),"riddle_not_readable.png", True, "front","picture1", (0,0)] # picture 1 (riddle) # is_riddle = True
                 ],
         "bookshelf": [
                 ],
-        "safe": [
+        "safe": [[(1.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],
-        "letter":[[(3.7, 0.6, 2.3),letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes]
+        "letter":[[(3.7, 0.6, 2.3),"letter1",letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes,None],
+                  [(1.2, 1.0, 1.0),"letter2",letter_data.letter_from_moriarty,None,action_data.check_postman_in_room],
                 ],
         "clock":[[(6, 0.42, 4.00)]
                 ],

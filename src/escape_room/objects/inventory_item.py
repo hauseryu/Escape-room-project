@@ -11,7 +11,7 @@ class InventoryItem:
     # normal constructor should not be called directly => see below create method
     def __init__(self, name, room_data, index, image, inventory, 
                  room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-            resize_room = None, resize_inventory = None):
+                 resize_room = None, resize_inventory = None):
         (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
         unique_id = room_data[name][index][1] # unique identifier for the key
         room_placement = True
@@ -52,7 +52,7 @@ class InventoryItem:
     @classmethod
     def create(cls, name, room_data, index, image, inventory, 
                 room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-        resize_room = None, resize_inventory = None):
+                resize_room = None, resize_inventory = None):
         unique_id = room_data[name][index][1] # unique identifier for the object
         try:
             role_assign = room_data[name][index][2] # availability of object for role?
@@ -140,7 +140,7 @@ class InventoryItem:
                     winsound.SND_FILENAME | winsound.SND_ASYNC,
                 )
             except Exception as e:
-                print(f"Sound konnte nicht abgespielt werden: {e}")
+                print(f"[DEBUG] Sound could not be played: {e}")
         
         if not self.inventory.objectInInventory(self.name, self.object_owner) and \
                self.room_placement == True:

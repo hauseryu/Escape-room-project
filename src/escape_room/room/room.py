@@ -175,7 +175,8 @@ class Room(tkinter.Frame):
         # create keys
         for index,key in enumerate(self.room_data["key"]):        
             obj = InventoryItem.create("key",room_data,index,
-                                "key_transparent.png",self.inventory,self.room_state)
+                                "key_transparent.png",self.inventory,self.room_state,
+                                sound="grab_key.wav")
             if obj!=None:
                 self.key.append(obj)
         #create safes
@@ -205,8 +206,9 @@ class Room(tkinter.Frame):
             self.fireplace.append(obj)
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
-            obj = Letter(room_data,index,self.canvas_area)
-            self.letter.append(obj)   
+            obj = Letter.create(room_data,index,self.canvas_area)
+            if obj != None:
+                self.letter.append(obj)   
         # create revolver
         for index,revolver in enumerate(self.room_data["revolver"]):    
             obj = InventoryItem.create("revolver",room_data,index,
