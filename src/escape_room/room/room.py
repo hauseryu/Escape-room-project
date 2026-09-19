@@ -121,6 +121,7 @@ class Room(tkinter.Frame):
         self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()
+            ContextManager().set_inventory(self.inventory)
         if self.player_panel == None:
             self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                         icon_queue=self.icon_queue,
@@ -245,6 +246,7 @@ class Room(tkinter.Frame):
     def update_player_data(self,player_name,player_icon_number):
         # player name + icon
         self.player_name = player_name
+        ContextManager().set_player_name(player_name)
         self.player_icon_number = player_icon_number
         # inform chat panel
         self.chat_panel.player_name = player_name

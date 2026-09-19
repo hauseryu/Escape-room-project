@@ -153,6 +153,8 @@ class Chair():
             self.draw(canvas)
 
     def move_chair(self):
+        if self.movement_vector==None:
+            return
         self.state = "moved"
         (a,b,c) = self.shift_coordinates
         if self.movement_vector[0]=="x":

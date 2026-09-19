@@ -11,30 +11,35 @@ class InventoryItem:
     # normal constructor should not be called directly => see below create method
     def __init__(self, name, room_data, index, image, inventory, 
                  room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-                 resize_room = None, resize_inventory = None):
-        (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
-        unique_id = room_data[name][index][1] # unique identifier for the key
-        room_placement = True
-        # key
-        if name=="key":
-            image = "key_transparent.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
-        # revolver
-        if name=="revolver":
-            image = "revolver.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
-        # magnifier        
-        if name == "magnifier":
-            image = "magnifier.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)   
-        # water glass
-        if name == "water_glass":
-            image = "water_glass.png"
-            shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+                 resize_room = None, resize_inventory = None, unique_identifier = None, object_owner = None):
+        # evaluate room data, if given
+        if room_data != None and index != None:
+            (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
+            unique_id = room_data[name][index][1] # unique identifier for the key
+            room_placement = True
+            # key
+            if name=="key":
+                image = "key_transparent.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # revolver
+            if name=="revolver":
+                image = "revolver.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # magnifier        
+            if name == "magnifier":
+                image = "magnifier.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)   
+            # water glass
+            if name == "water_glass":
+                image = "water_glass.png"
+                shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+            self.object_owner = ""
+        else: # in case magnifier is not created from room data
+            unique_id = unique_identifier 
+            self.object_owner = object_owner
 
         # set attributes
         self.canvas = None
-        self.object_owner = ""
         self.name = name
         self.inventory = inventory
         self.object_id = None

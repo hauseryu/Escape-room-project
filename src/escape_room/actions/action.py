@@ -3,6 +3,7 @@ from src.escape_room.application.game_over_screen import GameOverScreen
 from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.objects.clock import Clock
 from escape_room.objects.letter import Letter
+from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.escape_room.actions import action_data 
@@ -63,6 +64,18 @@ def letter_appears(unique_id):
         obj.draw(canvas)
     ContextManager().get_action_manager().execute_next_action()
 
+def put_magnifier_in_inventory(unique_id):
+    inventory = ContextManager().get_inventory()
+    room_state = ContextManager().get_room_state()
+    canvas = ContextManager().get_canvas()
+    player_name = ContextManager().get_player_name()
+    obj = InventoryItem("magnifier",None,None,
+                        "magnifier.png",inventory,room_state, unique_identifier=unique_id, 
+                        object_owner = player_name, resize_inventory=(100, 50))    
+    inventory.addObject("magnifier",player_name,obj)
+    obj.draw(canvas)
+    ContextManager().get_action_manager().execute_next_action()
+
 def process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role):
     if not hasattr(process_entry, "dialog"):
         process_entry.dialog = Dialog()
@@ -102,6 +115,15 @@ def time_elapse_callback(counter,clock,canvas,sound):
     else:
         ContextManager().get_action_manager().execute_next_action()
 
+def show_speechbubble(text):
+    speech_bubble = SpeechBubble([text])
+    canvas = ContextManager().get_canvas()
+    speech_bubble.show_bubble(canvas,callback=show_speechbubble_callback)
+
+def show_speechbubble_callback():
+    ContextManager().get_action_manager().execute_next_action()
+
+# check actions (return a boolean value which can be evaluated by caller)
 def check_figure_in_room(figure_name):
     figure = ContextManager().get_room().get_figure(figure_name)
     if figure==None:

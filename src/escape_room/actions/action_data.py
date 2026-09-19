@@ -14,6 +14,8 @@ sherlock_client_appears = [
 ]
 
 sherlock_client_disappears = [
+    [action.show_speechbubble,"Thanks Mr. Holmes.\nAs a present, I want to give you my magnifier.\nHope it helps you! Good bye!"], 
+    [action.put_magnifier_in_inventory,"magnifier1"],
     [action.time_elapse,1], # 1 hour to pass until client disappears
     [action.figure_disappears,"Mortimer Jackson"], # client of Sherlock! 
     [action.time_elapse,5,"clock_tick.wav"], # 5 hours to pass until postman arrives

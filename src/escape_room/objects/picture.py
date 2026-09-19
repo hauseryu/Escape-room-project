@@ -2,6 +2,7 @@ from PIL import Image, ImageTk
 from llm.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.escape_room.gui_utilities import graphics
+from src.escape_room.application.context_manager import ContextManager
 
 class Picture:
     """A picture frame on the back wall (``z = 4``).
@@ -113,7 +114,15 @@ class Picture:
         if self.is_riddle:
             canvas.tag_bind(
                 self.image_id,
-                "<Button-1>",
-                lambda e: self.speech_bubble.show_bubble(canvas) 
-            )
-        
+                "<Button-1>", 
+                lambda event: self.on_key_click(event)
+            )            
+
+    def on_key_click(self, event):
+        print("[DEBUG] Picture clicked!")
+        canvas = ContextManager().get_canvas()
+        inventory = ContextManager().get_inventory()
+        obj = inventory.getSelectedObject()
+        if obj[0] != "magnifier":
+            return
+        self.speech_bubble.show_bubble(canvas)        

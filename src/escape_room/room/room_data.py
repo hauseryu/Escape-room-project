@@ -166,7 +166,8 @@ living_room_221b = {
                 ],
         "safe": [[(1.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],
-        "letter":[[(3.7, 0.6, 2.3),"letter1",letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes,None],
+        "letter":[[(3.7, 0.6, 2.3),"letter1",letter_data.letter_to_holmes, # letter text
+                   letter_data.choices_letter_to_holmes,None], # letter choices, check action (if not fulfilled, letter is not (yet) shown)
                   [(1.2, 1.0, 1.0),"letter2",letter_data.letter_from_moriarty,None,action_data.check_postman_in_room],
                 ],
         "clock":[[(6, 0.42, 4.00)]
@@ -177,7 +178,7 @@ living_room_221b = {
                 ],
         "fireplace":[[(3.2, 0, 4)]
                 ],
-        "magnifier":[[(4.2,0,2.0), "magnifier1"]
+        "magnifier":[ # [(4.2,0,2.0), "magnifier1"]
                 ],
         "water_glass":[[(5.5,0.6,2.4), "water_glass1"],
                 ],
