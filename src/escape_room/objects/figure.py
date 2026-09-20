@@ -34,5 +34,5 @@ class Figure():
 
     def figure_clicked(self,canvas):
         print(f"[DEBUG]: figure {self.figure_name} clicked")
-        ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_talk)
-        pass
+        if self.action_sequence_talk!=None:
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_talk)

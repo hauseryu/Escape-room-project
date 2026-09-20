@@ -144,6 +144,7 @@ class Room(tkinter.Frame):
                                                     globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"),
                                                     self.role)
             self.game_client.role = self.role
+            ContextManager().set_role(self.role)
             action_type = "update_player_list"
             self.game_client.send_action(action_type) # all players need to know the role assignment
         except: # in case no roles are defined for the room, just pass on

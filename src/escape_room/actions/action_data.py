@@ -25,9 +25,19 @@ sherlock_client_disappears = [
 postman_appears = [
     [action.time_elapse,1], # 1 hours to pass until postman comes
     [action.figure_appears,"Postman","postman.png",
-            115,605,240,480,sherlock_client_talk], # client of Sherlock! x + y coordinates, width, height
+            115,605,240,480,None], # client of Sherlock! x + y coordinates, width, height
     [action.play_sound,"man_saying_hello.wav"],
-    [action.letter_appears,"letter2"],    
+    [action.letter_appears,"letter2"],
+    [action.set_object_state,"picture","picture2","active"] # set the room bell to active
+]
+
+call_mrs_hudson = [
+    [action.stop_sequence_conditionally,action.check_role,"watson"],
+    [action.play_sound,"room_bell.wav"],
+    [action.time_elapse,1], # 1 hours to pass until Mrs. Hudson comes
+    [action.figure_appears,"MrsHudson","Mrs_Hudson_with_tablet.png",
+            1200,605,340,480,None],
+    [action.inventory_item_appears,"water_glass","water_glass1","water_glass.png",(50, 100),(40, 80)]
 ]
 
 game_over = [
@@ -37,4 +47,12 @@ game_over = [
 # action sequences including check actions that return a value
 check_postman_in_room = [
     [action.check_figure_in_room,"Postman"]
+]
+
+check_mrs_hudson_in_room = [
+    [action.check_figure_in_room,"MrsHudson"]
+]
+
+check_room_bell_activation = [
+    [action.check_object_state,"picture","picture2","active"]
 ]

@@ -14,8 +14,8 @@ class InventoryItem:
                  resize_room = None, resize_inventory = None, unique_identifier = None, object_owner = None):
         # evaluate room data, if given
         if room_data != None and index != None:
-            (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
-            unique_id = room_data[name][index][1] # unique identifier for the key
+            (x,y,z) = room_data[name][index]["coord"] # get object coordinates (first element in list)
+            unique_id = room_data[name][index]["unique_id"] # unique identifier for the key
             room_placement = True
             # key
             if name=="key":
@@ -58,15 +58,25 @@ class InventoryItem:
     def create(cls, name, room_data, index, image, inventory, 
                 room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
                 resize_room = None, resize_inventory = None):
-        unique_id = room_data[name][index][1] # unique identifier for the object
+        unique_id = room_data[name][index]["unique_id"] # unique identifier for the object
         try:
-            role_assign = room_data[name][index][2] # availability of object for role?
+            role_assign = room_data[name][index]["role"] # availability of object for role?
             if ContextManager().get_room().role != role_assign:
                 return None # role mismatch => object not relevant for player!
         except:
             pass
         if room_state.object_is_removed(name,unique_id):
             return None
+        # check action?
+        try:
+            check_action = room_data[name][index]["check_action"] # get action that checks preconditions
+        except:
+            check_action = None
+        if check_action != None:
+            create_allowed = ContextManager().get_action_manager().execute_action_sequence(check_action)
+            if not create_allowed:
+                return None
+        # ok, object can be created
         return cls(name, room_data, index, image, inventory, room_state, unique_id, 
                     shift_coordinates, room_placement, sound, resize_room, resize_inventory)
 

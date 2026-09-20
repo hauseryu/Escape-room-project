@@ -94,4 +94,8 @@ class ContextManager():
     def get_player_name(self):
         return self.player_name
 
-    
+    def set_role(self,role):
+        self.role = role
+
+    def get_role(self):
+        return self.role
