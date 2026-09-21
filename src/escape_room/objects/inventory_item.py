@@ -30,7 +30,11 @@ class InventoryItem:
         # water glass
         if name == "water_glass":
             image = "water_glass.png"
-            shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+            shift_coordinates = (x-5.0,y-1.0,z-3.0)           
+        # poker
+        if name == "poker":
+            image = "poker.png"
+            shift_coordinates = (x-4,y-0,z-3.0)
 
         # set attributes
         self.canvas = None

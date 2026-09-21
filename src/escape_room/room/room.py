@@ -28,6 +28,7 @@ from escape_room.objects.clock import Clock
 from src.escape_room.objects.fireplace import Fireplace
 from src.escape_room.objects.bench import Bench
 from src.escape_room.objects.window import Window
+from src.escape_room.objects.metal_cassette import MetalCassette
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -93,6 +94,8 @@ class Room(tkinter.Frame):
         self.magnifier = []
         self.water_glass = []
         self.window = []
+        self.poker = []
+        self.metal_cassette = []
         for door in self.door:
             door.is_open = False        
 
@@ -198,11 +201,15 @@ class Room(tkinter.Frame):
         for index,clock in enumerate(self.room_data["clock"]):
             obj = Clock(room_data,index,self.canvas_area, time=1)
             self.clock.append(obj)
-        ContextManager().set_clock(self.clock)
+        ContextManager().set_clock(self.clock)        
         # create fireplaces
         for index,fireplace in enumerate(self.room_data["fireplace"]):
-            obj = Fireplace(room_data,index)
+            obj = Fireplace(room_data,index,self.room_state)
             self.fireplace.append(obj)
+        # create metal cassette
+        for index,cassette in enumerate(self.room_data["metal_cassette"]):
+            obj = MetalCassette(room_data,index,self.room_state)
+            self.metal_cassette.append(obj)
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
             obj = Letter(room_data,index,self.canvas_area)
@@ -225,6 +232,12 @@ class Room(tkinter.Frame):
                                 "water_glass.png",self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
             if obj!=None:
                 self.water_glass.append(obj)
+        # create poker
+        for index,poker in enumerate(self.room_data["poker"]):
+            obj = InventoryItem.create("poker",room_data,index,
+                                "poker.png",self.inventory,self.room_state, resize_room=(70, 130), resize_inventory=(40, 80))
+            if obj!=None:
+                self.poker.append(obj)
         # create benchs
         for index,bench in enumerate(self.room_data["bench"]):
             obj = Bench(room_data,index,self.canvas_area,self.room_state)
@@ -297,7 +310,15 @@ class Room(tkinter.Frame):
 
         # draw the fireplaces
         for fireplace in self.fireplace:
-            fireplace.draw(self.canvas_area, self.inventory, self.player_name)
+            fireplace.draw(self.canvas_area, self.inventory, self.player_name, self.metal_cassette)
+
+        # draw metal cassettes
+        for cassette in self.metal_cassette:
+            cassette.draw(self.canvas_area, self.inventory, self.player_name)
+
+        # draw the poker
+        for poker in self.poker:
+            poker.draw(self.canvas_area)
 
         # draw the chair
         for chair in self.chair:

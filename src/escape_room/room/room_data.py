@@ -49,6 +49,10 @@ start_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
                 ]
 }
 
@@ -94,6 +98,10 @@ mystery_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
                 ]
 }
 
@@ -136,6 +144,10 @@ doorway = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
                 ]
 }
 
@@ -171,7 +183,7 @@ living_room_221b = {
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
-        "fireplace":[[(3.2, 0, 4)]
+        "fireplace":[[(3.2, 0, 4), "fireplace1", "metal_cassette1"]
                 ],
         "magnifier":[[(4.2,0,2.0), "magnifier1"]
                 ],
@@ -180,6 +192,10 @@ living_room_221b = {
         "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
                 ],
         "window":[[(0, 1, 1.8)]
+                ],
+        "poker":[[(2.3, 0, 3.5), "poker1"]
+                ],
+        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1"]
                 ]
 }
 
@@ -223,6 +239,10 @@ riddle_key_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
                 ]
 }
 
