@@ -2,6 +2,7 @@ from PIL import Image, ImageTk
 from llm.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.escape_room.gui_utilities import graphics
+from src.escape_room.application.context_manager import ContextManager
 
 class Picture:
     """A picture frame on the back wall (``z = 4``).
@@ -10,13 +11,39 @@ class Picture:
     def __init__(self, room_data,index,image_path,room_state):
 
         # evaluate room data
-        (x,y,z) = room_data["picture"][index][0] # get wardrobe coordinates (first element in list)
-        file_name = room_data["picture"][index][1] 
+        (x,y,z) = room_data["picture"][index]["coord"] # get picture coordinates (first element in list)
+        file_name = room_data["picture"][index]["image"] 
         image_location = image_path / file_name
-        is_riddle = room_data["picture"][index][2]
-        direction = room_data["picture"][index][3]
-        unique_id = room_data["picture"][index][4] # unique identifier
-        pic_move_coord = room_data["picture"][index][5]
+        is_riddle = room_data["picture"][index]["is_riddle"]
+        try:
+            direction = room_data["picture"][index]["direction"]
+        except:
+            direction = "front"
+        unique_id = room_data["picture"][index]["unique_id"] # unique identifier
+        try:
+            pic_move_coord = room_data["picture"][index]["pic_move_coord"] # move picture to 2-d pixels 
+        except:
+            pic_move_coord = (0,0)
+        try:
+            draw_frame = room_data["picture"][index]["draw_frame"] # shall a frame be drawn?
+        except:
+            draw_frame = True
+        try:
+            needed_inventory =  room_data["picture"][index]["needed_inventory"] # this inventory item needs to be used to activate picture
+        except:
+            needed_inventory = None
+        try:
+            check_activation =  room_data["picture"][index]["check_activation"] # check the object state to enable using (clicking) the object
+        except:
+            check_activation = None
+        try:
+            is_clickable = room_data["picture"][index]["is_clickable"]
+        except:
+            is_clickable = False
+        try:
+            action_sequence = room_data["picture"][index]["action_sequence"]
+        except:
+            action_sequence = None
         shift_coordinates = (x-5.05,y-2.35,z-4.0)            
 
         # set attributes
@@ -27,6 +54,11 @@ class Picture:
         self.unique_id = unique_id
         self.room_state = room_state
         self.pic_move_coord = pic_move_coord
+        self.draw_frame = draw_frame
+        self.needed_inventory = needed_inventory
+        self.check_activation = check_activation
+        self.is_clickable = is_clickable
+        self.action_sequence = action_sequence
         
         if self.direction == "front":
             self.coordinates_frame = [
@@ -95,9 +127,10 @@ class Picture:
                                             self.riddles + self.correct_answers)
 
     def draw(self, canvas, tag):
-        # draw outline
-        graphics.draw(canvas,self.coordinates_frame,shift_coordinates=self.shift_coordinates)
-        graphics.draw(canvas,self.coordinates_image,tag="picture",
+        # draw outline (frame)
+        if self.draw_frame:
+            graphics.draw(canvas,self.coordinates_frame,shift_coordinates=self.shift_coordinates)
+            graphics.draw(canvas,self.coordinates_image,tag="picture",
                         shift_coordinates=self.shift_coordinates)
         # draw image
         x1, y1, x2, y2 = canvas.bbox(tag)
@@ -110,10 +143,28 @@ class Picture:
             self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
         else:
             self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], anchor="nw", image=self.foto_image)
-        if self.is_riddle:
+        if self.is_clickable:
             canvas.tag_bind(
                 self.image_id,
-                "<Button-1>",
-                lambda e: self.speech_bubble.show_bubble(canvas) 
-            )
-        
+                "<Button-1>", 
+                lambda event: self.on_key_click(event)
+            )            
+
+    def on_key_click(self, event):
+        print("[DEBUG] Picture clicked!")
+        canvas = ContextManager().get_canvas()
+        inventory = ContextManager().get_inventory()
+        if self.needed_inventory != None:
+            obj = inventory.getSelectedObject()
+            if obj[0] != self.needed_inventory:
+                return
+        if self.check_activation != None:
+            usage_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_activation)
+            if not usage_allowed:
+                print("[DEBUG] Object not yet activated!")
+                return
+        if self.riddles!=[]:
+            self.speech_bubble.show_bubble(canvas)        
+        elif self.action_sequence!=None:
+            print("[DEBUG] execute action sequence of picture!")
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)

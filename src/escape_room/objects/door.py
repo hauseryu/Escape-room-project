@@ -61,6 +61,8 @@ class Door:
                  shift_coordinates = (0,0,0),
                  player_name=None, 
                  next_room_callback=None,room_state=None):
+
+        # evaluate room data
         coord = room_data["door"][index][0] # get door coordinates (first element in list)
         color = room_data["door"][index][1]
         direction = room_data["door"][index][2]
@@ -69,14 +71,13 @@ class Door:
         can_be_opened = room_data["door"][index][5] # door can be opened
         always_open = room_data["door"][index][6] # door is always open
         next_room = room_data["door"][index][7] # next room
-        unique_id = room_data["door"][index][8] # unique identifier
-        # if direction == "front":
-        #     shift_coord = (coord[0]-3.2,coord[1]-0,coord[2]-4)
-        # elif direction == "left":
-        #     shift_coord = (coord[0]-0,coord[1]-0,coord[2]-1.5)
-        # elif direction == "right":
-        #     shift_coord = (coord[0]-8,coord[1]-0,coord[2]-3.1)       
+        unique_id = room_data["door"][index][8] # unique identifier        
+        try:
+            self.action_sequence = room_data["door"][index][9] # action sequence assigned?
+        except:
+            self.action_sequence = None
 
+        # set attributes
         self.position = tuple(coord)
         self.color = color
         self.direction = direction
@@ -206,26 +207,32 @@ class Door:
                     show_confirmation=False
                 )
                 return False # => no redraw    
+            # handle open door
             if self.is_open:
                 """Triggered when the player clicks on a door inside the canvas."""
                 main_window = event.widget.winfo_toplevel()
-                
-                # Call our custom English popup instead of messagebox
-                popup = ConfirmationPopup(
-                    parent_window=main_window,
-                    title="Change Room",
-                    message="Do you want to enter the next room?",
-                    mouse_x=event.x_root, # global position of mouse coordinates
-                    mouse_y=event.y_root
-                )
 
-                # The code pauses until the user clicks a button, then checks popup.result
-                if popup.result:
-                    print("[GAME] Player decided to change the room.")
-                    if self.next_room_callback != None:
-                        self.next_room_callback(self.next_room)
-                else:
-                    print("[GAME] Player decided to stay in the current room.")
+                if self.next_room != "": # is next room specified? => offer dialog box to enter that room
+                    # Call our custom English popup instead of messagebox
+                    popup = ConfirmationPopup(
+                        parent_window=main_window,
+                        title="Change Room",
+                        message="Do you want to enter the next room?",
+                        mouse_x=event.x_root, # global position of mouse coordinates
+                        mouse_y=event.y_root
+                    )
+
+                    # The code pauses until the user clicks a button, then checks popup.result
+                    if popup.result:
+                        print("[GAME] Player decided to change the room.")
+                        if self.next_room_callback != None:
+                            self.next_room_callback(self.next_room)
+                    else:
+                        print("[GAME] Player decided to stay in the current room.")
+                else: # no next room is specified => just leave the door open
+                    if self.action_sequence!=None:
+                        ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
+                
             return True # => redraw
         
         return False # => no redraw

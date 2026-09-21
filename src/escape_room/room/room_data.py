@@ -1,5 +1,6 @@
 
 from escape_room.objects import letter_data
+from src.escape_room.actions import action_data
 
 # the module defines layout and objects for each room
 
@@ -26,9 +27,13 @@ start_room = {
                 ],
         "wardrobe": [  # no wardrobe
                 ], 
-        "picture": [[(3.65,2.95,4.0), "harry-potter-logo.jpg", False, "front", "picture1", (971,495)],
-                    [(2,2.95,1.65), "sherlock_logo.png", False, "left", "picture2",(642,343)],
-                    [(6,2.95,2.65), "ghost_logo.png", False, "right", "picture3",(1257,379)],
+        "picture": [
+                    {"coord":(3.65,2.95,4.0),"image": "harry-potter-logo.jpg", "is_riddle": False, 
+                     "unique_id": "picture1", "pic_move_coord": (971,495)},   
+                    {"coord":(2,2.95,1.65),"image": "sherlock_logo.png", "is_riddle": False, 
+                     "unique_id": "picture1", "pic_move_coord": (642,343),"direction": "left"},   
+                    {"coord":(6,2.95,2.65),"image": "ghost_logo.png", "is_riddle": False, 
+                     "unique_id": "picture3", "pic_move_coord": (1257,379),"direction": "right"}                              
                 ],
         "bookshelf": [
                 ],
@@ -146,6 +151,8 @@ living_room_221b = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "role": ["sherlock","watson"],
         "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
+                 [(0, 0, 1), "green", "left", "green_door", True, True, False, # door2: player door, can be opened
+                  "","door2",action_data.postman_appears], # door2: no next_room, trigger action sequence 
                 ], 
         "light": [
                 ],
@@ -153,31 +160,38 @@ living_room_221b = {
                 ],
         "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
-        "key": [
+        "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1"} # key 1 => key1 is a global identifier of the key!
                 ],
         "wardrobe": [
                 ],
-        "picture": [
+        "picture": [{"coord":(1.35, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
+                     "direction": "front","unique_id": "picture1", "needed_inventory": "magnifier", "is_clickable": True}, 
+                    {"coord":(8, 2, 2),"image": "room_bell.png", "is_riddle": False,  # (door bell to call for Mrs. Hudson)
+                     "direction": "right","unique_id": "picture2", "pic_move_coord": (1450,550), "draw_frame": False,
+                     "check_activation": action_data.check_room_bell_activation, "is_clickable": True,
+                     "action_sequence": action_data.call_mrs_hudson}               
                 ],
         "bookshelf": [
                 ],
-        "safe": [
+        "safe": [[(1.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],
-        "letter":[[(3.7, 0.6, 2.3),letter_data.letter_to_holmes,letter_data.choices_letter_to_holmes]
+        "letter":[[(3.7, 0.6, 2.3),"letter1",letter_data.letter_to_holmes, # letter text
+                   letter_data.choices_letter_to_holmes,None], # letter choices, check action (if not fulfilled, letter is not (yet) shown)
+                  [(1.2, 1.0, 1.0),"letter2",letter_data.letter_from_moriarty,None,action_data.check_postman_in_room],
                 ],
         "clock":[[(6, 0.42, 4.00)]
                 ],
-        "revolver":[[(-1,0, 3.1), "revolver1","watson"] # revolver only available for role watson
+        "revolver":[{"coord": (-1,0, 3.1), "unique_id": "revolver1","role": "watson"} # revolver only available for role watson
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
         "fireplace":[[(3.2, 0, 4)]
                 ],
-        "magnifier":[[(4.2,0,2.0), "magnifier1"]
+        "magnifier":[ 
                 ],
-        "water_glass":[[(5.5,0.6,2.4), "water_glass1"],
+        "water_glass":[{"coord": (4.5,1.1,2.4), "unique_id": "water_glass1", "check_action": action_data.check_mrs_hudson_in_room},
                 ],
-        "magnifier":[[(-1,0,3.1), "magnifier1","sherlock"]  # magnifier only available for role sherlock
+        "magnifier":[{"coord": (-1,0,3.1), "unique_id": "magnifier1","role": "sherlock"}  # magnifier only available for role sherlock
                 ],
         "window":[[(0, 1, 1.8)]
                 ]
@@ -198,11 +212,12 @@ riddle_key_room = {
                 ],
         "chair": [ [(5.00,0,2.35),"right","chair1",("x",-1)] # movement vector in x-direction
                 ],
-        "key": [[(5.3,1.25,5.0),"key1"] # key 1 => key1 is a global identifier of the key!
+        "key": [{"coord": (5.3,1.25,5.0),"unique_id": "key1"} # key 1 => key1 is a global identifier of the key!
                 ],
         "wardrobe": [  # no wardrobe
                 ],
-        "picture": [[(6.05, 2.35, 3.985),"riddle_not_readable.png", True, "front","picture1", (0,0)] # picture 1 (riddle) # is_riddle = True
+        "picture": [{"coord":(6.05, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
+                     "direction": "front","unique_id": "picture1", "is_clickable": True},
                 ],
         "bookshelf": [[(0, 0, 4)]  # bookshelf 1
                 ],

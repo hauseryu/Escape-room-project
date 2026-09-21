@@ -11,30 +11,35 @@ class InventoryItem:
     # normal constructor should not be called directly => see below create method
     def __init__(self, name, room_data, index, image, inventory, 
                  room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-            resize_room = None, resize_inventory = None):
-        (x,y,z) = room_data[name][index][0] # get object coordinates (first element in list)
-        unique_id = room_data[name][index][1] # unique identifier for the key
-        room_placement = True
-        # key
-        if name=="key":
-            image = "key_transparent.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
-        # revolver
-        if name=="revolver":
-            image = "revolver.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)    
-        # magnifier        
-        if name == "magnifier":
-            image = "magnifier.png"
-            shift_coordinates = (x-6.5,y-0.78,z-3.0)   
-        # water glass
-        if name == "water_glass":
-            image = "water_glass.png"
-            shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+                 resize_room = None, resize_inventory = None, unique_identifier = None, object_owner = None):
+        # evaluate room data, if given
+        if room_data != None and index != None:
+            (x,y,z) = room_data[name][index]["coord"] # get object coordinates (first element in list)
+            unique_id = room_data[name][index]["unique_id"] # unique identifier for the key
+            room_placement = True
+            # key
+            if name=="key":
+                image = "key_transparent.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # revolver
+            if name=="revolver":
+                image = "revolver.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # magnifier        
+            if name == "magnifier":
+                image = "magnifier.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)   
+            # water glass
+            if name == "water_glass":
+                image = "water_glass.png"
+                shift_coordinates = (x-5.0,y-1.0,z-3.0)            
+            self.object_owner = ""
+        else: # in case magnifier is not created from room data
+            unique_id = unique_identifier 
+            self.object_owner = object_owner
 
         # set attributes
         self.canvas = None
-        self.object_owner = ""
         self.name = name
         self.inventory = inventory
         self.object_id = None
@@ -52,16 +57,26 @@ class InventoryItem:
     @classmethod
     def create(cls, name, room_data, index, image, inventory, 
                 room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-        resize_room = None, resize_inventory = None):
-        unique_id = room_data[name][index][1] # unique identifier for the object
+                resize_room = None, resize_inventory = None):
+        unique_id = room_data[name][index]["unique_id"] # unique identifier for the object
         try:
-            role_assign = room_data[name][index][2] # availability of object for role?
+            role_assign = room_data[name][index]["role"] # availability of object for role?
             if ContextManager().get_room().role != role_assign:
                 return None # role mismatch => object not relevant for player!
         except:
             pass
         if room_state.object_is_removed(name,unique_id):
             return None
+        # check action?
+        try:
+            check_action = room_data[name][index]["check_action"] # get action that checks preconditions
+        except:
+            check_action = None
+        if check_action != None:
+            create_allowed = ContextManager().get_action_manager().execute_action_sequence(check_action)
+            if not create_allowed:
+                return None
+        # ok, object can be created
         return cls(name, room_data, index, image, inventory, room_state, unique_id, 
                     shift_coordinates, room_placement, sound, resize_room, resize_inventory)
 
@@ -140,7 +155,7 @@ class InventoryItem:
                     winsound.SND_FILENAME | winsound.SND_ASYNC,
                 )
             except Exception as e:
-                print(f"Sound konnte nicht abgespielt werden: {e}")
+                print(f"[DEBUG] Sound could not be played: {e}")
         
         if not self.inventory.objectInInventory(self.name, self.object_owner) and \
                self.room_placement == True:
