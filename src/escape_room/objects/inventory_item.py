@@ -35,6 +35,10 @@ class InventoryItem:
         if name == "poker":
             image = "poker.png"
             shift_coordinates = (x-4,y-0,z-3.0)
+        # diamond
+        if name == "diamond":
+            image = "diamond.png"
+            shift_coordinates = (x-3.78,y-0.37,z-3.5)
 
         # set attributes
         self.canvas = None
@@ -82,6 +86,28 @@ class InventoryItem:
                     break
             if not draw_key:
                 return # key is hidden => do not draw it!
+
+        if self.name == "diamond":
+            draw_diamond = True            
+            for index, cassette in enumerate(ContextManager().get_room().metal_cassette): 
+                unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
+                if (self.unique_id == cassette.diamond.unique_id and self.room_state.get_state_object("metal_cassette",unique_id) == "opened"): 
+                    break
+                else: 
+                    draw_diamond = False
+                    break
+            if not draw_diamond:
+                return # key is hidden => do not draw it!
+
+            # for index, cassette in enumerate(ContextManager().get_room().metal_cassette):
+            #     unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
+            #     if self.unique_id == unique_id and self.room_state.get_state_object("metal_cassette",unique_id) == "opened":
+            #         break
+            #     else:
+            #         draw_diamond = False
+            #         break
+            # if not draw_diamond:
+            #     return
 
         # part 2: actually draw the inventory item
         self.canvas = canvas

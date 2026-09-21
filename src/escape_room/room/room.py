@@ -96,6 +96,7 @@ class Room(tkinter.Frame):
         self.window = []
         self.poker = []
         self.metal_cassette = []
+        self.diamond = []
         for door in self.door:
             door.is_open = False        
 
@@ -206,10 +207,16 @@ class Room(tkinter.Frame):
         for index,fireplace in enumerate(self.room_data["fireplace"]):
             obj = Fireplace(room_data,index,self.room_state)
             self.fireplace.append(obj)
+        # create diamond
+        for index,diamond in enumerate(self.room_data["diamond"]):
+            obj = InventoryItem.create("diamond",room_data,index,
+                                "diamond.png",self.inventory,self.room_state, resize_room=(30, 50), resize_inventory=(50, 70))
+            if obj!=None:
+                self.diamond.append(obj)
         # create metal cassette
         for index,cassette in enumerate(self.room_data["metal_cassette"]):
             obj = MetalCassette(room_data,index,self.room_state)
-            self.metal_cassette.append(obj)
+            self.metal_cassette.append(obj)        
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
             obj = Letter(room_data,index,self.canvas_area)
@@ -270,6 +277,11 @@ class Room(tkinter.Frame):
             revolver.object_owner = self.player_name
         for water_glass in self.water_glass:
             water_glass.object_owner = self.player_name
+        for poker in self.poker:
+            poker.object_owner = self.player_name
+        for diamond in self.diamond:
+            diamond.object_owner = self.player_name
+
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -315,6 +327,10 @@ class Room(tkinter.Frame):
         # draw metal cassettes
         for cassette in self.metal_cassette:
             cassette.draw(self.canvas_area, self.inventory, self.player_name)
+
+        # draw the diamond
+        for diamond in self.diamond:
+            diamond.draw(self.canvas_area)
 
         # draw the poker
         for poker in self.poker:

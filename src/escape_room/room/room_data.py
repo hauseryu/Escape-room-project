@@ -53,6 +53,8 @@ start_room = {
         "poker":[
                 ],
         "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -102,6 +104,8 @@ mystery_room = {
         "poker":[
                 ],
         "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -148,6 +152,8 @@ doorway = {
         "poker":[
                 ],
         "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -195,7 +201,9 @@ living_room_221b = {
                 ],
         "poker":[[(2.3, 0, 3.5), "poker1"]
                 ],
-        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1"]
+        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1"]
+                ],
+        "diamond": [[(1.1, 0.34, 3.50), "diamond1"]
                 ]
 }
 
@@ -243,6 +251,8 @@ riddle_key_room = {
         "poker":[
                 ],
         "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
