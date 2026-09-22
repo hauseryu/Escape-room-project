@@ -1,8 +1,7 @@
-import sqlite3
 import json
 from src.escape_room.application.database_manager import DatabaseManager
 
-class RoomStateRepository(DatabaseManager):
+class RoomStateRepository():
     def __init__(self, db_path="src/escape_room/assets/mydata.db"):
         self.db = DatabaseManager(db_path)
         self._init_db()
@@ -20,10 +19,6 @@ class RoomStateRepository(DatabaseManager):
             
     def load_all_rooms(self):
         """loads all rooms and converts them into a python dict"""
-        # self.cursor.execute("""
-        #                 SELECT room_name, state_json FROM room_states
-        #                 """)
-        # rows = self.cursor.fetchall()
         query = "SELECT room_name, state_json FROM room_states"
         rows = self.db.fetch_all(query)
         result = {}
@@ -39,7 +34,7 @@ class RoomStateRepository(DatabaseManager):
             self.db.execute("DELETE FROM room_states") # empty the table 
             
             data_to_insert = [
-                (room_name, json.dumps(state))
+                (room_name, json.dumps(state)) # dump string
                 for room_name, state in room_state.items()
             ]
             

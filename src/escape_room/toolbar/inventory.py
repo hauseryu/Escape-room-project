@@ -2,6 +2,7 @@
 from pathlib import Path
 from PIL import Image, ImageTk
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.repositories.inventory_repository import InventoryRepository
 
 IMAGE_DIR = ContextManager.get_image_path()
 INVENTORY_TEXTURE = IMAGE_DIR / "inventory_wood.jpg"
@@ -22,6 +23,7 @@ class Inventory():
 
     def __init__(self):
         self.canvas = None
+        self.repo = InventoryRepository()
         self.inventory = {} # dictionary of inventory objects (type,object owner, selection status)
         pass
 
@@ -150,3 +152,6 @@ class Inventory():
             # remove current object images and selection
             (_,object_ref,_) = value
             object_ref.draw(self.canvas)
+    
+    def save_to_db(self):
+        self.repo.save_inventory(self)

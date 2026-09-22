@@ -120,5 +120,6 @@ class EscapeApp():
     def save_game(self):
         room_state = self.context_manager.get_room_state()
         room_state.save_to_db()
+        
 
 

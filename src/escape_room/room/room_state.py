@@ -1,5 +1,5 @@
 from src.escape_room.objects.figure import Figure
-from src.escape_room.room.room_state_repository import RoomStateRepository
+from src.escape_room.repositories.room_state_repository import RoomStateRepository
 
 class RoomState():
     def __init__(self):
