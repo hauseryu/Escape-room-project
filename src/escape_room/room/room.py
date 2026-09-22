@@ -125,6 +125,7 @@ class Room(tkinter.Frame):
         self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()
+            ContextManager().set_inventory(self.inventory)
         if self.player_panel == None:
             self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                         icon_queue=self.icon_queue,
@@ -147,6 +148,7 @@ class Room(tkinter.Frame):
                                                     globals.icon_mapping.get(self.player_icon_number, "playerpic_running_man.png"),
                                                     self.role)
             self.game_client.role = self.role
+            ContextManager().set_role(self.role)
             action_type = "update_player_list"
             self.game_client.send_action(action_type) # all players need to know the role assignment
         except: # in case no roles are defined for the room, just pass on
@@ -179,7 +181,8 @@ class Room(tkinter.Frame):
         # create keys
         for index,key in enumerate(self.room_data["key"]):        
             obj = InventoryItem.create("key",room_data,index,
-                                "key_transparent.png",self.inventory,self.room_state)
+                                "key_transparent.png",self.inventory,self.room_state,
+                                sound="grab_key.wav")
             if obj!=None:
                 self.key.append(obj)
         #create safes
@@ -219,8 +222,9 @@ class Room(tkinter.Frame):
             self.metal_cassette.append(obj)        
         # create letters
         for index,letter in enumerate(self.room_data["letter"]):
-            obj = Letter(room_data,index,self.canvas_area)
-            self.letter.append(obj)   
+            obj = Letter.create(room_data,index,self.canvas_area)
+            if obj != None:
+                self.letter.append(obj)   
         # create revolver
         for index,revolver in enumerate(self.room_data["revolver"]):    
             obj = InventoryItem.create("revolver",room_data,index,
@@ -263,6 +267,7 @@ class Room(tkinter.Frame):
     def update_player_data(self,player_name,player_icon_number):
         # player name + icon
         self.player_name = player_name
+        ContextManager().set_player_name(player_name)
         self.player_icon_number = player_icon_number
         # inform chat panel
         self.chat_panel.player_name = player_name

@@ -7,14 +7,18 @@ class Letter():
 
         # evaluate room data
         (x,y,z) = room_data["letter"][index][0] # get letter coordinates (first element in list)
-        text = room_data["letter"][index][1] # get letter text
-        choices = room_data["letter"][index][2] # get choices for letter
+        unique_id = room_data["letter"][index][1]
+        text = room_data["letter"][index][2] # get letter text
+        choices = room_data["letter"][index][3] # get choices for letter
+        check_action = room_data["letter"][index][4] # get action that checks preconditions
         shift_coordinates = (x-3.5,y-0,z-2)
 
         # set attributes
         self.shift_coordinates = shift_coordinates
         self.text = text
         self.choices = choices
+        self.unique_id = unique_id
+        self.check_action = check_action
         self.speech_bubble = SpeechBubble([text],choices,
                                           evaluate_choices_callback=
                                           ContextManager().get_action_manager().evaluate_choices)
@@ -27,6 +31,18 @@ class Letter():
             [3.6, 0, 1.86, 0.015, "#B02525", 0, 360]
             ]
 
+    # class method create has to be used to create objects, if based on preconditions
+    @classmethod
+    def create(cls, room_data, index, canvas):
+        check_action = room_data["letter"][index][4] # get action that checks preconditions
+        if check_action == None:
+            return cls(room_data, index, canvas)
+        create_allowed = ContextManager().get_action_manager().execute_action_sequence(check_action)
+        if create_allowed:
+            return cls(room_data, index, canvas)
+        else:
+            return None # check failed => forbid creation
+    
     def draw(self,canvas):
         graphics.draw(canvas,self.coordinates,tag="letter",object=self,shift_coordinates=self.shift_coordinates)
         graphics.draw_arc(canvas, *self.coordinates_stamp[0], tag="letter", shift_coordinates=self.shift_coordinates)
