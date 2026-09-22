@@ -27,6 +27,7 @@ from src.escape_room.objects.metal_cassette import MetalCassette
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.actions.action import ActionManager
 from src.escape_room.room.room_state import RoomState
+from src.escape_room.actions.action import action_mgr_create
 
 IMAGE_DIR = ContextManager.get_image_path()
 
@@ -154,10 +155,9 @@ class EscapeRoomTest(unittest.TestCase):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
-        action_manager = ActionManager()
-        ContextManager().set_action_manager(action_manager)
+        action_manager_factory = action_mgr_create
+        ContextManager().set_action_manager_factory(action_manager_factory)
         room_state = RoomState()
-
 
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
@@ -276,8 +276,8 @@ class EscapeRoomTest(unittest.TestCase):
         mock_generate_riddle.return_value = "Test riddle"
 
         app = EscapeApp.__new__(EscapeApp)
-        action_manager = ActionManager()
-        ContextManager().set_action_manager(action_manager)
+        action_manager_factory = action_mgr_create
+        ContextManager().set_action_manager_factory(action_manager_factory)
         room_state = RoomState()
 
         app.room = Room.__new__(Room)

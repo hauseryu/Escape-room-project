@@ -14,10 +14,12 @@ sherlock_client_appears = [
 ]
 
 sherlock_client_disappears = [
+    [action.skip_actions_if_false,2,action.check_role,"sherlock"], # skip next 2 actions if role is not sherlock
     [action.show_speechbubble,"Thanks Mr. Holmes.\nAs a present, I want to give you my magnifier.\nHope it helps you! Good bye!"], 
-    [action.put_magnifier_in_inventory,"magnifier1"],
+    [action.put_item_in_inventory,"magnifier","magnifier1"],
     [action.time_elapse,1], # 1 hour to pass until client disappears
     [action.figure_disappears,"Mortimer Jackson"], # client of Sherlock! 
+    [action.remove_letter,"letter1"],
     [action.time_elapse,5,"clock_tick.wav"], # 5 hours to pass until postman arrives
     [action.play_sound,"bell.wav"]
 ]
@@ -27,8 +29,20 @@ postman_appears = [
     [action.figure_appears,"Postman","postman.png",
             115,605,240,480,None], # client of Sherlock! x + y coordinates, width, height
     [action.play_sound,"man_saying_hello.wav"],
-    [action.letter_appears,"letter2"],
+    [action.letter_appears,"letter2","postman_disappears"], # trigger action sequence postman disappears after dialog box is closed
     [action.set_object_state,"picture","picture2","active"] # set the room bell to active
+]
+
+postman_disappears = [
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.figure_disappears,"Postman"], 
+    [action.set_object_state,"letter","letter2","removed"],
+    [action.remove_letter,"letter2"]
+]
+
+mrs_hudson_disappears = [
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.figure_disappears,"MrsHudson"]
 ]
 
 call_mrs_hudson = [

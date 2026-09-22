@@ -8,6 +8,7 @@ class Fireplace():
 
         # evaluate room data
         (x,y,z) = room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
+        self.action_sequence = room_data["fireplace"][index][3] # trigger action sequence if object (fire) is clicked
         self.index = index
         self.room_data = room_data
         shift_coordinates = (x-3.2,y-0,z-4)
@@ -81,7 +82,7 @@ class Fireplace():
             #canvas.tag_raise("chair", "secret_compartment")
             #canvas.tag_raise("letter", "chair")
 
-    def clicked(event, self, canvas, inventory, player_name, metal_cassette):
+    def clicked(self, event, canvas, inventory, player_name, metal_cassette):
         if inventory.objectIsSelected("water_glass", player_name) == True:
             canvas.delete("fire")            
             inventory.remove_inventory_pictures()
@@ -94,6 +95,8 @@ class Fireplace():
             canvas.tag_bind("secret_compartment","<Button-1>", lambda event: self.secret_clicked(self, canvas, inventory, player_name, metal_cassette))
             canvas.tag_raise("chair", "secret_compartment")
             canvas.tag_raise("letter", "chair")
+            if self.action_sequence!=None:
+                ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
 
     def secret_clicked(event, self, canvas, inventory, player_name, metal_cassette):
         if inventory.objectIsSelected("poker", player_name) == True:

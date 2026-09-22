@@ -32,6 +32,7 @@ class RoomState():
             "bench": {},
             "chair": {},
             "table": {},
+            "letter": {},
             "fireplace": {},
             "poker": {},
             "diamond": {},

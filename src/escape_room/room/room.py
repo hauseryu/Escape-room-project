@@ -466,23 +466,27 @@ class Room(tkinter.Frame):
                 return figure
         return None
 
+    def get_letter(self,unique_id):
+        for letter in self.letter:
+            if letter.unique_id == unique_id:
+                return letter
+        return None
+    
     def removeObject(self,object):
-        if object.name == "key":
-            for index,key in enumerate(self.key):
-                if key == object:
-                    del self.key[index]
-        if object.name == "revolver":
-            for index,revolver in enumerate(self.revolver):
-                if revolver == object:
-                    del self.revolver[index]
-        if object.name == "water_glass":
-            for index,water_glass in enumerate(self.water_glass):
-                if water_glass == object:
-                    del self.water_glass[index]
-        if object.name == "magnifier":
-            for index,magnifier in enumerate(self.magnifier):
-                if magnifier == object:
-                    del self.magnifier[index]
+        if object.name == "key": object_list = self.key
+        elif object.name == "revolver": object_list = self.revolver
+        elif object.name == "water_glass": object_list = self.water_glass
+        elif object.name == "magnifier": object_list = self.magnifier
+        elif object.name == "letter": object_list = self.letter
+        elif object.name == "poker": object_list = self.poker
+        elif object.name == "diamond": object_list = self.diamond
+        for index,item in enumerate(object_list):
+            if item == object:
+                del object_list[index]
+                break
+
+    def addObject(self,object):
+        if object.name == "letter": self.letter.append(object)
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
