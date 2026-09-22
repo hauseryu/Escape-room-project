@@ -12,6 +12,7 @@ from src.escape_room.application.start_screen import StartScreen
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.application.game_over_screen import GameOverScreen
 from src.escape_room.actions.action import ActionManager
+from src.escape_room.actions.action import action_mgr_create
 from src.llm.llm_client import LlmClient
 
 IMAGE_DIR = ContextManager.get_image_path()
@@ -23,8 +24,8 @@ class EscapeApp():
 
         # get context manager instance (singleton)
         self.context_manager = ContextManager()
-        self.action_manager = ActionManager()
-        self.context_manager.set_action_manager(self.action_manager)
+        action_manager_factory = action_mgr_create
+        self.context_manager.set_action_manager_factory(action_manager_factory)
 
         # create LLM client and pass it to context manager
         self.llm_client = LlmClient()

@@ -1,11 +1,23 @@
 from src.escape_room.gui_utilities import graphics
 
 class Wardrobe():
-	def __init__(self,direction,shift_coordinates=(0,0,0),room_state=None,unique_id=None):
+	def __init__(self,room_data,index,room_state):
+
+		# evaluate room data
+		(x,y,z) = room_data["wardrobe"][index][0] # get wardrobe coordinates (first element in list)
+		direction = room_data["wardrobe"][index][1] # get wardrobe direction (right/left)
+		unique_id = room_data["wardrobe"][index][2] # unique identifier
+		shift_coordinates = (x-0,y-0,z-4)
+		# check for state if room is re-entered
+		self.state = 0 # 0 = closed, 1 = open
+		state = room_state.get_state_object("wardrobe",unique_id)
+		if state==1:
+			self.state = 1
+
+		# set attributes
 		self.shift_coordinates = shift_coordinates
 		self.room_state = room_state
 		self.unique_id = unique_id
-		self.state = 0 # 0 = closed, 1 = open
 		if direction=="left":
 			self.wardrobe_coordinates = [
 				["#4A2A1A", (0, 0, 4), (1.8, 0, 4), (1.8, 2, 4), (0, 2, 4)],
@@ -85,6 +97,21 @@ class Wardrobe():
 				[1.8, 1, 3.1, 0.05, "#C9A227", 0, 360]
 			]
 
+	def draw(self,canvas):
+		if self.state == 0:
+			graphics.draw(canvas,self.wardrobe_coordinates, tag="wardrobe", object=self,
+						shift_coordinates=self.shift_coordinates)
+			graphics.draw_arc(canvas, *self.wardrobe_coordinates_knobes[0], tag="wardrobe", 
+							shift_coordinates=self.shift_coordinates)
+			graphics.draw_arc(canvas, *self.wardrobe_coordinates_knobes[1], tag="wardrobe", 
+							shift_coordinates=self.shift_coordinates)
+		elif self.state == 1:
+			graphics.draw(canvas,self.wardrobe_coordinates_open, tag="wardrobe", object=self,
+						shift_coordinates=self.shift_coordinates)
+			graphics.draw_arc(canvas, *self.wardrobe_coordinates_knobes_open[0], tag="wardrobe", 
+							shift_coordinates=self.shift_coordinates)
+			graphics.draw_arc(canvas, *self.wardrobe_coordinates_knobes_open[1], tag="wardrobe", 
+							shift_coordinates=self.shift_coordinates)
 
 	def clicked(self, event, tag, object, canvas, world_coordinates):
 		if self.state == 0: # wardrobe is closed, open it

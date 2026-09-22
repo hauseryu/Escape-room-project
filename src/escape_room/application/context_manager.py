@@ -16,12 +16,14 @@ class ContextManager():
             self.clock = None
             self.canvas = None
             self.initialized = True
-            self.action_manager = None
+            self.action_manager_factory = None
             self.room = None
             self.llm_client = None
             self.escape_app = None
             self.room_state = None
-
+            self.inventory = None
+            self.player_name  = None
+            
     @staticmethod
     def get_image_path() -> Path:
         image_path = Path(__file__).resolve().parent.parent / "assets" / "images"
@@ -33,11 +35,11 @@ class ContextManager():
         return sound_path
 
     # action manager access
-    def get_action_manager(self):
-        return self.action_manager
+    def get_action_manager(self):        
+        return self.action_manager_factory()
 
-    def set_action_manager(self,action_manager):
-        self.action_manager = action_manager
+    def set_action_manager_factory(self,action_manager_factory):
+        self.action_manager_factory = action_manager_factory
 
     # llm client access
     def get_llm_client(self):
@@ -79,4 +81,21 @@ class ContextManager():
         
     def get_room_state(self):
         return self.room_state
-    
+
+    def set_inventory(self,inventory):
+        self.inventory = inventory
+
+    def get_inventory(self):
+        return self.inventory
+
+    def set_player_name(self,player_name):
+        self.player_name = player_name
+
+    def get_player_name(self):
+        return self.player_name
+
+    def set_role(self,role):
+        self.role = role
+
+    def get_role(self):
+        return self.role

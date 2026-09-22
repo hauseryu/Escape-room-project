@@ -8,3 +8,9 @@ choices_letter_to_holmes = [
     ("--> yes, sure. Please come at 4 o'clock.",action_data.sherlock_client_appears),
     ("--> no, sorry, no time at 4 o'clock.",action_data.game_over)
 ]
+
+letter_from_moriarty = "Dear Mr. Holmes, \n" + \
+                       "this is Moriarty speaking.\n" + \
+                       "I have deposited a special item in your house.\n" + \
+                       "If you don't find it in 1 hour, the police will arrest you thereafter for robbery....\n" + \
+                       "Your fiend, Moriarty"

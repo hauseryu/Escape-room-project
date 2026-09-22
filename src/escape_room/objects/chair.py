@@ -1,3 +1,5 @@
+from src.escape_room.gui_utilities import graphics
+
 LEG_SHADOW = "#4A2C14"
 LEG_MIDTONE = "#6F4520"
 LEG_HIGHLIGHT = "#7A4A22"
@@ -7,14 +9,30 @@ WOOD_HIGHLIGHT = "#7A4A22"
 WOOD_TOP = "#8B5A2B"
 
 class Chair():
-    def __init__(self, x, y, z, direction="right", shift_coordinates=(0, 0, 0)):
+    def __init__(self, room_data, index, room_state):
+        (x,y,z) = room_data["chair"][index][0] # get chair coordinates (first element in list)
+        direction = room_data["chair"][index][1] # get chair direction (right/left)
+        unique_id = room_data["chair"][index][2] # unique identifier
+        shift_coord = (x-5.00,y-0,z-2.35) 
         self.x = x
         self.y = y
         self.z = z
         self.width_small = 0.1
         self.width_large = 0.7
         self.direction = direction
-        self.shift_coordinates = shift_coordinates
+        self.shift_coordinates = shift_coord
+        self.room_state = room_state
+        self.unique_id = unique_id
+        self.state="initial"
+        movement_vector=None
+        try:
+            movement_vector = room_data["chair"][index][3]
+        except:
+            pass
+        self.movement_vector = movement_vector
+        # consider room state (bench is moved)
+        if room_state.object_is_moved("chair",unique_id):
+            self.move_chair()
 
         # 1. Base Parts: The main seat panel (Always spans full 0.7 width)
         self.coordinates_chairseat = self._create_panel_coordinates(z1=2.6,z2=3.15,back=False)
@@ -122,3 +140,27 @@ class Chair():
              (x_pos2 + width_x, height2, z1+width_z),
              (x_pos2, height2, z1)],
         ]
+
+    def draw(self,canvas):
+        graphics.draw(canvas,self.coordinates_chair,object=self,tag="chair",shift_coordinates=self.shift_coordinates)
+
+    def clicked(self, event, tag, object, canvas, world_coordinates):
+        if tag=="chair" and self.state=="initial":
+            print("[DEBUG] chair clicked!")
+            canvas.delete(tag)
+            self.move_chair()
+            self.room_state.move("chair",self.unique_id)
+            self.draw(canvas)
+
+    def move_chair(self):
+        if self.movement_vector==None:
+            return
+        self.state = "moved"
+        (a,b,c) = self.shift_coordinates
+        if self.movement_vector[0]=="x":
+            a+=self.movement_vector[1]
+        elif self.movement_vector[0]=="y":
+            b+=self.movement_vector[1]
+        elif self.movement_vector[0]=="z":
+            c+=self.movement_vector[1]
+        self.shift_coordinates = (a,b,c)        

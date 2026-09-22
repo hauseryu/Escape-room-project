@@ -3,3 +3,4 @@ python-dotenv
 scapy
 pillow 
 pytest
+numpy

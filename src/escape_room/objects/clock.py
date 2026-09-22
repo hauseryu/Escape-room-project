@@ -2,7 +2,13 @@ import math
 from src.escape_room.gui_utilities import graphics
 
 class Clock():
-    def __init__(self, canvas, time, shift_coordinates=(0,0,0)):
+    def __init__(self,room_data,index,canvas, time):
+
+        # evaluate room data
+        (x,y,z) = room_data["clock"][index][0] # get clock coordinates (first element in list)
+        shift_coordinates = (x-5.15,y-0.42,z-4.00)
+
+        # set attributes        
         self.shift_coordinates = shift_coordinates
         self.time = time # on the hour only, e.g. 3, 4, 5, etc.
         self.canvas = canvas
