@@ -191,8 +191,6 @@ living_room_221b = {
                 ],
         "water_glass":[{"coord": (4.5,1.1,2.4), "unique_id": "water_glass1", "check_action": action_data.check_mrs_hudson_in_room},
                 ],
-        "magnifier":[{"coord": (-1,0,3.1), "unique_id": "magnifier1","role": "sherlock"}  # magnifier only available for role sherlock
-                ],
         "window":[[(0, 1, 1.8)]
                 ]
 }

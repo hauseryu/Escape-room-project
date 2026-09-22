@@ -10,10 +10,13 @@ class SpeechBubble:
         self.evaluate_choices_callback = evaluate_choices_callback
         self.callback = None
 
-    def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False, button_text=None, action_data=None, callback=None):
+    def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False, button_text=None, action_data=None, 
+                    callback=None, callback_arg=None, action_sequence=None):
 
             self.current_bubble = 0
             self.callback = callback
+            self.callback_arg = callback_arg
+            self.action_sequence = action_sequence
             if entry_field:
                 code_entry = self.draw_bubble(canvas, position, skip_overlay, entry_field, button_text,action_data)
             else:
@@ -287,7 +290,9 @@ class SpeechBubble:
         canvas.unbind("<Right>")
         canvas.unbind("<Escape>")
         if self.callback != None:
-            self.callback()
+            self.callback(self.callback_arg) # call single action as callback
+        elif self.action_sequence!=None:
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence) # call registered action sequence
 
     def replace_bubble_text(self, canvas, new_text):
         self.bubbles[self.current_bubble] = new_text

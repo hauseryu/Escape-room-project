@@ -16,7 +16,7 @@ class ContextManager():
             self.clock = None
             self.canvas = None
             self.initialized = True
-            self.action_manager = None
+            self.action_manager_factory = None
             self.room = None
             self.llm_client = None
             self.escape_app = None
@@ -35,11 +35,11 @@ class ContextManager():
         return sound_path
 
     # action manager access
-    def get_action_manager(self):
-        return self.action_manager
+    def get_action_manager(self):        
+        return self.action_manager_factory()
 
-    def set_action_manager(self,action_manager):
-        self.action_manager = action_manager
+    def set_action_manager_factory(self,action_manager_factory):
+        self.action_manager_factory = action_manager_factory
 
     # llm client access
     def get_llm_client(self):
