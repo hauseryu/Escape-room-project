@@ -4,10 +4,13 @@ from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.application import globals
 
 class Fireplace():
-    def __init__(self, room_data, index):
+    def __init__(self, room_data, index, room_state):
 
         # evaluate room data
         (x,y,z) = room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
+        self.action_sequence = room_data["fireplace"][index][3] # trigger action sequence if object (fire) is clicked
+        self.index = index
+        self.room_data = room_data
         shift_coordinates = (x-3.2,y-0,z-4)
 
         # set attributes
@@ -44,25 +47,66 @@ class Fireplace():
             ["#92705A",(3.05, 1.21, 3.40),(4.95, 1.21, 3.40),(4.95, 1.34, 3.40),(3.05, 1.34, 3.40)], # mantelpiece (front part)
         ]
         self.fire_coordinate = (3.55, 0.8, 3.9)
+        self.secret_compartment_coordinate = [["#48352E",(3.7, 0.33, 3.50),(4.3, 0.33, 3.50),(4.3, 0.7, 3.50),(3.7, 0.7, 3.50)]] # back wall of the fireplace
+        self.secret_compartment_opened = [["#3B3838",(3.7, 0.33, 3.50),(4.3, 0.33, 3.50),(4.3, 0.7, 3.50),(3.7, 0.7, 3.50)],
+                                          ["#48352E",(4.3, 0.33, 3.50),(4.4, 0.33, 3.20),(4.4, 0.7, 3.20),(4.3, 0.7, 3.50)]]
+        self.secret_hole_coordinate = [[3.85, 0.515, 3.5, 0.02, "#171514", 0, 360]]
 
-    def draw(self, canvas, inventory, player_name):
+        self.room_state = room_state
+
+    def draw(self, canvas, inventory, player_name, metal_cassette):
         # draw outline
         graphics.draw(canvas,self.fireplace_coordinates,shift_coordinates=self.shift_coordinates)
         fire_x, fire_y, fire_z = self.fire_coordinate
         x_pos, y_pos = graphics.compute_2d_coordinates(fire_x, fire_y, fire_z, globals.canvas_width, globals.canvas_height, self.shift_coordinates)
 
-        # Load the fire image
-        fire_image_path = ContextManager.get_image_path().joinpath("fire.png")
-        fire_image = Image.open(fire_image_path)
-        resized_image = ImageOps.contain(fire_image, (90, 90))  # Resize while maintaining aspect ratio
-        self.fire_image_tk = ImageTk.PhotoImage(resized_image)
-        # Draw the fire image on the canvas
-        self.fire_image_id = canvas.create_image(x_pos, y_pos, image=self.fire_image_tk, anchor="nw", tags="fire")
-        canvas.tag_bind("fire","<Button-1>", lambda event: self.clicked(canvas, inventory, player_name))
+        if self.room_state.get_state_object("fireplace","fireplace1") == None:
+            # Load the fire image
+            fire_image_path = ContextManager.get_image_path().joinpath("fire.png")
+            fire_image = Image.open(fire_image_path)
+            resized_image = ImageOps.contain(fire_image, (90, 90)) 
+            self.fire_image_tk = ImageTk.PhotoImage(resized_image)
+            # Draw the fire image on the canvas
+            self.fire_image_id = canvas.create_image(x_pos, y_pos, image=self.fire_image_tk, anchor="nw", tags="fire")
+            canvas.tag_bind("fire","<Button-1>", lambda event: self.clicked(self, canvas, inventory, player_name, metal_cassette))
 
-    def clicked(event, canvas, inventory, player_name):
+        elif self.room_state.get_state_object("fireplace","fireplace1") == "fire deleted":
+            graphics.draw(canvas,self.secret_compartment_coordinate,shift_coordinates=self.shift_coordinates)
+            graphics.draw_arc(canvas, *self.secret_hole_coordinate[0], tag=("fireplace", "secret_compartment"), 
+							shift_coordinates=self.shift_coordinates)
+            #canvas.tag_raise("chair", "secret_compartment")
+            #canvas.tag_raise("letter", "chair")
+
+        elif self.room_state.get_state_object("fireplace","fireplace1") == "secret compartment opened":
+            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace", "secret_compartment"))
+            #canvas.tag_raise("chair", "secret_compartment")
+            #canvas.tag_raise("letter", "chair")
+
+    def clicked(self, event, canvas, inventory, player_name, metal_cassette):
         if inventory.objectIsSelected("water_glass", player_name) == True:
             canvas.delete("fire")            
             inventory.remove_inventory_pictures()
             inventory.delObject("water_glass",player_name)
             inventory.redraw_inventory()
+            self.room_state.set_state_object("fireplace","fireplace1","fire deleted")
+            graphics.draw(canvas,self.secret_compartment_coordinate,shift_coordinates=self.shift_coordinates, tag=("fireplace","secret_compartment"))
+            graphics.draw_arc(canvas, *self.secret_hole_coordinate[0], tag="secret_compartment", 
+							shift_coordinates=self.shift_coordinates)
+            canvas.tag_bind("secret_compartment","<Button-1>", lambda event: self.secret_clicked(self, canvas, inventory, player_name, metal_cassette))
+            canvas.tag_raise("chair", "secret_compartment")
+            canvas.tag_raise("letter", "chair")
+            if self.action_sequence!=None:
+                ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
+
+    def secret_clicked(event, self, canvas, inventory, player_name, metal_cassette):
+        if inventory.objectIsSelected("poker", player_name) == True:
+            canvas.delete("secret_compartment")
+            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace","secret_compartment"))
+            self.room_state.set_state_object("fireplace","fireplace1","secret compartment opened")
+            for index, cassette in enumerate(metal_cassette):
+                if self.room_data["fireplace"][self.index][2] == self.room_data["metal_cassette"][index][1]:
+                    cassette.draw(canvas, inventory, player_name)
+            canvas.tag_raise("metal_cassette", "secret_compartment")
+            canvas.tag_raise("chair", "metal_cassette")
+            canvas.tag_raise("letter", "chair")
+            

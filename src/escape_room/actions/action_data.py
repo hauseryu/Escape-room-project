@@ -40,6 +40,11 @@ postman_disappears = [
     [action.remove_letter,"letter2"]
 ]
 
+mrs_hudson_disappears = [
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.figure_disappears,"MrsHudson"]
+]
+
 call_mrs_hudson = [
     [action.stop_sequence_conditionally,action.check_role,"watson"],
     [action.play_sound,"room_bell.wav"],

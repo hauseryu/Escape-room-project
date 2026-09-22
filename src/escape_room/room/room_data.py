@@ -54,6 +54,12 @@ start_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -99,6 +105,12 @@ mystery_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -141,6 +153,12 @@ doorway = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
@@ -150,9 +168,10 @@ living_room_221b = {
         "room_coordinates": "normal_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "role": ["sherlock","watson"],
-        "door": [[(8, 0, 2.1), "brown", "right", "red_door", True, True, True, "start_room","door1"],
+        "door": [[(8, 0, 2), "brown", "right", "red_door", True, True, True, "start_room","door1"],
                  [(0, 0, 1), "green", "left", "green_door", True, True, False, # door2: player door, can be opened
                   "","door2",action_data.postman_appears], # door2: no next_room, trigger action sequence 
+                [(8, 0, 3.8), "black", "right", "black_door", True, True, True, "","door3"],
                 ], 
         "light": [
                 ],
@@ -185,13 +204,19 @@ living_room_221b = {
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
-        "fireplace":[[(3.2, 0, 4)]
+        "fireplace":[[(3.2, 0, 4), "fireplace1", "metal_cassette1", action_data.mrs_hudson_disappears]
                 ],
         "magnifier":[ 
                 ],
         "water_glass":[{"coord": (4.5,1.1,2.4), "unique_id": "water_glass1", "check_action": action_data.check_mrs_hudson_in_room},
                 ],
         "window":[[(0, 1, 1.8)]
+                ],
+        "poker":[{"coord": (2.3, 0, 3.5), "unique_id": "poker1"}
+                ],
+        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1"]
+                ],
+        "diamond": [{"coord": (1.1, 0.34, 3.50), "unique_id": "diamond1"}
                 ]
 }
 
@@ -236,6 +261,12 @@ riddle_key_room = {
         "water_glass":[
                 ],
         "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
+                ],
+        "diamond": [
                 ]
 }
 
