@@ -213,11 +213,11 @@ living_room_221b = {
                 ],
         "window":[[(0, 1, 1.8)]
                 ],
-        "poker":[[(2.3, 0, 3.5), "poker1"]
+        "poker":[{"coord": (2.3, 0, 3.5), "unique_id": "poker1"}
                 ],
         "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1"]
                 ],
-        "diamond": [[(1.1, 0.34, 3.50), "diamond1"]
+        "diamond": [{"coord": (1.1, 0.34, 3.50), "unique_id": "diamond1"}
                 ]
 }
 
