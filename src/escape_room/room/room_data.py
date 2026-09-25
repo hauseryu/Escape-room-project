@@ -73,7 +73,7 @@ mystery_room = {
                   True, True, "start_room","door1"],   # door1: player door, can be opened
                  [(3.2, 0, 4), "white", "front", "white_door", True, 
                   True, True, "doorway","door2"],   # door2: player door, can be opened
-                ], 
+                ],                
         "light": [[(3.89, 3, 1.92),"light1"] # light1
                 ],
         "table": [[(4.75, 0.67, 2.75)] # table 1 7.55
@@ -121,7 +121,7 @@ doorway = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
                   True, True, "doorway","door1"],   # door1: player door, can be opened
-                ], 
+                ],                 
         "light": [
                 ],
         "table": [
@@ -171,8 +171,8 @@ living_room_221b = {
         "door": [[(8, 0, 2), "brown", "right", "red_door", True, True, True, "start_room","door1"],
                  [(0, 0, 1), "green", "left", "green_door", True, True, False, # door2: player door, can be opened
                   "","door2",action_data.postman_appears], # door2: no next_room, trigger action sequence 
-                [(8, 0, 3.8), "black", "right", "black_door", True, True, True, "","door3"],
-                ], 
+                [(8, 0, 3.8), "black", "right", "black_door", True, True, True, "hotel_entrance","door3"],
+                ],              
         "light": [
                 ],
         "table": [[(8, 0, 3)]
@@ -228,7 +228,7 @@ riddle_key_room = {
         "door": [[(3.2, 0, 4), "brown", "front", "red_door", False, True, False,"","door1"], # door1: not player door, can be opened
                  [(0, 0, 1.5), "green", "left", "green_door", True, True, True,"start_room","door2"], # door2: player door, can be opened, next_room = mystery_room
                  [(8, 0, 3.1), "blue", "right", "blue_door", False, False, False, "","door3"]   # door3: not player door, cannot be opened
-                ], 
+                ],               
         "light": [[(3.88, 3, 1.92),"light1"] # light1 => global identifier for the light
                 ],
         "table": [[(7.55, 0.67, 3.75),"table1",("z",-1)] # movement vector in z-direction
@@ -270,10 +270,75 @@ riddle_key_room = {
                 ]
 }
 
+
+# from mystery room -> front door 
+hotel_entrance = {  
+        "room_name": "hotel_entrance",
+        "room_coordinates": "hotel_door",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "hotel_door": [[(3.2, 0, 4),"hotel_door1"],  
+                ], 
+        "door": [
+                ],
+        "light": [
+                ],
+        "table": [
+                ],
+        "chair": [
+                ],
+        "key": [
+                ],
+        "wardrobe": [
+                ],
+        "picture": [
+                    {"coord":(0.5,1,2),"image": "hotel_logo.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture1", "pic_move_coord": (400,400), 
+                     "pic_resize": (190,90), # original size: 380,180
+                     "draw_frame": False},
+                    {"coord":(0.5,1,2),"image": "potted_plant.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture2", "pic_move_coord": (370,540), 
+                     "pic_resize": (300,450), # original size: 430, 645
+                     "draw_frame": False},               
+                    {"coord":(0.5,1,2),"image": "potted_plant.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture2", "pic_move_coord": (1350,540), 
+                     "pic_resize": (300,450), # original size: 430, 645
+                     "draw_frame": False}               
+                ],
+        "bookshelf": [
+                ],
+        "safe": [
+                ],
+        "letter":[
+                ],
+        "clock":[
+                ],
+        "revolver":[
+                ],
+        "bench": [
+                ],
+        "fireplace":[
+                ],
+        "magnifier":[
+                ],
+        "water_glass":[
+                ],
+        "window":[
+                ],
+        "poker":[
+                ],
+        "metal_cassette":[
+                ],
+        "diamond": [
+                ],
+        "action_sequence": [ action_data.hotel_portier_appears
+        ]
+}
+
 all_rooms = {
         "start_room": start_room,
         "mystery_room": mystery_room,
         "doorway": doorway,
         "riddle_key_room": riddle_key_room,
-        "living_room_221b": living_room_221b
+        "living_room_221b": living_room_221b,
+        "hotel_entrance": hotel_entrance
 }
