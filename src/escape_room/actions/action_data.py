@@ -45,6 +45,11 @@ mrs_hudson_disappears = [
     [action.figure_disappears,"MrsHudson"]
 ]
 
+hotel_portier_appears = [
+    [action.figure_appears,"Hotel_portier","hotel_portier.png",
+            560,440,400,600,None] # appears at hotel entrance
+]
+
 call_mrs_hudson = [
     [action.stop_sequence_conditionally,action.check_role,"watson"],
     [action.play_sound,"room_bell.wav"],

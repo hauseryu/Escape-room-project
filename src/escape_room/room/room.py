@@ -17,6 +17,7 @@ from src.escape_room.room.room_coordinates import room_coord
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
+from escape_room.objects.hotel_door import HotelDoor
 from escape_room.objects.light import Light
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
@@ -97,6 +98,8 @@ class Room(tkinter.Frame):
         self.poker = []
         self.metal_cassette = []
         self.diamond = []
+        self.hotel_door = []
+
         for door in self.door:
             door.is_open = False        
 
@@ -160,6 +163,12 @@ class Room(tkinter.Frame):
                        next_room_callback=self.next_room_callback,player_name=self.player_name,                       
                        room_state=self.room_state)
             self.door.append(obj)        
+        # create hotel doors
+        try: 
+            for index,hotel_door in enumerate(self.room_data["hotel_door"]):
+                obj = HotelDoor(room_data,index,self.room_state)
+                self.hotel_door.append(obj)   
+        except: pass
         # create lights
         for index,light in enumerate(self.room_data["light"]):
             obj = Light(self.room_data,index,room_state=self.room_state)
@@ -306,7 +315,11 @@ class Room(tkinter.Frame):
         # draw the doors
         for index,door in enumerate(self.door):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
-        
+
+        # draw the hotel doors
+        for index,hotel_door in enumerate(self.hotel_door):
+            hotel_door.draw(self.canvas_area)
+
         # draw the lights
         for light in self.light:
             light.draw(self.canvas_area)
@@ -388,6 +401,12 @@ class Room(tkinter.Frame):
         # draw the benchs
         for bench in self.bench:
             bench.draw()
+
+        # trigger action sequences
+        try: 
+            for action_sequence in self.room_data["action_sequence"]:
+                ContextManager().get_action_manager().execute_action_sequence(action_sequence)
+        except: pass
 
         # draw the figures (persons etc.)
         for figure in self.figure:
