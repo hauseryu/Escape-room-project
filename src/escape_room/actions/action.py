@@ -102,7 +102,7 @@ def put_item_in_inventory(action_mgr,name,unique_id):
     obj = InventoryItem("magnifier",None,None,
                        image,inventory,room_state, unique_identifier=unique_id, 
                         object_owner = player_name, resize_inventory=(100, 50))    
-    inventory.addObject(name,player_name,obj)
+    inventory.addObject(name,unique_id,player_name,obj)
     obj.draw(canvas)
     action_mgr.execute_next_action()
 

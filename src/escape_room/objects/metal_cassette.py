@@ -5,6 +5,7 @@ class MetalCassette():
 		def __init__(self, room_data, index, room_state):
 			(x,y,z) = room_data["metal_cassette"][index][0] 
 			self.shift_coordinates = (x-3.78,y-0.37,z-3.5)
+			self.unique_id = room_data["metal_cassette"][index][1] 
 			self.room_state = room_state
 
 			self.metal_cassette_coordinates = [
@@ -65,7 +66,7 @@ class MetalCassette():
 
 
 		def clicked(event, self, canvas, inventory, player_name):
-			if inventory.objectIsSelected("revolver", player_name) == True:
+			if inventory.objectIsSelected("revolver", self.unique_id, player_name) == True:
 				graphics.draw(canvas,self.metal_cassette_opened,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				self.room_state.set_state_object("metal_cassette","metal_cassette1","opened")
 				for diamond in ContextManager().get_room().diamond:

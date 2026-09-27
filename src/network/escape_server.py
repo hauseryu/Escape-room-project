@@ -31,6 +31,7 @@ class EscapeServer():
                 if action == "send_inventory":
                     target = game_data.get("player_name")       # to whom?
                     inventory = game_data.get("inventory")           # what?
+                    object_id = game_data.get("object_id")
                     owner =  game_data.get("owner")
                     
                     with players_lock:
@@ -39,6 +40,7 @@ class EscapeServer():
                             payload = {"action": "inventory_received", 
                                        "from": player_name, 
                                        "inventory": inventory,
+                                       "object_id": object_id,
                                        "owner": owner}
                             active_players[target]["queue"].put(json.dumps(payload))
                             

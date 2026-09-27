@@ -51,7 +51,6 @@ class InventoryItem:
         self.canvas = None
         self.name = name
         self.inventory = inventory
-        self.object_id = None
         self.selection_id = None
         self.unique_id = unique_id
         self.shift_coordinates = shift_coordinates
@@ -146,8 +145,8 @@ class InventoryItem:
             img = ImageOps.contain(img, self.resize_room_tuple)
         self.img = ImageTk.PhotoImage(img, master=canvas)
         
-        if self.inventory.objectInInventory(self.name,self.object_owner):
-            objIndex = self.inventory.getObjectIndex(self.name,self.object_owner)
+        if self.inventory.objectInInventory(self.name,self.unique_id,self.object_owner):
+            objIndex = self.inventory.getObjectIndex(self.name,self.unique_id,self.object_owner)
             (x1,y1) = self.inventory.getObjectCoordinates(objIndex)
             if self.resize_inventory_tuple is not None:
                 img = ImageOps.contain(img, self.resize_inventory_tuple)
@@ -161,8 +160,8 @@ class InventoryItem:
                 globals.canvas_height,
                 self.shift_coordinates
             )
-        if self.inventory.objectIsSelected(self.name, self.object_owner):
-            objIndex = self.inventory.getObjectIndex(self.name, self.object_owner)
+        if self.inventory.objectIsSelected(self.name, self.unique_id, self.object_owner):
+            objIndex = self.inventory.getObjectIndex(self.name, self.unique_id, self.object_owner)
             (x1,y1) = self.inventory.getObjectCoordinates(objIndex)
             select_rect = (x1-5,y1-5,
                            x1+57,y1-5,
@@ -170,29 +169,30 @@ class InventoryItem:
                            x1-5,y1+45
                            )
             self.selection_id = self.canvas.create_polygon(*select_rect,fill="blue",width=3)
-        self.object_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
+        self.obj_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
         tooltip_data = {"rect_id": None, "text_id": None}
         # bind event '<Enter>' (mouse moves over icon)
         self.canvas.tag_bind(
-            self.object_id, 
+            self.obj_id, 
             "<Enter>", 
-            lambda event: self._show_tooltip(event, x1, y1, "owner: " + self.object_owner, tooltip_data)
+            lambda event: self._show_tooltip(event, x1, y1, 
+                                             "owner: " + self.object_owner + "(" + self.unique_id + ")", tooltip_data)
         )        
         # bind event '<Leave>' (mouse moves away from icon)
         self.canvas.tag_bind(
-            self.object_id,
+            self.obj_id,
             "<Leave>", 
             lambda event: self._hide_tooltip(event, tooltip_data)
         )        
         self.canvas.tag_bind(
-            self.object_id,
+            self.obj_id,
             "<Button-1>", 
             lambda event: self.on_key_click(event, tooltip_data)
         )
 
     def on_key_click(self, event, tooltip_data):
         self._hide_tooltip(event, tooltip_data)
-        self.canvas.delete(self.object_id)
+        self.canvas.delete(self.obj_id)
         if self.sound_path is not None:
             try:
                 winsound.PlaySound(
@@ -202,14 +202,14 @@ class InventoryItem:
             except Exception as e:
                 print(f"[DEBUG] Sound could not be played: {e}")
         
-        if not self.inventory.objectInInventory(self.name, self.object_owner) and \
+        if not self.inventory.objectInInventory(self.name, self.unique_id,self.object_owner) and \
                self.room_placement == True:
-            self.inventory.addObject(self.name, self.object_owner, self)
+            self.inventory.addObject(self.name, self.unique_id, self.object_owner, self)
             self.room_state.remove(self.name, self.unique_id)
             self.room_placement = False
             ContextManager().get_room().removeObject(self)
         else:
-            self.inventory.selectObject(self.name, self.object_owner)
+            self.inventory.selectObject(self.name, self.unique_id, self.object_owner)
         self.draw(self.canvas)
 
     def _show_tooltip(self, event, x, y, text, tooltip_data):
