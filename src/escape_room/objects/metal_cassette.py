@@ -66,7 +66,8 @@ class MetalCassette():
 
 
 		def clicked(event, self, canvas, inventory, player_name):
-			if inventory.objectIsSelected("revolver", self.unique_id, player_name) == True:
+			(_, unique_id_revolver, _) = inventory.getSelectedObject()
+			if inventory.objectIsSelected("revolver", unique_id_revolver, player_name) == True:
 				graphics.draw(canvas,self.metal_cassette_opened,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				self.room_state.set_state_object("metal_cassette","metal_cassette1","opened")
 				for diamond in ContextManager().get_room().diamond:

@@ -121,14 +121,14 @@ class Inventory():
             (_,_,selection) = self.inventory[obj]
             if selection == "selected":
                 return obj
-        return (None,None)
+        return (None,None,None)
 
     # select object in inventory. If other object is selected, de-select it
     def selectObject(self,object,object_id,object_owner):
         (index,obj_ref,_) = self.inventory[(object,object_id,object_owner)]
         # first remove current selection 
         selected_object = self.getSelectedObject()
-        if selected_object != (None,None):
+        if selected_object != (None,None,None):
             (a,obj_ref_sel,_) = self.inventory[selected_object]
             self.inventory[selected_object] = (a,obj_ref_sel,"not selected") # remove selection for currently selected object
             self.canvas.delete(obj_ref_sel.selection_id)
@@ -140,7 +140,7 @@ class Inventory():
         for obj,value in self.inventory.items():
             # remove current object images and selection
             (_,object_ref,selection) = value
-            self.canvas.delete(object_ref.object_id)
+            self.canvas.delete(object_ref.obj_id)
             if selection == "selected":
                 self.canvas.delete(object_ref.selection_id)
 
