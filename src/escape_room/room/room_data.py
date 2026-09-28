@@ -16,17 +16,6 @@ start_room = {
                  [(2, 0, 1.5), "red", "left", "red_door", True, 
                   True, True, "living_room_221b","door3"], 
                 ], 
-        "light": [
-                ],
-        "table": [
-                ],
-        "chair": [  
-                
-                ],
-        "key": [
-                ],
-        "wardrobe": [  # no wardrobe
-                ], 
         "picture": [
                     {"coord":(3.65,2.95,4.0),"image": "harry-potter-logo.jpg", "is_riddle": False, 
                      "unique_id": "picture1", "pic_move_coord": (971,495)},   
@@ -35,32 +24,6 @@ start_room = {
                     {"coord":(6,2.95,2.65),"image": "ghost_logo.png", "is_riddle": False, 
                      "unique_id": "picture3", "pic_move_coord": (1257,379),"direction": "right"}                              
                 ],
-        "bookshelf": [
-                ],
-        "safe": [
-                ],
-        "letter":[
-                ],
-        "clock":[
-                ],
-        "revolver":[
-                ],
-        "bench": [
-                ],
-        "fireplace":[            
-                ],
-        "magnifier":[
-                ],
-        "water_glass":[
-                ],
-        "window":[
-                ],
-        "poker":[
-                ],
-        "metal_cassette":[
-                ],
-        "diamond": [
-                ]
 }
 
 
@@ -80,38 +43,8 @@ mystery_room = {
                 ],
         "chair": [ [(1.50,0,1.35),"right","chair1"] #  
                 ],
-        "key": [
-                ],
         "wardrobe": [[(5.9, 0, 4),"right","wardrobe1"]  # wardrobe 1
                 ],
-        "picture": [
-                ],
-        "bookshelf": [
-                ],
-        "safe": [
-                ],
-        "letter":[
-                ],
-        "clock":[
-                ],
-        "revolver":[             
-                ],       
-        "bench": [
-                ],
-        "fireplace":[
-                ],
-        "magnifier":[
-                ],
-        "water_glass":[
-                ],
-        "window":[
-                ],
-        "poker":[
-                ],
-        "metal_cassette":[
-                ],
-        "diamond": [
-                ]
 }
 
 # from mystery room -> front door 
@@ -122,44 +55,6 @@ doorway = {
         "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
                   True, True, "doorway","door1"],   # door1: player door, can be opened
                 ],                 
-        "light": [
-                ],
-        "table": [
-                ],
-        "chair": [
-                ],
-        "key": [
-                ],
-        "wardrobe": [
-                ],
-        "picture": [
-                ],
-        "bookshelf": [
-                ],
-        "safe": [
-                ],
-        "letter":[
-                ],
-        "clock":[
-                ],
-        "revolver":[
-                ],
-        "bench": [
-                ],
-        "fireplace":[
-                ],
-        "magnifier":[
-                ],
-        "water_glass":[
-                ],
-        "window":[
-                ],
-        "poker":[
-                ],
-        "metal_cassette":[
-                ],
-        "diamond": [
-                ]
 }
 
 # from mystery room -> front door 
@@ -173,15 +68,11 @@ living_room_221b = {
                   "","door2",action_data.postman_appears], # door2: no next_room, trigger action sequence 
                 [(8, 0, 3.8), "black", "right", "black_door", True, True, True, "hotel_entrance","door3"],
                 ],              
-        "light": [
-                ],
         "table": [[(8, 0, 3)]
                 ],
         "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
         "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1"}, {"coord": (1.1, 0.34, 3.50),"unique_id": "key2"}
-                ],
-        "wardrobe": [
                 ],
         "picture": [{"coord":(1.35, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
                      "direction": "front","unique_id": "picture1", "needed_inventory": "magnifier", "is_clickable": True}, 
@@ -189,8 +80,6 @@ living_room_221b = {
                      "direction": "right","unique_id": "picture2", "pic_move_coord": (1450,550), "draw_frame": False,
                      "check_activation": action_data.check_room_bell_activation, "is_clickable": True,
                      "action_sequence": action_data.call_mrs_hudson}               
-                ],
-        "bookshelf": [
                 ],
         "safe": [[(1.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],
@@ -205,8 +94,6 @@ living_room_221b = {
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
         "fireplace":[[(3.2, 0, 4), "fireplace1", "metal_cassette1", action_data.mrs_hudson_disappears]
-                ],
-        "magnifier":[ 
                 ],
         "water_glass":[{"coord": (4.5,1.1,2.4), "unique_id": "water_glass1", "check_action": action_data.check_mrs_hudson_in_room},
                 ],
@@ -237,8 +124,6 @@ riddle_key_room = {
                 ],
         "key": [{"coord": (5.3,1.25,5.0),"unique_id": "key1"} # key 1 => key1 is a global identifier of the key!
                 ],
-        "wardrobe": [  # no wardrobe
-                ],
         "picture": [{"coord":(6.05, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
                      "direction": "front","unique_id": "picture1", "is_clickable": True},
                 ],
@@ -246,28 +131,6 @@ riddle_key_room = {
                 ],
         "safe": [[(5.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],  
-        "letter":[
-                ],
-        "clock":[
-                ],
-        "revolver":[
-                ],
-        "bench": [
-                ],
-        "fireplace":[
-                ],
-        "magnifier":[
-                ],
-        "water_glass":[
-                ],
-        "window":[
-                ],
-        "poker":[
-                ],
-        "metal_cassette":[
-                ],
-        "diamond": [
-                ]
 }
 
 
@@ -278,18 +141,6 @@ hotel_entrance = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "hotel_door": [[(3.2, 0, 4),"hotel_door1"],  
                 ], 
-        "door": [
-                ],
-        "light": [
-                ],
-        "table": [
-                ],
-        "chair": [
-                ],
-        "key": [
-                ],
-        "wardrobe": [
-                ],
         "picture": [
                     {"coord":(0.5,1,2),"image": "hotel_logo.png", "is_riddle": False,  
                      "direction": "front","unique_id": "picture1", "pic_move_coord": (400,400), 
@@ -303,32 +154,6 @@ hotel_entrance = {
                      "direction": "front","unique_id": "picture2", "pic_move_coord": (1350,540), 
                      "pic_resize": (300,450), # original size: 430, 645
                      "draw_frame": False}               
-                ],
-        "bookshelf": [
-                ],
-        "safe": [
-                ],
-        "letter":[
-                ],
-        "clock":[
-                ],
-        "revolver":[
-                ],
-        "bench": [
-                ],
-        "fireplace":[
-                ],
-        "magnifier":[
-                ],
-        "water_glass":[
-                ],
-        "window":[
-                ],
-        "poker":[
-                ],
-        "metal_cassette":[
-                ],
-        "diamond": [
                 ],
         "action_sequence": [ action_data.hotel_portier_appears
         ]
