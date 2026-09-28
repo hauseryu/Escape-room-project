@@ -72,7 +72,7 @@ living_room_221b = {
                 ],
         "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
-        "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1"} # key 1 => key1 is a global identifier of the key!
+        "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1"}, {"coord": (4, 0.6, 3.90),"unique_id": "key2"}
                 ],
         "picture": [{"coord":(1.35, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
                      "direction": "front","unique_id": "picture1", "needed_inventory": "magnifier", "is_clickable": True}, 
@@ -101,9 +101,9 @@ living_room_221b = {
                 ],
         "poker":[{"coord": (2.3, 0, 3.5), "unique_id": "poker1"}
                 ],
-        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1"]
+        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1", "key2"]
                 ],
-        "diamond": [{"coord": (1.1, 0.34, 3.50), "unique_id": "diamond1"}
+        "diamond": [{"coord": (1.07, 0.34, 3.50), "unique_id": "diamond1"}
                 ]
 }
 

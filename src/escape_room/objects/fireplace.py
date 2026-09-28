@@ -8,6 +8,7 @@ class Fireplace():
 
         # evaluate room data
         (x,y,z) = room_data["fireplace"][index][0] # get fireplace coordinates (first element in list)
+        self.unique_id = room_data["fireplace"][index][1]
         self.action_sequence = room_data["fireplace"][index][3] # trigger action sequence if object (fire) is clicked
         self.index = index
         self.room_data = room_data
@@ -73,20 +74,17 @@ class Fireplace():
         elif self.room_state.get_state_object("fireplace","fireplace1") == "fire deleted":
             graphics.draw(canvas,self.secret_compartment_coordinate,shift_coordinates=self.shift_coordinates)
             graphics.draw_arc(canvas, *self.secret_hole_coordinate[0], tag=("fireplace", "secret_compartment"), 
-							shift_coordinates=self.shift_coordinates)
-            #canvas.tag_raise("chair", "secret_compartment")
-            #canvas.tag_raise("letter", "chair")
+							shift_coordinates=self.shift_coordinates)            
 
         elif self.room_state.get_state_object("fireplace","fireplace1") == "secret compartment opened":
-            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace", "secret_compartment"))
-            #canvas.tag_raise("chair", "secret_compartment")
-            #canvas.tag_raise("letter", "chair")
+            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace", "secret_compartment"))            
 
     def clicked(self, event, canvas, inventory, player_name, metal_cassette):
-        if inventory.objectIsSelected("water_glass", player_name) == True:
+        (_, unique_id_glass, _) = inventory.getSelectedObject()
+        if inventory.objectIsSelected("water_glass", unique_id_glass,player_name) == True:
             canvas.delete("fire")            
             inventory.remove_inventory_pictures()
-            inventory.delObject("water_glass",player_name)
+            inventory.delObject("water_glass",unique_id_glass,player_name)
             inventory.redraw_inventory()
             self.room_state.set_state_object("fireplace","fireplace1","fire deleted")
             graphics.draw(canvas,self.secret_compartment_coordinate,shift_coordinates=self.shift_coordinates, tag=("fireplace","secret_compartment"))
@@ -99,7 +97,8 @@ class Fireplace():
                 ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
 
     def secret_clicked(event, self, canvas, inventory, player_name, metal_cassette):
-        if inventory.objectIsSelected("poker", player_name) == True:
+        (_, unique_id_poker, _) = inventory.getSelectedObject()
+        if inventory.objectIsSelected("poker", unique_id_poker, player_name) == True:
             canvas.delete("secret_compartment")
             graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace","secret_compartment"))
             self.room_state.set_state_object("fireplace","fireplace1","secret compartment opened")

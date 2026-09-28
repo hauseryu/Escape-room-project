@@ -580,12 +580,13 @@ class Room(tkinter.Frame):
                 elif event_type == "inventory_received": 
                     inventory = event_data.get("inventory")
                     player = event_data.get("from")
+                    object_id = event_data.get("object_id")
                     owner = event_data.get("owner")
                     print(f"[GUI Event] event-based passing of inventory {inventory},",
                            f"owner {owner} from player {player}")
                     key = InventoryItem("key","key_transparent.png",self.inventory,self.room_state)
                     key.object_owner = owner
-                    self.inventory.addObject("key",key.object_owner,key)
+                    self.inventory.addObject("key",object_id,key.object_owner,key)
                     # draw the key and inventory
                     key.draw(self.canvas_area) # draw key into inventory
 
@@ -603,7 +604,7 @@ class Room(tkinter.Frame):
         # as an event was triggered, there should be something in the queue
         event_data = self.icon_queue.get_nowait()
         event_type = event_data.get("action")
-        (object,object_owner) = self.inventory.getSelectedObject()
+        (object,object_id,object_owner) = self.inventory.getSelectedObject()
         if object == None: # if nothing is selected, we quit
             return
         if event_type == "send_inventory":
@@ -611,11 +612,11 @@ class Room(tkinter.Frame):
             player = event_data.get("player_name")
             print(f"[GUI Event] received send_inventory event for inventory {inventory},",
                    f"owner {object_owner} for player {player}")
-            self.game_client.send_action(event_type,player,inventory,object_owner)
+            self.game_client.send_action(event_type,player,inventory,object_id,object_owner)
             # remove key image from canvas
             self.inventory.remove_inventory_pictures()
             # remove from inventory
-            self.inventory.delObject(object,object_owner)
+            self.inventory.delObject(object,object_id,object_owner)
             self.inventory.redraw_inventory()
 
     def on_message_event(self, event):
