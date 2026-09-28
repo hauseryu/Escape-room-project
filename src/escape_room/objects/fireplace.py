@@ -74,14 +74,10 @@ class Fireplace():
         elif self.room_state.get_state_object("fireplace","fireplace1") == "fire deleted":
             graphics.draw(canvas,self.secret_compartment_coordinate,shift_coordinates=self.shift_coordinates)
             graphics.draw_arc(canvas, *self.secret_hole_coordinate[0], tag=("fireplace", "secret_compartment"), 
-							shift_coordinates=self.shift_coordinates)
-            #canvas.tag_raise("chair", "secret_compartment")
-            #canvas.tag_raise("letter", "chair")
+							shift_coordinates=self.shift_coordinates)            
 
         elif self.room_state.get_state_object("fireplace","fireplace1") == "secret compartment opened":
-            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace", "secret_compartment"))
-            #canvas.tag_raise("chair", "secret_compartment")
-            #canvas.tag_raise("letter", "chair")
+            graphics.draw(canvas,self.secret_compartment_opened,shift_coordinates=self.shift_coordinates, tag=("fireplace", "secret_compartment"))            
 
     def clicked(self, event, canvas, inventory, player_name, metal_cassette):
         (_, unique_id_glass, _) = inventory.getSelectedObject()

@@ -70,12 +70,10 @@ class MetalCassette():
 			if inventory.objectIsSelected("revolver", unique_id_revolver, player_name) == True:
 				graphics.draw(canvas,self.metal_cassette_opened,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				self.room_state.set_state_object("metal_cassette","metal_cassette1","opened")
-				for diamond in ContextManager().get_room().diamond:
-					diamond.draw(canvas)
-				for key in ContextManager().get_room().key:
-					key.draw(canvas)
-				canvas.tag_raise("chair", "metal_cassette")
-				canvas.tag_raise("letter", "chair")
+				self.diamond.draw(canvas)				
+				self.key.draw(canvas)				
+				canvas.tag_raise("chair")
+				canvas.tag_raise("letter")
 				
 
 

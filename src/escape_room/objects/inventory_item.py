@@ -95,7 +95,6 @@ class InventoryItem:
             draw_key = True
             for safe in ContextManager().get_room().safe: # look for associated safe
                 if self.unique_id == safe.key.unique_id:
-                    container = "safe"
                     if safe.state == 1: # safe is open
                         break
                     elif safe.state == 0: # safe is closed
@@ -107,7 +106,8 @@ class InventoryItem:
             for index, cassette in enumerate(ContextManager().get_room().metal_cassette): # look for associated metal cassette
                 unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
                 if self.unique_id == cassette.key.unique_id:
-                    container = "cassette"
+                    self.resize_room_tuple = (30, 40)
+                    self.resize_inventory_tuple = (50, 100)
                     if self.room_state.get_state_object("metal_cassette",unique_id) == "opened": # cassette is open
                         break
                     else: # cassette is closed
@@ -127,16 +127,6 @@ class InventoryItem:
                     break
             if not draw_diamond:
                 return # key is hidden => do not draw it!
-
-            # for index, cassette in enumerate(ContextManager().get_room().metal_cassette):
-            #     unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
-            #     if self.unique_id == unique_id and self.room_state.get_state_object("metal_cassette",unique_id) == "opened":
-            #         break
-            #     else:
-            #         draw_diamond = False
-            #         break
-            # if not draw_diamond:
-            #     return
 
         # part 2: actually draw the inventory item
         self.canvas = canvas
@@ -169,7 +159,7 @@ class InventoryItem:
                            x1-5,y1+45
                            )
             self.selection_id = self.canvas.create_polygon(*select_rect,fill="blue",width=3)
-        self.obj_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
+        self.obj_id = canvas.create_image(x1, y1, image=self.img, anchor="nw", tags=self.name)
         tooltip_data = {"rect_id": None, "text_id": None}
         # bind event '<Enter>' (mouse moves over icon)
         self.canvas.tag_bind(
