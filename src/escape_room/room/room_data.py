@@ -139,7 +139,7 @@ hotel_entrance = {
         "room_name": "hotel_entrance",
         "room_coordinates": "hotel_door",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "hotel_door": [[(3.2, 0, 4),"hotel_door1"],  
+        "hotel_door": [[(3.2, 0, 4),"hotel_door1","living_room_221b"],  # -> next room
                 ], 
         "picture": [
                     {"coord":(0.5,1,2),"image": "hotel_logo.png", "is_riddle": False,  

@@ -1,7 +1,7 @@
 from src.escape_room.gui_utilities import graphics
 
 class HotelDoor():
-    def __init__(self, room_data, index, room_state):
+    def __init__(self, room_data, index, room_state, next_room_callback=None):
 
         # evaluate room data
         (x,y,z) = room_data["hotel_door"][index][0] # get hotel door coordinates (first element in list)
@@ -9,7 +9,10 @@ class HotelDoor():
         self.room_data = room_data
         self.state = 0 # 0=shut, 1=open
         shift_coordinates = (x-2.75,y-0,z-4)
-        unique_id = room_data["hotel_door"][index][1]
+        self.unique_id = room_data["hotel_door"][index][1]
+        self.room_state = room_state
+        self.next_room_callback = next_room_callback
+        self.next_room = room_data["hotel_door"][index][2]
 
         # set attributes
         self.shift_coordinates = shift_coordinates
@@ -78,6 +81,18 @@ class HotelDoor():
     def draw(self, canvas):
         # draw outline
         if self.state==0:
-            graphics.draw(canvas,self.hotel_door_coordinates,shift_coordinates=self.shift_coordinates)
+            graphics.draw(canvas,self.hotel_door_coordinates,shift_coordinates=self.shift_coordinates,
+                          tag="hotel_door",object=self)
         elif self.state==1:
-            graphics.draw(canvas,self.hotel_door_open_70_coordinates,shift_coordinates=self.shift_coordinates)
+            graphics.draw(canvas,self.hotel_door_open_70_coordinates,shift_coordinates=self.shift_coordinates,
+                          object=self)
+
+    def clicked(self, event, tag, object, canvas, world_coordinates):
+        if tag=="hotel_door" and self.state==0:
+            print("[DEBUG] hotel door clicked!")
+            canvas.delete(tag)
+            self.state = 1 # now open
+            self.room_state.set_state_object("hotel_door",self.unique_id,self.state)
+            self.draw(canvas)
+            if self.next_room_callback != None:
+                self.next_room_callback(self.next_room,True) # execute room switch            

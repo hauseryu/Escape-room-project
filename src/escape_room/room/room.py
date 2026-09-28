@@ -168,7 +168,7 @@ class Room(tkinter.Frame):
         # create hotel doors
         try: 
             for index,hotel_door in enumerate(self.room_data["hotel_door"]):
-                obj = HotelDoor(room_data,index,self.room_state)
+                obj = HotelDoor(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
                 self.hotel_door.append(obj)   
         except KeyError: pass
         # create lights
@@ -496,9 +496,11 @@ class Room(tkinter.Frame):
                     self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
-    def next_room_callback(self,next_room):
+    def next_room_callback(self,next_room,exec_room_switch=False):
         self.goto_next_room = True
         self.next_room = next_room
+        if exec_room_switch:
+            self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
 
     def execute_room_switch(self):
         print("[GAME]: room switch")
