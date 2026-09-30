@@ -1,10 +1,35 @@
 from src.escape_room.actions import action
 from src.escape_room.objects import speech_data
 
+# action sequences including check actions that return a value
+check_postman_in_room = [
+    [action.check_figure_in_room,"Postman"]
+]
+
+check_mrs_hudson_in_room = [
+    [action.check_figure_in_room,"MrsHudson"]
+]
+
+check_room_bell_activation = [
+    [action.check_object_state,"picture","picture2","active"]
+]
+
+check_hotel_door_activation = [
+    [action.check_object_state,"hotel_door","hotel_door1","active"]
+]
+
+check_plant_moved = [
+    [action.check_object_state,"picture","picture3","moved"]
+]
+
 # specific action sequences
 sherlock_client_talk = [
     [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],
-    # [action.process_entry]
+]
+
+hotel_portier_talk = [
+    [action.stop_sequence_conditionally,action.check_object_state,"hotel_door","hotel_door1",None],
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0], 
 ]
 
 sherlock_client_appears = [
@@ -46,8 +71,15 @@ mrs_hudson_disappears = [
 ]
 
 hotel_portier_appears = [
-    [action.figure_appears,"Hotel_portier","hotel_portier.png",
-            560,440,400,600,None] # appears at hotel entrance
+    [action.figure_appears,"Hotel_portier","hotel_portier.png", # appears at hotel entrance
+            560,440,400,600,
+            "hotel_portier_talk", # action sequence for talk
+            "hotel_portier_receive_coin"],  # generic sequence
+]
+
+hotel_portier_receive_coin = [
+    [action.stop_sequence_conditionally,action.check_is_selected_inventory,"coin","coin1"],
+    [action.set_object_state,"hotel_door","hotel_door1","active"]
 ]
 
 call_mrs_hudson = [
@@ -55,7 +87,7 @@ call_mrs_hudson = [
     [action.play_sound,"room_bell.wav"],
     [action.time_elapse,1], # 1 hours to pass until Mrs. Hudson comes
     [action.figure_appears,"MrsHudson","Mrs_Hudson_with_tablet.png",
-            1200,605,340,480,None],
+            1200,605,340,480],
     [action.inventory_item_appears,"water_glass","water_glass1","water_glass.png",(50, 100),(40, 80)]
 ]
 
@@ -63,15 +95,3 @@ game_over = [
     [action.game_over]
 ]
 
-# action sequences including check actions that return a value
-check_postman_in_room = [
-    [action.check_figure_in_room,"Postman"]
-]
-
-check_mrs_hudson_in_room = [
-    [action.check_figure_in_room,"MrsHudson"]
-]
-
-check_room_bell_activation = [
-    [action.check_object_state,"picture","picture2","active"]
-]

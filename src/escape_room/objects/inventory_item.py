@@ -42,7 +42,16 @@ class InventoryItem:
             if name == "diamond":
                 image = "diamond.png"
                 shift_coordinates = (x-3.78,y-0.37,z-3.5)                          
+            # coin
+            if name == "coin": 
+                image = "gold_coin.png" # original size of picture: 201, 152
+                shift_coordinates = (x-0.5,y-1.25,z-5.0)                          
             self.object_owner = ""
+            try:
+                self.check_action_draw = room_data[name][index]["check_action_draw"] # get action that checks preconditions for drawing
+            except:
+                self.check_action_draw = None
+
         else: # in case magnifier is not created from room data
             unique_id = unique_identifier 
             self.object_owner = object_owner
@@ -127,6 +136,12 @@ class InventoryItem:
                     break
             if not draw_diamond:
                 return # key is hidden => do not draw it!
+
+        # check draw action?
+        if self.check_action_draw != None:
+            draw_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action_draw)
+            if not draw_allowed:
+                return None
 
         # part 2: actually draw the inventory item
         self.canvas = canvas

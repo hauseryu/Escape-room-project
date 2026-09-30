@@ -28,10 +28,11 @@ def time_elapse(action_mgr,time,sound=None):
     else:
         action_mgr.execute_next_action()
 
-def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,figure_talk):
+def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,
+                   action_sequence_talk=None,action_sequence_generic=None):
     print(f"[DEBUG] Person appears: {figure}")
     image = ContextManager().get_image_path() / image_name
-    figure = Figure(figure,image,x_xoord,y_coord,width,height,figure_talk)
+    figure = Figure(figure,image,x_xoord,y_coord,width,height,action_sequence_talk,action_sequence_generic)
     ContextManager().get_room().add_figure(figure)
     figure.draw_image(ContextManager().get_canvas())
     action_mgr.execute_next_action()
@@ -186,6 +187,11 @@ def check_role(action_mgr,role):
     player_role = ContextManager().get_role()
     return player_role == role
 
+def check_is_selected_inventory(action_mgr,name,unique_id):
+    inv = ContextManager().get_inventory()
+    player = ContextManager().get_player_name()
+    return inv.objectIsSelected(name,unique_id,player)
+    
 # factory to create manager instances
 def action_mgr_create():
     return ActionManager()

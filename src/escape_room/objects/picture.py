@@ -51,6 +51,14 @@ class Picture:
             action_sequence = room_data["picture"][index]["action_sequence"]
         except:
             action_sequence = None
+        try:
+            movement_vector = room_data["picture"][index]["movement_vector"]
+        except:
+            movement_vector = None            
+        try:
+            trigger_object_draw = room_data["picture"][index]["trigger_object_draw"]
+        except:
+            trigger_object_draw = None            
         shift_coordinates = (x-5.05,y-2.35,z-4.0)            
 
         # set attributes
@@ -66,6 +74,8 @@ class Picture:
         self.needed_inventory = needed_inventory
         self.check_activation = check_activation
         self.is_clickable = is_clickable
+        self.movement_vector = movement_vector
+        self.trigger_object_draw = trigger_object_draw
         self.action_sequence = action_sequence
 
         if self.draw_frame:
@@ -160,9 +170,10 @@ class Picture:
         
         # 3. Das Bild auf dem Canvas wie gewohnt platzieren
         if self.is_riddle:
-            self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
+            self.image_id = canvas.create_image(x1, y1, anchor="nw", tags=self.unique_id, image=self.foto_image)
         else:
-            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], anchor="nw", image=self.foto_image)
+            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], 
+                                                tags=self.unique_id, anchor="nw", image=self.foto_image)
 
         if self.is_clickable:
             canvas.tag_bind(
@@ -188,4 +199,34 @@ class Picture:
             self.speech_bubble.show_bubble(canvas)        
         elif self.action_sequence!=None:
             print("[DEBUG] execute action sequence of picture!")
-            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
+        elif self.movement_vector!=None:
+            if self.room_state.object_is_moved("picture",self.unique_id): # check if object is already moved
+                return
+            canvas.delete(self.unique_id)
+            self.move_picture()
+            self.room_state.move("picture",self.unique_id)
+            self.draw(canvas,self.unique_id)
+            if self.trigger_object_draw != None:
+                (name,unique_id) = self.trigger_object_draw
+                ContextManager().get_room().triggerObjectDraw(name,unique_id)
+
+    def move_picture(self):
+        if self.movement_vector==None:
+            return
+        self.state = "moved"
+        if self.draw_frame:
+            (a,b,c) = self.shift_coordinates
+            if self.movement_vector[0]=="x":
+                a+=self.movement_vector[1]
+            elif self.movement_vector[0]=="y":
+                b+=self.movement_vector[1]
+            elif self.movement_vector[0]=="z":
+                c+=self.movement_vector[1]
+            self.shift_coordinates = (a,b,c)                    
+        else:
+            (a,b)=self.pic_move_coord
+            if self.movement_vector[0]=="x":
+                a+=self.movement_vector[1]
+            elif self.movement_vector[0]=="y":
+                b+=self.movement_vector[1]
+            self.pic_move_coord = (a,b)

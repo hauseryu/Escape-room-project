@@ -98,6 +98,7 @@ class Room(tkinter.Frame):
         self.poker = []
         self.metal_cassette = []
         self.diamond = []
+        self.coin = []
         self.hotel_door = []
 
         for door in self.door:
@@ -296,6 +297,14 @@ class Room(tkinter.Frame):
                 if obj!=None:
                     self.poker.append(obj)
         except KeyError: pass
+        # create coin
+        try:
+            for index,coin in enumerate(self.room_data["coin"]):
+                obj = InventoryItem.create("coin",room_data,index,
+                                    "gold_coin.png",self.inventory,self.room_state, resize_room=(101, 75), resize_inventory=(40, 80))
+                if obj!=None:
+                    self.coin.append(obj)
+        except KeyError: pass
         # create benchs
         try:
             for index,bench in enumerate(self.room_data["bench"]):
@@ -335,7 +344,8 @@ class Room(tkinter.Frame):
             poker.object_owner = self.player_name
         for diamond in self.diamond:
             diamond.object_owner = self.player_name
-
+        for coin in self.coin:
+            coin.object_owner = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -437,6 +447,10 @@ class Room(tkinter.Frame):
         # draw the glass of water
         for water_glass in self.water_glass:
             water_glass.draw(self.canvas_area)
+
+        # draw the coin
+        for coin in self.coin:
+            coin.draw(self.canvas_area)
 
         # draw the benchs
         for bench in self.bench:
@@ -541,6 +555,7 @@ class Room(tkinter.Frame):
         elif object.name == "letter": object_list = self.letter
         elif object.name == "poker": object_list = self.poker
         elif object.name == "diamond": object_list = self.diamond
+        elif object.name == "coin": object_list = self.coin
         for index,item in enumerate(object_list):
             if item == object:
                 del object_list[index]
@@ -548,6 +563,15 @@ class Room(tkinter.Frame):
 
     def addObject(self,object):
         if object.name == "letter": self.letter.append(object)
+
+    def getObjectList(self,name):
+        return vars(self).get(name)
+
+    def triggerObjectDraw(self,name,unique_id):
+        obj_list = self.getObjectList(name)
+        for obj in obj_list:
+            if obj.unique_id == unique_id:
+                obj.draw(self.canvas_area)
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""

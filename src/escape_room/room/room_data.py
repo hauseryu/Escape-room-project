@@ -139,7 +139,7 @@ hotel_entrance = {
         "room_name": "hotel_entrance",
         "room_coordinates": "hotel_door",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "hotel_door": [[(3.2, 0, 4),"hotel_door1","living_room_221b"],  # -> next room
+        "hotel_door": [[(3.2, 0, 4),"hotel_door1","living_room_221b",action_data.check_hotel_door_activation],  # -> next room
                 ], 
         "picture": [
                     {"coord":(0.5,1,2),"image": "hotel_logo.png", "is_riddle": False,  
@@ -151,10 +151,14 @@ hotel_entrance = {
                      "pic_resize": (300,450), # original size: 430, 645
                      "draw_frame": False},               
                     {"coord":(0.5,1,2),"image": "potted_plant.png", "is_riddle": False,  
-                     "direction": "front","unique_id": "picture2", "pic_move_coord": (1350,540), 
+                     "direction": "front","unique_id": "picture3", "pic_move_coord": (1350,540), 
                      "pic_resize": (300,450), # original size: 430, 645
-                     "draw_frame": False}               
+                     "is_clickable": True, "movement_vector":("x",100), "draw_frame": False,
+                     "trigger_object_draw": ("coin","coin1")}               
                 ],
+        "coin": [{"coord": (2.2,0,5.5),"unique_id": "coin1", 
+                  "check_action_draw": action_data.check_plant_moved}, 
+                ],                
         "action_sequence": [ action_data.hotel_portier_appears
         ]
 }
