@@ -1,4 +1,5 @@
 from src.escape_room.gui_utilities import graphics
+from src.escape_room.application.context_manager import ContextManager
 
 class HotelDoor():
     def __init__(self, room_data, index, room_state, next_room_callback=None):
@@ -13,6 +14,7 @@ class HotelDoor():
         self.room_state = room_state
         self.next_room_callback = next_room_callback
         self.next_room = room_data["hotel_door"][index][2]
+        self.check_action = room_data["hotel_door"][index][3]
 
         # set attributes
         self.shift_coordinates = shift_coordinates
@@ -90,9 +92,17 @@ class HotelDoor():
     def clicked(self, event, tag, object, canvas, world_coordinates):
         if tag=="hotel_door" and self.state==0:
             print("[DEBUG] hotel door clicked!")
+            open_allowed=True
+            if self.check_action!=None:
+                open_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action)
+            if not open_allowed:
+                print("[DEBUG] opening hotel door not allowed!")
+                return
             canvas.delete(tag)
             self.state = 1 # now open
             self.room_state.set_state_object("hotel_door",self.unique_id,self.state)
             self.draw(canvas)
             if self.next_room_callback != None:
                 self.next_room_callback(self.next_room,True) # execute room switch            
+
+               
