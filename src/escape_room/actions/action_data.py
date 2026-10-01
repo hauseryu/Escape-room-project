@@ -29,7 +29,7 @@ sherlock_client_talk = [
 
 hotel_portier_talk = [
     [action.stop_sequence_conditionally,action.check_object_state,"hotel_door","hotel_door1",None],
-    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0], 
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0, None,False,"top"], # no button text, no entry field, positon (None/top/bottom)
 ]
 
 sherlock_client_appears = [

@@ -5,6 +5,6 @@ story_mortimer_jackson =  f"""
                     """
 
 story_hotel_portier = f"""
-                    Dear sir, this is a 5-star hotel. I assume you \nare not a hotel guest...
+                    Dear sir, this is a 5-star hotel. I assume \nyou are not a hotel guest...
                     Please refrain from entering the hotel building.
                     """

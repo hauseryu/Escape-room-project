@@ -44,14 +44,16 @@ def figure_disappears(action_mgr,figure):
     ContextManager().get_room().remove_figure(figure)
     action_mgr.execute_next_action()
                    
-def figure_talks(action_mgr,figure,speech,figure_id,player_role):
+def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position=None):
     print(f"[DEBUG] Person talks: {figure}")
     speech_bubble = SpeechBubble([speech])  # ([speech])
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
     speech_bubble2 = SpeechBubble(["You:"])
-    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True,
-                                              button_text="End dialog",action_data=action_data.sherlock_client_disappears)
-    bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
+    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,
+                                              entry_field=entry_field,position=position,
+                                              button_text=button_text,action_data=action_data.sherlock_client_disappears)
+    if bubble_entry!=None:
+        bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
 
 def letter_appears(action_mgr,unique_id,action_sequence=None):
     print(f"[DEBUG] Letter appears: {unique_id}")
