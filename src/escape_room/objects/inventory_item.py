@@ -55,6 +55,7 @@ class InventoryItem:
         else: # in case magnifier is not created from room data
             unique_id = unique_identifier 
             self.object_owner = object_owner
+            self.check_action_draw = None
 
         # set attributes
         self.canvas = None
@@ -219,38 +220,49 @@ class InventoryItem:
 
     def _show_tooltip(self, event, x, y, text, tooltip_data):
         """draws text for a short wile on canvas."""
-        # placement of text: e.g. 20 pixels above the icon
-        text_id = tooltip_data["text_id"] = self.canvas.create_text(
-            x, y - 20, 
+
+        # 1. create top level window
+        popup = tooltip_data["popup_window"] = tkinter.Toplevel(self.canvas.winfo_toplevel())
+        
+        # 2. change window to frame-less, so it looks like a tooltip
+        popup.wm_overrideredirect(True)
+        
+        # 3. configure window like a normal rectangle object
+        popup.configure(
+            bg="#4D2D97", 
+            highlightbackground="#EE0707", 
+            highlightthickness=1
+        )
+
+        # 4. insert text label
+        label = tkinter.Label(
+            popup, 
             text=text, 
             font=("Arial", 10, "bold"), 
-            fill="yellow", 
-            anchor="w"
+            fg="yellow", 
+            bg="#4D2D97", 
+            padx=4, pady=2
         )
-        bbox = self.canvas.bbox(text_id)
-        if bbox:
-            # adjust to text size, create rectangle
-            # care about order of drawing!
-            rect_id = self.canvas.create_rectangle(
-                bbox[0] - 4, bbox[1] - 2, 
-                bbox[2] + 4, bbox[3] + 2, 
-                fill="#4D2D97",      # 薄い黄色（お好みの色に変更してください）
-                outline="#EE0707"    # 枠線の色
-            )
-            
-            # 4. 重なり順の調整：背景の長方形をテキストの後ろ（下）に移動させる
-            self.canvas.tag_lower(rect_id, text_id)
-            
-            # IDを保持
-            tooltip_data["rect_id"] = rect_id
-            tooltip_data["text_id"] = text_id        
+        label.pack()
+
+        # 5. calculate position on screen (not canvas!) 
+        # winfo_rootx/y is absolute screen position of canvas origin
+        root_x = self.canvas.winfo_rootx() + x
+        root_y = self.canvas.winfo_rooty() + (y - 20)
+
+        int_x = int(root_x)
+        int_y = int(root_y)
+
+        # place window onto calculated position 
+        popup.wm_geometry(f"+{int_x}+{int_y}")
+
+        # 6. make sure it's on top
+        popup.lift()        
 
     def _hide_tooltip(self, event, tooltip_data):
         """removes text immediately again, if mouse if moved."""
-        if tooltip_data["rect_id"] is not None:
-            self.canvas.delete(tooltip_data["rect_id"])
-            tooltip_data["rect_id"] = None
-            
-        if tooltip_data["text_id"] is not None:
-            self.canvas.delete(tooltip_data["text_id"])
-            tooltip_data["text_id"] = None
+        if "popup_window" in tooltip_data and tooltip_data["popup_window"]:
+            tooltip_data["popup_window"].destroy()
+            tooltip_data["popup_window"] = None
+
+

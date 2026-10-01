@@ -199,6 +199,7 @@ class Picture:
             self.speech_bubble.show_bubble(canvas)        
         elif self.action_sequence!=None:
             print("[DEBUG] execute action sequence of picture!")
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
         elif self.movement_vector!=None:
             if self.room_state.object_is_moved("picture",self.unique_id): # check if object is already moved
                 return

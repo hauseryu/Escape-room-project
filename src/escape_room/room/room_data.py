@@ -100,7 +100,7 @@ living_room_221b = {
                 ],
         "poker":[{"coord": (2.3, 0, 3.5), "unique_id": "poker1"}
                 ],
-        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1", "key2"]
+        "metal_cassette":[[(3.78, 0.37, 3.50), "metal_cassette1", "diamond1", "key2", "check_secret_compartment_opened"]
                 ],
         "diamond": [{"coord": (1.07, 0.34, 3.50), "unique_id": "diamond1"}
                 ]
