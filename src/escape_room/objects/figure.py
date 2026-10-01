@@ -1,6 +1,5 @@
 from PIL import Image, ImageTk
 from src.escape_room.application.context_manager import ContextManager
-from src.escape_room.actions import action_data 
 
 # figures are persons, animals etc. drawn on the canvas
 class Figure():
@@ -38,10 +37,8 @@ class Figure():
         print(f"[DEBUG]: figure {self.figure_name} clicked")
         # evaluate generic action sequence
         if self.action_sequence_generic!=None:            
-            act_sequence = action_data.__dict__[self.action_sequence_generic]
-            ContextManager().get_action_manager().execute_action_sequence(act_sequence)
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_generic)
 
         # evaluate action sequence for talk
         if self.action_sequence_talk!=None:            
-            act_sequence = action_data.__dict__[self.action_sequence_talk]
-            ContextManager().get_action_manager().execute_action_sequence(act_sequence)
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_talk)

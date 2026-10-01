@@ -6,7 +6,6 @@ from escape_room.objects.letter import Letter
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
-from src.escape_room.actions import action_data 
 from src.llm.dialog import Dialog
 import winsound
 
@@ -51,7 +50,7 @@ def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End
     speech_bubble2 = SpeechBubble(["You:"])
     bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,
                                               entry_field=entry_field,position=position,
-                                              button_text=button_text,action_data=action_data.sherlock_client_disappears)
+                                              button_text=button_text,action_data="sherlock_client_disappears")
     if bubble_entry!=None:
         bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
 
@@ -63,7 +62,7 @@ def letter_appears(action_mgr,unique_id,action_sequence=None):
     canvas = ContextManager().get_canvas()
     for index,letter in enumerate(room_data["letter"]):
         if letter[1] == unique_id:
-            act_sequence = action_data.__dict__[action_sequence]
+            act_sequence = action_data_dictionary[action_sequence]
             obj = Letter(room_data,index,canvas,action_sequence=act_sequence)
             room.addObject(obj)
             break
@@ -144,6 +143,12 @@ def skip_actions_if_false(action_mgr,number=1,*condition):
     action_mgr.execute_next_action()
 
 # helper functions
+action_data_dictionary = None
+
+def set_action_data_dict(action_data_dict):
+    global action_data_dictionary
+    action_data_dictionary = action_data_dict
+
 def _play_sound(sound):
     if sound==None:
         return
@@ -211,7 +216,8 @@ class ActionManager():
 
     def execute_action_sequence(self,action_sequence):
         print(f"[DEBUG] Execute action sequence {action_sequence}")
-        self.action_sequence = action_sequence.copy()
+        act_sequence = action_data_dictionary[action_sequence] # action_data.__dict__
+        self.action_sequence = act_sequence.copy()
         return self.execute_next_action()
 
     def execute_next_action(self):

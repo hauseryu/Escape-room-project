@@ -35,7 +35,7 @@ hotel_portier_talk = [
 sherlock_client_appears = [
     [action.time_elapse,3,"clock_tick.wav"], # 3 hours to pass until client comes, w/ sound
     [action.figure_appears,"Mortimer Jackson","sherlock_client.png",
-        880,660,160,300,sherlock_client_talk] # client of Sherlock! x + y coordinates, width, height
+        880,660,160,300,"sherlock_client_talk"] # client of Sherlock! x + y coordinates, width, height
 ]
 
 sherlock_client_disappears = [
