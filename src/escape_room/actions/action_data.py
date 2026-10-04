@@ -26,6 +26,14 @@ check_plant_moved = [
     [action.check_object_state,"picture","picture3","moved"]
 ]
 
+check_safe_open = [
+    [action.check_object_state,"safe","safe1","OPEN"] 
+]
+
+check_metal_cassette_open = [
+    [action.check_object_state,"metal_cassette","metal_cassette1","opened"] 
+]
+
 # specific action sequences
 sherlock_client_talk = [
     [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],

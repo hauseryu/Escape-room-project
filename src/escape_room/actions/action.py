@@ -45,12 +45,14 @@ def figure_disappears(action_mgr,figure):
                    
 def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position="bottom"):
     print(f"[DEBUG] Person talks: {figure}")
-    speech_bubble = SpeechBubble([speech])  # ([speech])
-    speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
-    speech_bubble2 = SpeechBubble(["You:"])
-    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),skip_overlay=True,
-                                              entry_field=entry_field,position=position,
-                                              button_text=button_text,action_data="sherlock_client_disappears")
+    speech_bubble = SpeechBubble([speech]) 
+    speech_bubble.show_bubble(ContextManager().get_canvas(),position)
+    bubble_entry=None
+    if entry_field:
+        speech_bubble2 = SpeechBubble(["You:"])
+        bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),skip_overlay=True,
+                                                entry_field=entry_field,position=position,
+                                                button_text=button_text,action_data="sherlock_client_disappears")
     if bubble_entry!=None:
         bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
 

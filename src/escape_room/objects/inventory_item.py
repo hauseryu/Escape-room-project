@@ -101,45 +101,9 @@ class InventoryItem:
     def draw(self, canvas):
 
         # part 1: check preconditions (in some cases inventory item may be hidden)
-        if self.name == "key": # key may be hidden in safe
-            draw_key = True
-            for safe in ContextManager().get_room().safe: # look for associated safe
-                if self.unique_id == safe.key.unique_id:
-                    if safe.state == 1: # safe is open
-                        break
-                    elif safe.state == 0: # safe is closed
-                        draw_key = False
-                        break
-            if not draw_key:
-                return # key is hidden => do not draw it!
-
-            for index, cassette in enumerate(ContextManager().get_room().metal_cassette): # look for associated metal cassette
-                unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
-                if self.unique_id == cassette.key.unique_id:
-                    self.resize_room_tuple = (30, 40)
-                    self.resize_inventory_tuple = (50, 100)
-                    if self.room_state.get_state_object("metal_cassette",unique_id) == "opened": # cassette is open
-                        break
-                    else: # cassette is closed
-                        draw_key = False
-                        break
-            if not draw_key:
-                return # key is hidden => do not draw it!
-
-        if self.name == "diamond":
-            draw_diamond = True            
-            for index, cassette in enumerate(ContextManager().get_room().metal_cassette): 
-                unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
-                if (self.unique_id == cassette.diamond.unique_id and self.room_state.get_state_object("metal_cassette",unique_id) == "opened"): 
-                    break
-                else: 
-                    draw_diamond = False
-                    break
-            if not draw_diamond:
-                return # key is hidden => do not draw it!
-
-        # check draw action?
-        if self.check_action_draw != None:
+        # check draw action
+        if self.check_action_draw != None and \
+                not self.inventory.objectInInventory(self.name,self.unique_id,self.object_owner):
             draw_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action_draw)
             if not draw_allowed:
                 return None

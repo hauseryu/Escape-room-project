@@ -83,6 +83,8 @@ class RoomState():
         if type=='figure':
             figures = []
             for figure_name,attribs in self.room_state[self.current_room]["figure"].items():
+                if attribs==None:
+                    continue
                 image = attribs[0]
                 x_coord,y_coord,width,height = attribs[1:5]
                 figure_talk = attribs[5]
@@ -95,7 +97,11 @@ class RoomState():
             self.room_state[self.current_room]["figure"][object.figure_name] = [ \
                 object.image_path, object.x_coord, object.y_coord, object.width, object.height, \
                 object.action_sequence_talk ]
-    
+
+    def remove_object(self,type,object):
+        if type=='figure':
+            self.room_state[self.current_room]["figure"][object.figure_name] = None
+
     def save_to_db(self):
         """Stores the corrent state of every room in the database"""
         self.repo.save_all_rooms(self.room_state)
