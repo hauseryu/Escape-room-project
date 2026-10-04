@@ -11,6 +11,8 @@ STONE_PAVEMENT_TEXTURE = IMAGE_DIR / "stone_pavement_texture1.jpg"
 STONE_PAVEMENT_TEXTURE2 = IMAGE_DIR / "stone_pavement_texture2.jpg"
 BRICK_WALL = IMAGE_DIR / "brick_wall.jpg"
 MARBLE_TEXTURE = IMAGE_DIR / "marble_texture.jpg"
+MOSAIC_TEXTURE = IMAGE_DIR / "mosaic_texture.jpg"
+WOOD_TEXTURE = IMAGE_DIR / "wood_texture.jpg"
 
 room_coord = {
     "normal_room": [[("white",FLOOR_TEXTURE),
@@ -184,4 +186,30 @@ room_coord = {
                      (6, 3, 4), 
                      (2, 3, 4)]                     
                     ],
+    "lobby_room": [[("white",MOSAIC_TEXTURE),
+                     (0,0,0), # floor
+                     (15,0,0), 
+                     (15,0,10), 
+                     (0,0,10)], 
+                    [("white",WOOD_TEXTURE),
+                     (0,8,0), # ceiling
+                     (15,8,0), 
+                     (15,8,10), 
+                     (0,8,10)],                
+                    [("white",MARBLE_TEXTURE),
+                     (0,0,0), # wall left
+                     (0,8,0),
+                     (0,8,10), 
+                     (0,0,10)],               
+                    [("white",MARBLE_TEXTURE),
+                     (15,0,0), # wall right
+                     (15,8,0), 
+                     (15,8,10), 
+                     (15,0,10)],                 
+                    [("white",MARBLE_TEXTURE), # back wall
+                     (0, 0, 10), 
+                     (15, 0, 10), 
+                     (15, 8, 10), 
+                     (0, 8, 10)]                     
+                     ],
 }
