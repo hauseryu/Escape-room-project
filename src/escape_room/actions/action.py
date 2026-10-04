@@ -91,18 +91,50 @@ def inventory_item_appears(action_mgr,name,unique_id,image,resize_room=None,resi
         obj.draw(canvas)
     action_mgr.execute_next_action()
 
-def put_item_in_inventory(action_mgr,name,unique_id):
+def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     inventory = ContextManager().get_inventory()
     room_state = ContextManager().get_room_state()
     canvas = ContextManager().get_canvas()
-    player_name = ContextManager().get_player_name()
+    if object_owner == None:
+        object_owner = ContextManager().get_player_name()
     # select attributes depending on item type
     if name=="magnifier": 
         image="magnifier.png"
-    obj = InventoryItem("magnifier",None,None,
-                       image,inventory,room_state, unique_identifier=unique_id, 
-                        object_owner = player_name, resize_inventory=(100, 50))    
-    inventory.addObject(name,player_name,obj)
+        obj = InventoryItem("magnifier",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            sound="grab_key.wav", object_owner = object_owner)    
+    if name=="key": 
+        image="key_transparent.png"
+        obj = InventoryItem("key",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            object_owner = object_owner, resize_inventory=(100, 50)) 
+    
+    if name=="diamond": 
+        image="diamond.png"
+        obj = InventoryItem("diamond",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            object_owner = object_owner, 
+                            resize_room=(30, 50), resize_inventory=(50, 70))  
+    if name=="revolver": 
+        image="revolver.png"
+        obj = InventoryItem("revolver",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            object_owner = object_owner, resize_inventory=(100, 50))
+    if name=="water_glass": 
+        image="water_glass.png"
+        obj = InventoryItem("water_glass",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            object_owner = object_owner, resize_room=(50, 100), 
+                            resize_inventory=(40, 80))
+        
+    if name=="poker": 
+        image="poker.png"
+        obj = InventoryItem("poker",None,None,
+                            image,inventory,room_state, unique_id=unique_id, 
+                            object_owner = object_owner, resize_room=(70, 130), 
+                            resize_inventory=(40, 80))    
+    
+    inventory.addObject(name,object_owner,obj)
     obj.draw(canvas)
     action_mgr.execute_next_action()
 

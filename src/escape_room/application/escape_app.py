@@ -13,7 +13,9 @@ from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.application.game_over_screen import GameOverScreen
 from src.escape_room.actions.action import ActionManager
 from src.escape_room.actions.action import action_mgr_create
+from src.escape_room.actions.action import put_item_in_inventory
 from src.llm.llm_client import LlmClient
+from src.escape_room.repositories.inventory_repository import set_function_put_in_inventory
 
 IMAGE_DIR = ContextManager.get_image_path()
 
@@ -26,6 +28,7 @@ class EscapeApp():
         self.context_manager = ContextManager()
         action_manager_factory = action_mgr_create
         self.context_manager.set_action_manager_factory(action_manager_factory)
+        set_function_put_in_inventory(put_item_in_inventory)
 
         # create LLM client and pass it to context manager
         self.llm_client = LlmClient()
@@ -40,6 +43,8 @@ class EscapeApp():
         self.room.init_room(self.game_client)
         # show the start screen => start screen will then call the start_game function
         self.show_start_screen()
+        
+       
         
     # set up network, server and connection to other players
     def init_network(self):
@@ -121,6 +126,6 @@ class EscapeApp():
     def save_game(self):
         room_state = self.context_manager.get_room_state()
         room_state.save_to_db()
+        inventory = self.context_manager.get_inventory()
+        inventory.save_to_db()
         
-
-

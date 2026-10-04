@@ -1,9 +1,10 @@
-from src.escape_room.actions import action
 from src.escape_room.objects import speech_data
+from src.escape_room.actions import action
+from src.escape_room.actions.action import figure_talks
 
 # specific action sequences
 sherlock_client_talk = [
-    [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],
+    [figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],
     # [action.process_entry]
 ]
 
