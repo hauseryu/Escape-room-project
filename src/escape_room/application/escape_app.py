@@ -14,6 +14,8 @@ from src.escape_room.application.game_over_screen import GameOverScreen
 from src.escape_room.actions.action import ActionManager
 from src.escape_room.actions.action import action_mgr_create
 from src.escape_room.actions.action import put_item_in_inventory
+from src.escape_room.actions import action_data
+from src.escape_room.actions import action
 from src.llm.llm_client import LlmClient
 from src.escape_room.repositories.inventory_repository import set_function_put_in_inventory
 
@@ -29,6 +31,9 @@ class EscapeApp():
         action_manager_factory = action_mgr_create
         self.context_manager.set_action_manager_factory(action_manager_factory)
         set_function_put_in_inventory(put_item_in_inventory)
+        # create link between actions and action_data
+        action_data_dic = action_data.__dict__
+        action.set_action_data_dict(action_data_dic)
 
         # create LLM client and pass it to context manager
         self.llm_client = LlmClient()

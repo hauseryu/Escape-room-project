@@ -5,7 +5,7 @@ from src.escape_room.application.context_manager import ContextManager
 class Figure():
 
     def __init__(self, figure_name, image_path=None,x_coord=None,y_coord=None,width=None,height=None,
-                 action_sequence_talk = None):
+                 action_sequence_talk = None, action_sequence_generic = None):
         self.figure_name = figure_name
         self.image_path = image_path
         self.x_coord = x_coord
@@ -15,6 +15,7 @@ class Figure():
         self.foto_image = None
         self.image_id = None
         self.action_sequence_talk = action_sequence_talk
+        self.action_sequence_generic = action_sequence_generic
 
     def draw_image(self, canvas):
         image = Image.open(self.image_path)
@@ -34,5 +35,10 @@ class Figure():
 
     def figure_clicked(self,canvas):
         print(f"[DEBUG]: figure {self.figure_name} clicked")
-        if self.action_sequence_talk!=None:
+        # evaluate generic action sequence
+        if self.action_sequence_generic!=None:            
+            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_generic)
+
+        # evaluate action sequence for talk
+        if self.action_sequence_talk!=None:            
             ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_talk)

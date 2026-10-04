@@ -6,7 +6,6 @@ from escape_room.objects.letter import Letter
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
-from src.escape_room.actions import action_data 
 from src.llm.dialog import Dialog
 import winsound
 
@@ -28,10 +27,11 @@ def time_elapse(action_mgr,time,sound=None):
     else:
         action_mgr.execute_next_action()
 
-def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,figure_talk):
+def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,
+                   action_sequence_talk=None,action_sequence_generic=None):
     print(f"[DEBUG] Person appears: {figure}")
     image = ContextManager().get_image_path() / image_name
-    figure = Figure(figure,image,x_xoord,y_coord,width,height,figure_talk)
+    figure = Figure(figure,image,x_xoord,y_coord,width,height,action_sequence_talk,action_sequence_generic)
     ContextManager().get_room().add_figure(figure)
     figure.draw_image(ContextManager().get_canvas())
     action_mgr.execute_next_action()
@@ -43,14 +43,16 @@ def figure_disappears(action_mgr,figure):
     ContextManager().get_room().remove_figure(figure)
     action_mgr.execute_next_action()
                    
-def figure_talks(action_mgr,figure,speech,figure_id,player_role):
+def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position=None):
     print(f"[DEBUG] Person talks: {figure}")
     speech_bubble = SpeechBubble([speech])  # ([speech])
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
     speech_bubble2 = SpeechBubble(["You:"])
-    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,entry_field=True,
-                                              button_text="End dialog",action_data=action_data.sherlock_client_disappears)
-    bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
+    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,
+                                              entry_field=entry_field,position=position,
+                                              button_text=button_text,action_data="sherlock_client_disappears")
+    if bubble_entry!=None:
+        bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
 
 def letter_appears(action_mgr,unique_id,action_sequence=None):
     print(f"[DEBUG] Letter appears: {unique_id}")
@@ -60,7 +62,7 @@ def letter_appears(action_mgr,unique_id,action_sequence=None):
     canvas = ContextManager().get_canvas()
     for index,letter in enumerate(room_data["letter"]):
         if letter[1] == unique_id:
-            act_sequence = action_data.__dict__[action_sequence]
+            act_sequence = action_data_dictionary[action_sequence]
             obj = Letter(room_data,index,canvas,action_sequence=act_sequence)
             room.addObject(obj)
             break
@@ -102,12 +104,12 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
         image="magnifier.png"
         obj = InventoryItem("magnifier",None,None,
                             image,inventory,room_state, unique_id=unique_id, 
-                            sound="grab_key.wav", object_owner = object_owner)    
+                            object_owner = object_owner, resize_inventory=(100, 50))    
     if name=="key": 
         image="key_transparent.png"
         obj = InventoryItem("key",None,None,
                             image,inventory,room_state, unique_id=unique_id, 
-                            object_owner = object_owner, resize_inventory=(100, 50)) 
+                            sound="grab_key.wav", object_owner = object_owner, resize_inventory=(100, 50)) 
     
     if name=="diamond": 
         image="diamond.png"
@@ -134,7 +136,7 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
                             object_owner = object_owner, resize_room=(70, 130), 
                             resize_inventory=(40, 80))    
     
-    inventory.addObject(name,object_owner,obj)
+    inventory.addObject(name,unique_id, object_owner,obj)
     obj.draw(canvas)
     action_mgr.execute_next_action()
 
@@ -173,6 +175,12 @@ def skip_actions_if_false(action_mgr,number=1,*condition):
     action_mgr.execute_next_action()
 
 # helper functions
+action_data_dictionary = None
+
+def set_action_data_dict(action_data_dict):
+    global action_data_dictionary
+    action_data_dictionary = action_data_dict
+
 def _play_sound(sound):
     if sound==None:
         return
@@ -218,6 +226,11 @@ def check_role(action_mgr,role):
     player_role = ContextManager().get_role()
     return player_role == role
 
+def check_is_selected_inventory(action_mgr,name,unique_id):
+    inv = ContextManager().get_inventory()
+    player = ContextManager().get_player_name()
+    return inv.objectIsSelected(name,unique_id,player)
+    
 # factory to create manager instances
 def action_mgr_create():
     return ActionManager()
@@ -235,7 +248,8 @@ class ActionManager():
 
     def execute_action_sequence(self,action_sequence):
         print(f"[DEBUG] Execute action sequence {action_sequence}")
-        self.action_sequence = action_sequence.copy()
+        act_sequence = action_data_dictionary[action_sequence] # action_data.__dict__
+        self.action_sequence = act_sequence.copy()
         return self.execute_next_action()
 
     def execute_next_action(self):

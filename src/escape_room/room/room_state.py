@@ -36,7 +36,9 @@ class RoomState():
             "fireplace": {},
             "poker": {},
             "diamond": {},
-            "metal_cassette": {}
+            "metal_cassette": {},
+            "hotel_door": {},
+            "coin": {}
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered

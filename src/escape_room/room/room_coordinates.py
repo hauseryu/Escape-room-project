@@ -7,6 +7,10 @@ FLOOR_TEXTURE = IMAGE_DIR / "weathered_brown_planks1.jpg"
 WALL_TEXTURE = IMAGE_DIR / "woodchip_texture.jpg"
 DARK_WALL_TEXTURE = IMAGE_DIR / "dark-wall-texture.png"
 PEBBLE_FLOOR_TEXTURE = IMAGE_DIR / "pebble_floor_texture.jpg"
+STONE_PAVEMENT_TEXTURE = IMAGE_DIR / "stone_pavement_texture1.jpg"
+STONE_PAVEMENT_TEXTURE2 = IMAGE_DIR / "stone_pavement_texture2.jpg"
+BRICK_WALL = IMAGE_DIR / "brick_wall.jpg"
+MARBLE_TEXTURE = IMAGE_DIR / "marble_texture.jpg"
 
 room_coord = {
     "normal_room": [[("white",FLOOR_TEXTURE),
@@ -120,5 +124,64 @@ room_coord = {
                     (6, 0, 4),
                     (6, 3, 4),
                     (2, 3, 4)]
+                    ],
+    "hotel_door": [    # part 1: 1m in front
+                    [("white",STONE_PAVEMENT_TEXTURE2), # #8B4513
+                     (0,0,0), # floor
+                     (8,0,0), 
+                     (8,0,2), 
+                     (0,0,2)],
+                    [("white",BRICK_WALL),
+                     (0,0,0), # wall left
+                     (0,3,0), 
+                     (0,3,2), 
+                     (0,0,2)],
+                    [("white",BRICK_WALL),
+                     (8,0,0), # wall right
+                     (8,3,0), 
+                     (8,3,2), 
+                     (8,0,2)],
+                    [("white",MARBLE_TEXTURE),
+                     (0,3,0), # ceiling
+                     (8,3,0), 
+                     (8,3,2), 
+                     (0,3,2)],
+                    # part 2: wall left & right
+                    [("white",MARBLE_TEXTURE),
+                     (0,0,2), # wall left upfront
+                     (2,0,2), 
+                     (2,3,2), 
+                     (0,3,2)],
+                    [("white",MARBLE_TEXTURE),
+                     (8,0,2), # wall right upfront
+                     (6,0,2), 
+                     (6,3,2), 
+                     (8,3,2)],
+                     # part 3: doorway
+                     [("white",STONE_PAVEMENT_TEXTURE), # #8B4513
+                     (2,0,2), # floor
+                     (6,0,2), 
+                     (6,0,4), 
+                     (2,0,4)],
+                    [("white",MARBLE_TEXTURE),
+                     (2,0,2), # wall left
+                     (2,3,2), 
+                     (2,3,4), 
+                     (2,0,4)],
+                    [("white",MARBLE_TEXTURE),
+                     (6,0,2), # wall right
+                     (6,3,2), 
+                     (6,3,4), 
+                     (6,0,4)],
+                    [("white",MARBLE_TEXTURE),
+                     (2,3,2), # ceiling
+                     (6,3,2), 
+                     (6,3,4), 
+                     (2,3,4)],
+                    [("white",MARBLE_TEXTURE), # back wall
+                     (2, 0, 4), 
+                     (6, 0, 4), 
+                     (6, 3, 4), 
+                     (2, 3, 4)]                     
                     ],
 }

@@ -101,7 +101,7 @@ class EscapeClient:
         if self.client_socket:
             self.client_socket.close()
 
-    def send_action(self, action_type, player=None, inventory=None, owner=None, json_payload = None):
+    def send_action(self, action_type, player=None, inventory=None, object_id=None, owner=None, json_payload = None):
         """ useful method to send actions to the sever via the GUI class."""
         if not self.client_socket:
             print("⚠️ No active server connection.")
@@ -120,6 +120,7 @@ class EscapeClient:
                 "action": action_type,
                 "player_name": player,
                 "inventory": inventory,
+                "object_id": object_id,
                 "owner": owner
             }
         try:

@@ -145,7 +145,7 @@ class Door:
         self.room_state.set_state_object("door",self.unique_id,"OPEN")
 
     def door_can_be_opened(self, selected_object):
-        (object_type, object_owner) = selected_object
+        (object_type, object_id, object_owner) = selected_object
 
         if not self.can_be_opened:
             return False

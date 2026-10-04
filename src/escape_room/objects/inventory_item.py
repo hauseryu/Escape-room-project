@@ -42,7 +42,16 @@ class InventoryItem:
             if name == "diamond":
                 image = "diamond.png"
                 shift_coordinates = (x-3.78,y-0.37,z-3.5)                          
+            # coin
+            if name == "coin": 
+                image = "gold_coin.png" # original size of picture: 201, 152
+                shift_coordinates = (x-0.5,y-1.25,z-5.0)                          
             self.object_owner = ""
+            try:
+                self.check_action_draw = room_data[name][index]["check_action_draw"] # get action that checks preconditions for drawing
+            except:
+                self.check_action_draw = None
+
         else: # in case magnifier is not created from room data
             unique_id = unique_identifier 
             self.object_owner = object_owner
@@ -51,7 +60,6 @@ class InventoryItem:
         self.canvas = None
         self.name = name
         self.inventory = inventory
-        self.object_id = None
         self.selection_id = None
         self.unique_id = unique_id
         self.shift_coordinates = shift_coordinates
@@ -95,11 +103,25 @@ class InventoryItem:
         if self.name == "key": # key may be hidden in safe
             draw_key = True
             for safe in ContextManager().get_room().safe: # look for associated safe
-                if (self.unique_id == safe.key.unique_id and safe.state == 1): # safe is open
-                    break
-                elif (self.unique_id == safe.key.unique_id and safe.state == 0): # safe is closed
-                    draw_key = False
-                    break
+                if self.unique_id == safe.key.unique_id:
+                    if safe.state == 1: # safe is open
+                        break
+                    elif safe.state == 0: # safe is closed
+                        draw_key = False
+                        break
+            if not draw_key:
+                return # key is hidden => do not draw it!
+
+            for index, cassette in enumerate(ContextManager().get_room().metal_cassette): # look for associated metal cassette
+                unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
+                if self.unique_id == cassette.key.unique_id:
+                    self.resize_room_tuple = (30, 40)
+                    self.resize_inventory_tuple = (50, 100)
+                    if self.room_state.get_state_object("metal_cassette",unique_id) == "opened": # cassette is open
+                        break
+                    else: # cassette is closed
+                        draw_key = False
+                        break
             if not draw_key:
                 return # key is hidden => do not draw it!
 
@@ -115,15 +137,11 @@ class InventoryItem:
             if not draw_diamond:
                 return # key is hidden => do not draw it!
 
-            # for index, cassette in enumerate(ContextManager().get_room().metal_cassette):
-            #     unique_id = ContextManager().get_room().room_data["metal_cassette"][index][1]
-            #     if self.unique_id == unique_id and self.room_state.get_state_object("metal_cassette",unique_id) == "opened":
-            #         break
-            #     else:
-            #         draw_diamond = False
-            #         break
-            # if not draw_diamond:
-            #     return
+        # check draw action?
+        if self.check_action_draw != None:
+            draw_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action_draw)
+            if not draw_allowed:
+                return None
 
         # part 2: actually draw the inventory item
         self.canvas = canvas
@@ -132,8 +150,8 @@ class InventoryItem:
             img = ImageOps.contain(img, self.resize_room_tuple)
         self.img = ImageTk.PhotoImage(img, master=canvas)
         
-        if self.inventory.objectInInventory(self.name,self.object_owner):
-            objIndex = self.inventory.getObjectIndex(self.name,self.object_owner)
+        if self.inventory.objectInInventory(self.name,self.unique_id,self.object_owner):
+            objIndex = self.inventory.getObjectIndex(self.name,self.unique_id,self.object_owner)
             (x1,y1) = self.inventory.getObjectCoordinates(objIndex)
             if self.resize_inventory_tuple is not None:
                 img = ImageOps.contain(img, self.resize_inventory_tuple)
@@ -147,8 +165,8 @@ class InventoryItem:
                 globals.canvas_height,
                 self.shift_coordinates
             )
-        if self.inventory.objectIsSelected(self.name, self.object_owner):
-            objIndex = self.inventory.getObjectIndex(self.name, self.object_owner)
+        if self.inventory.objectIsSelected(self.name, self.unique_id, self.object_owner):
+            objIndex = self.inventory.getObjectIndex(self.name, self.unique_id, self.object_owner)
             (x1,y1) = self.inventory.getObjectCoordinates(objIndex)
             select_rect = (x1-5,y1-5,
                            x1+57,y1-5,
@@ -156,29 +174,30 @@ class InventoryItem:
                            x1-5,y1+45
                            )
             self.selection_id = self.canvas.create_polygon(*select_rect,fill="blue",width=3)
-        self.object_id = canvas.create_image(x1, y1, image=self.img, anchor="nw")
+        self.obj_id = canvas.create_image(x1, y1, image=self.img, anchor="nw", tags=self.name)
         tooltip_data = {"rect_id": None, "text_id": None}
         # bind event '<Enter>' (mouse moves over icon)
         self.canvas.tag_bind(
-            self.object_id, 
+            self.obj_id, 
             "<Enter>", 
-            lambda event: self._show_tooltip(event, x1, y1, "owner: " + self.object_owner, tooltip_data)
+            lambda event: self._show_tooltip(event, x1, y1, 
+                                             "owner: " + self.object_owner + "(" + self.unique_id + ")", tooltip_data)
         )        
         # bind event '<Leave>' (mouse moves away from icon)
         self.canvas.tag_bind(
-            self.object_id,
+            self.obj_id,
             "<Leave>", 
             lambda event: self._hide_tooltip(event, tooltip_data)
         )        
         self.canvas.tag_bind(
-            self.object_id,
+            self.obj_id,
             "<Button-1>", 
             lambda event: self.on_key_click(event, tooltip_data)
         )
 
     def on_key_click(self, event, tooltip_data):
         self._hide_tooltip(event, tooltip_data)
-        self.canvas.delete(self.object_id)
+        self.canvas.delete(self.obj_id)
         if self.sound_path is not None:
             try:
                 winsound.PlaySound(
@@ -188,14 +207,14 @@ class InventoryItem:
             except Exception as e:
                 print(f"[DEBUG] Sound could not be played: {e}")
         
-        if not self.inventory.objectInInventory(self.name, self.object_owner) and \
+        if not self.inventory.objectInInventory(self.name, self.unique_id,self.object_owner) and \
                self.room_placement == True:
-            self.inventory.addObject(self.name, self.object_owner, self)
+            self.inventory.addObject(self.name, self.unique_id, self.object_owner, self)
             self.room_state.remove(self.name, self.unique_id)
             self.room_placement = False
             ContextManager().get_room().removeObject(self)
         else:
-            self.inventory.selectObject(self.name, self.object_owner)
+            self.inventory.selectObject(self.name, self.unique_id, self.object_owner)
         self.draw(self.canvas)
 
     def _show_tooltip(self, event, x, y, text, tooltip_data):

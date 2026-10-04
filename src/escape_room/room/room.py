@@ -17,6 +17,7 @@ from src.escape_room.room.room_coordinates import room_coord
 
 from escape_room.objects.chair import Chair
 from escape_room.objects.door import Door
+from escape_room.objects.hotel_door import HotelDoor
 from escape_room.objects.light import Light
 from escape_room.objects.table import Table
 from escape_room.objects.wardrobe import Wardrobe
@@ -97,6 +98,9 @@ class Room(tkinter.Frame):
         self.poker = []
         self.metal_cassette = []
         self.diamond = []
+        self.coin = []
+        self.hotel_door = []
+
         for door in self.door:
             door.is_open = False        
 
@@ -156,104 +160,158 @@ class Room(tkinter.Frame):
             pass
 
         # create doors
-        for index,door in enumerate(self.room_data["door"]):
-            obj = Door(room_data,index,
-                       next_room_callback=self.next_room_callback,player_name=self.player_name,                       
-                       room_state=self.room_state)
-            self.door.append(obj)        
+        try:
+            for index,door in enumerate(self.room_data["door"]):
+                obj = Door(room_data,index,
+                        next_room_callback=self.next_room_callback,player_name=self.player_name,                       
+                        room_state=self.room_state)
+                self.door.append(obj)        
+        except KeyError: pass
+        # create hotel doors
+        try: 
+            for index,hotel_door in enumerate(self.room_data["hotel_door"]):
+                obj = HotelDoor(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
+                self.hotel_door.append(obj)   
+        except KeyError: pass
         # create lights
-        for index,light in enumerate(self.room_data["light"]):
-            obj = Light(self.room_data,index,room_state=self.room_state)
-            self.light.append(obj)            
+        try: 
+            for index,light in enumerate(self.room_data["light"]):
+                obj = Light(self.room_data,index,room_state=self.room_state)
+                self.light.append(obj)            
+        except KeyError: pass
         # create windows
-        for index,window in enumerate(self.room_data["window"]):
-            coord = self.room_data["window"][index][0] # get window coordinates (first element in list)
-            shift_coord = (coord[0]-0,coord[1]-1,coord[2]-1.8)
-            obj = Window(shift_coordinates=shift_coord)
-            self.window.append(obj)
+        try: 
+            for index,window in enumerate(self.room_data["window"]):
+                coord = self.room_data["window"][index][0] # get window coordinates (first element in list)
+                shift_coord = (coord[0]-0,coord[1]-1,coord[2]-1.8)
+                obj = Window(shift_coordinates=shift_coord)
+                self.window.append(obj)
+        except KeyError: pass
         # create tables 
-        for index,table in enumerate(self.room_data["table"]):
-            obj = Table(room_data,index,self.room_state)
-            self.table.append(obj)
+        try: 
+            for index,table in enumerate(self.room_data["table"]):
+                obj = Table(room_data,index,self.room_state)
+                self.table.append(obj)
+        except KeyError: pass
         # create chairs
-        for index,chair in enumerate(self.room_data["chair"]):
-            obj = Chair(room_data,index,self.room_state)
-            self.chair.append(obj)        
+        try: 
+            for index,chair in enumerate(self.room_data["chair"]):
+                obj = Chair(room_data,index,self.room_state)
+                self.chair.append(obj)        
+        except KeyError: pass
         # create keys
-        for index,key in enumerate(self.room_data["key"]):        
-            obj = InventoryItem.create("key",room_data,index,
-                                "key_transparent.png",self.inventory,self.room_state,
-                                sound="grab_key.wav")
-            if obj!=None:
-                self.key.append(obj)
+        try: 
+            for index,key in enumerate(self.room_data["key"]):        
+                obj = InventoryItem.create("key",room_data,index,
+                                    "key_transparent.png",self.inventory,self.room_state,
+                                    sound="grab_key.wav")
+                if obj!=None:
+                    self.key.append(obj)
+        except KeyError: pass
         #create safes
-        for index,safe in enumerate(self.room_data["safe"]):
-            obj = Safe(room_data,index,self.room_state)
-            self.safe.append(obj)
+        try: 
+            for index,safe in enumerate(self.room_data["safe"]):
+                obj = Safe(room_data,index,self.room_state)
+                self.safe.append(obj)
+        except KeyError: pass
         # create pictures
-        for index,picture in enumerate(self.room_data["picture"]):
-            obj = Picture(room_data,index,IMAGE_DIR,self.room_state)
-            self.picture.append(obj)
+        try: 
+            for index,picture in enumerate(self.room_data["picture"]):
+                obj = Picture(room_data,index,IMAGE_DIR,self.room_state)
+                self.picture.append(obj)
+        except KeyError: pass
         # create bookshelves
-        for index,bookshelf in enumerate(self.room_data["bookshelf"]):
-            obj = Bookshelf(room_data,index)
-            self.bookshelf.append(obj)
+        try: 
+            for index,bookshelf in enumerate(self.room_data["bookshelf"]):
+                obj = Bookshelf(room_data,index)
+                self.bookshelf.append(obj)
+        except KeyError: pass
         # create wardrobes
-        for index,wardrobe in enumerate(self.room_data["wardrobe"]):
-            obj = Wardrobe(room_data,index,self.room_state)
-            self.wardrobe.append(obj)
+        try:
+            for index,wardrobe in enumerate(self.room_data["wardrobe"]):
+                obj = Wardrobe(room_data,index,self.room_state)
+                self.wardrobe.append(obj)
+        except KeyError: pass
         # create clocks
-        for index,clock in enumerate(self.room_data["clock"]):
-            obj = Clock(room_data,index,self.canvas_area, time=1)
-            self.clock.append(obj)
-        ContextManager().set_clock(self.clock)        
+        try:
+            for index,clock in enumerate(self.room_data["clock"]):
+                obj = Clock(room_data,index,self.canvas_area, time=1)
+                self.clock.append(obj)
+            ContextManager().set_clock(self.clock)        
+        except KeyError: pass
         # create fireplaces
-        for index,fireplace in enumerate(self.room_data["fireplace"]):
-            obj = Fireplace(room_data,index,self.room_state)
-            self.fireplace.append(obj)
+        try:
+            for index,fireplace in enumerate(self.room_data["fireplace"]):
+                obj = Fireplace(room_data,index,self.room_state)
+                self.fireplace.append(obj)
+        except KeyError: pass
         # create diamond
-        for index,diamond in enumerate(self.room_data["diamond"]):
-            obj = InventoryItem.create("diamond",room_data,index,
-                                "diamond.png",self.inventory,self.room_state, resize_room=(30, 50), resize_inventory=(50, 70))
-            if obj!=None:
-                self.diamond.append(obj)
+        try:
+            for index,diamond in enumerate(self.room_data["diamond"]):
+                obj = InventoryItem.create("diamond",room_data,index,
+                                    "diamond.png",self.inventory,self.room_state, resize_room=(30, 50), resize_inventory=(50, 70))
+                if obj!=None:
+                    self.diamond.append(obj)
+        except KeyError: pass
         # create metal cassette
-        for index,cassette in enumerate(self.room_data["metal_cassette"]):
-            obj = MetalCassette(room_data,index,self.room_state)
-            self.metal_cassette.append(obj)        
+        try:
+            for index,cassette in enumerate(self.room_data["metal_cassette"]):
+                obj = MetalCassette(room_data,index,self.room_state)
+                self.metal_cassette.append(obj)        
+        except KeyError: pass
         # create letters
-        for index,letter in enumerate(self.room_data["letter"]):
-            obj = Letter.create(room_data,index,self.canvas_area)
-            if obj != None:
-                self.letter.append(obj)   
+        try:
+            for index,letter in enumerate(self.room_data["letter"]):
+                obj = Letter.create(room_data,index,self.canvas_area)
+                if obj != None:
+                    self.letter.append(obj)   
+        except KeyError: pass
         # create revolver
-        for index,revolver in enumerate(self.room_data["revolver"]):    
-            obj = InventoryItem.create("revolver",room_data,index,
-                                "revolver.png",self.inventory,self.room_state, resize_inventory=(50, 25))
-            if obj!=None:
-                self.revolver.append(obj)
+        try:
+            for index,revolver in enumerate(self.room_data["revolver"]):    
+                obj = InventoryItem.create("revolver",room_data,index,
+                                    "revolver.png",self.inventory,self.room_state, resize_inventory=(50, 25))
+                if obj!=None:
+                    self.revolver.append(obj)
+        except KeyError: pass
         # create magnifier
-        for index,magnifier in enumerate(self.room_data["magnifier"]):
-            obj = InventoryItem.create("magnifier",room_data,index,
-                                "magnifier.png",self.inventory,self.room_state, resize_inventory=(100, 50))
-            if obj!=None:
-                self.magnifier.append(obj)
+        try:
+            for index,magnifier in enumerate(self.room_data["magnifier"]):
+                obj = InventoryItem.create("magnifier",room_data,index,
+                                    "magnifier.png",self.inventory,self.room_state, resize_inventory=(100, 50))
+                if obj!=None:
+                    self.magnifier.append(obj)
+        except KeyError: pass
         # create glass of water
-        for index,water_glass in enumerate(self.room_data["water_glass"]):
-            obj = InventoryItem.create("water_glass",room_data,index,
-                                "water_glass.png",self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
-            if obj!=None:
-                self.water_glass.append(obj)
+        try:
+            for index,water_glass in enumerate(self.room_data["water_glass"]):
+                obj = InventoryItem.create("water_glass",room_data,index,
+                                    "water_glass.png",self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
+                if obj!=None:
+                    self.water_glass.append(obj)
+        except KeyError: pass
         # create poker
-        for index,poker in enumerate(self.room_data["poker"]):
-            obj = InventoryItem.create("poker",room_data,index,
-                                "poker.png",self.inventory,self.room_state, resize_room=(70, 130), resize_inventory=(40, 80))
-            if obj!=None:
-                self.poker.append(obj)
+        try:
+            for index,poker in enumerate(self.room_data["poker"]):
+                obj = InventoryItem.create("poker",room_data,index,
+                                    "poker.png",self.inventory,self.room_state, resize_room=(70, 130), resize_inventory=(40, 80))
+                if obj!=None:
+                    self.poker.append(obj)
+        except KeyError: pass
+        # create coin
+        try:
+            for index,coin in enumerate(self.room_data["coin"]):
+                obj = InventoryItem.create("coin",room_data,index,
+                                    "gold_coin.png",self.inventory,self.room_state, resize_room=(101, 75), resize_inventory=(40, 80))
+                if obj!=None:
+                    self.coin.append(obj)
+        except KeyError: pass
         # create benchs
-        for index,bench in enumerate(self.room_data["bench"]):
-            obj = Bench(room_data,index,self.canvas_area,self.room_state)
-            self.bench.append(obj)
+        try:
+            for index,bench in enumerate(self.room_data["bench"]):
+                obj = Bench(room_data,index,self.canvas_area,self.room_state)
+                self.bench.append(obj)
+        except KeyError: pass
 
         # create figures
         # check for state if figure has appeared
@@ -287,7 +345,8 @@ class Room(tkinter.Frame):
             poker.object_owner = self.player_name
         for diamond in self.diamond:
             diamond.object_owner = self.player_name
-
+        for coin in self.coin:
+            coin.object_owner = self.player_name
 
     # draw the room using world coordinates
     def draw_room(self):
@@ -307,7 +366,11 @@ class Room(tkinter.Frame):
         # draw the doors
         for index,door in enumerate(self.door):
             door.draw(self.canvas_area, globals.canvas_width, globals.canvas_height)
-        
+
+        # draw the hotel doors
+        for index,hotel_door in enumerate(self.hotel_door):
+            hotel_door.draw(self.canvas_area)
+
         # draw the lights
         for light in self.light:
             light.draw(self.canvas_area)
@@ -386,9 +449,19 @@ class Room(tkinter.Frame):
         for water_glass in self.water_glass:
             water_glass.draw(self.canvas_area)
 
+        # draw the coin
+        for coin in self.coin:
+            coin.draw(self.canvas_area)
+
         # draw the benchs
         for bench in self.bench:
             bench.draw()
+
+        # trigger action sequences
+        try: 
+            for action_sequence in self.room_data["action_sequence"]:
+                ContextManager().get_action_manager().execute_action_sequence(action_sequence)
+        except: pass
 
         # draw the figures (persons etc.)
         for figure in self.figure:
@@ -438,9 +511,11 @@ class Room(tkinter.Frame):
                     self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
-    def next_room_callback(self,next_room):
+    def next_room_callback(self,next_room,exec_room_switch=False):
         self.goto_next_room = True
         self.next_room = next_room
+        if exec_room_switch:
+            self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
 
     def execute_room_switch(self):
         print("[GAME]: room switch")
@@ -481,6 +556,7 @@ class Room(tkinter.Frame):
         elif object.name == "letter": object_list = self.letter
         elif object.name == "poker": object_list = self.poker
         elif object.name == "diamond": object_list = self.diamond
+        elif object.name == "coin": object_list = self.coin
         for index,item in enumerate(object_list):
             if item == object:
                 del object_list[index]
@@ -488,6 +564,15 @@ class Room(tkinter.Frame):
 
     def addObject(self,object):
         if object.name == "letter": self.letter.append(object)
+
+    def getObjectList(self,name):
+        return vars(self).get(name)
+
+    def triggerObjectDraw(self,name,unique_id):
+        obj_list = self.getObjectList(name)
+        for obj in obj_list:
+            if obj.unique_id == unique_id:
+                obj.draw(self.canvas_area)
 
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
@@ -522,12 +607,13 @@ class Room(tkinter.Frame):
                 elif event_type == "inventory_received": 
                     inventory = event_data.get("inventory")
                     player = event_data.get("from")
+                    object_id = event_data.get("object_id")
                     owner = event_data.get("owner")
                     print(f"[GUI Event] event-based passing of inventory {inventory},",
                            f"owner {owner} from player {player}")
                     key = InventoryItem("key","key_transparent.png",self.inventory,self.room_state)
                     key.object_owner = owner
-                    self.inventory.addObject("key",key.object_owner,key)
+                    self.inventory.addObject("key",object_id,key.object_owner,key)
                     # draw the key and inventory
                     key.draw(self.canvas_area) # draw key into inventory
 
@@ -545,7 +631,7 @@ class Room(tkinter.Frame):
         # as an event was triggered, there should be something in the queue
         event_data = self.icon_queue.get_nowait()
         event_type = event_data.get("action")
-        (object,object_owner) = self.inventory.getSelectedObject()
+        (object,object_id,object_owner) = self.inventory.getSelectedObject()
         if object == None: # if nothing is selected, we quit
             return
         if event_type == "send_inventory":
@@ -553,11 +639,11 @@ class Room(tkinter.Frame):
             player = event_data.get("player_name")
             print(f"[GUI Event] received send_inventory event for inventory {inventory},",
                    f"owner {object_owner} for player {player}")
-            self.game_client.send_action(event_type,player,inventory,object_owner)
+            self.game_client.send_action(event_type,player,inventory,object_id,object_owner)
             # remove key image from canvas
             self.inventory.remove_inventory_pictures()
             # remove from inventory
-            self.inventory.delObject(object,object_owner)
+            self.inventory.delObject(object,object_id,object_owner)
             self.inventory.redraw_inventory()
 
     def on_message_event(self, event):

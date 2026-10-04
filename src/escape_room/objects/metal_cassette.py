@@ -5,6 +5,7 @@ class MetalCassette():
 		def __init__(self, room_data, index, room_state):
 			(x,y,z) = room_data["metal_cassette"][index][0] 
 			self.shift_coordinates = (x-3.78,y-0.37,z-3.5)
+			self.unique_id = room_data["metal_cassette"][index][1] 
 			self.room_state = room_state
 
 			self.metal_cassette_coordinates = [
@@ -32,9 +33,9 @@ class MetalCassette():
 
 			included_diamond_id = room_data["metal_cassette"][index][2]       
 			diamond_found=False
-			# is some key included?
+			# is some diamond included?
 			if(included_diamond_id!=""):
-				# try to find the key object via the ID
+				# try to find the diamond object via the ID
 				for diamond in ContextManager().get_room().diamond:
 					if diamond.unique_id == included_diamond_id:
 						diamond_found=True
@@ -43,19 +44,36 @@ class MetalCassette():
 				diamond=None
 			self.diamond = diamond
 
+			included_key_id = room_data["metal_cassette"][index][3]       
+			key_found=False
+			# is some key included?
+			if(included_key_id!=""):
+				# try to find the key object via the ID
+				for key in ContextManager().get_room().key:
+					if key.unique_id == included_key_id:
+						key_found=True
+						break
+			if not key_found:
+				key=None
+			self.key = key			
+
 		def draw(self, canvas, inventory, player_name):
 			if self.room_state.get_state_object("fireplace","fireplace1") == "secret compartment opened":
 				graphics.draw(canvas,self.metal_cassette_coordinates,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				canvas.tag_bind("metal_cassette","<Button-1>", lambda event: self.clicked(self, canvas, inventory, player_name))
+				if self.room_state.get_state_object("metal_cassette","metal_cassette1") == "opened":
+					graphics.draw(canvas,self.metal_cassette_opened,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
+
 
 		def clicked(event, self, canvas, inventory, player_name):
-			if inventory.objectIsSelected("revolver", player_name) == True:
+			(_, unique_id_revolver, _) = inventory.getSelectedObject()
+			if inventory.objectIsSelected("revolver", unique_id_revolver, player_name) == True:
 				graphics.draw(canvas,self.metal_cassette_opened,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				self.room_state.set_state_object("metal_cassette","metal_cassette1","opened")
-				for diamond in ContextManager().get_room().diamond:
-					diamond.draw(canvas)
-				canvas.tag_raise("chair", "metal_cassette")
-				canvas.tag_raise("letter", "chair")
+				self.diamond.draw(canvas)				
+				self.key.draw(canvas)				
+				canvas.tag_raise("chair")
+				canvas.tag_raise("letter")
 				
 
 

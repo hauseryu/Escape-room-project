@@ -11,7 +11,10 @@ class Picture:
     def __init__(self, room_data,index,image_path,room_state):
 
         # evaluate room data
-        (x,y,z) = room_data["picture"][index]["coord"] # get picture coordinates (first element in list)
+        try:
+            (x,y,z) = room_data["picture"][index]["coord"] # get picture coordinates (first element in list)
+        except:
+            (x,y,z) = (0,0,0)
         file_name = room_data["picture"][index]["image"] 
         image_location = image_path / file_name
         is_riddle = room_data["picture"][index]["is_riddle"]
@@ -24,6 +27,10 @@ class Picture:
             pic_move_coord = room_data["picture"][index]["pic_move_coord"] # move picture to 2-d pixels 
         except:
             pic_move_coord = (0,0)
+        try:
+            pic_resize = room_data["picture"][index]["pic_resize"] # resize picture in 2-d pixels 
+        except:
+            pic_resize = None
         try:
             draw_frame = room_data["picture"][index]["draw_frame"] # shall a frame be drawn?
         except:
@@ -44,6 +51,14 @@ class Picture:
             action_sequence = room_data["picture"][index]["action_sequence"]
         except:
             action_sequence = None
+        try:
+            movement_vector = room_data["picture"][index]["movement_vector"]
+        except:
+            movement_vector = None            
+        try:
+            trigger_object_draw = room_data["picture"][index]["trigger_object_draw"]
+        except:
+            trigger_object_draw = None            
         shift_coordinates = (x-5.05,y-2.35,z-4.0)            
 
         # set attributes
@@ -54,45 +69,49 @@ class Picture:
         self.unique_id = unique_id
         self.room_state = room_state
         self.pic_move_coord = pic_move_coord
+        self.pic_resize = pic_resize
         self.draw_frame = draw_frame
         self.needed_inventory = needed_inventory
         self.check_activation = check_activation
         self.is_clickable = is_clickable
+        self.movement_vector = movement_vector
+        self.trigger_object_draw = trigger_object_draw
         self.action_sequence = action_sequence
-        
-        if self.direction == "front":
-            self.coordinates_frame = [
-                ["#4A2B18", (5.05, 2.35, 4), (5.75, 2.35, 4),
-                 (5.75, 1.45, 4), (5.05, 1.45, 4)],
-                ["#C79045", (5.10, 2.30, 4), (5.70, 2.30, 4),
-                 (5.70, 1.50, 4), (5.10, 1.50, 4)],
-            ]
-            self.coordinates_image = [
-                ["#24364B", (5.15, 2.25, 4), (5.65, 2.25, 4),
-                 (5.65, 1.55, 4), (5.15, 1.55, 4)],
-            ]
-        elif self.direction == "left":
-            self.coordinates_frame = [
-                ["#4A2B18", (5.05, 2.35, 4.0), (5.05, 2.35, 4.7),
-                (5.05, 1.45, 4.7), (5.05, 1.45, 4.0)],
-                ["#C79045", (5.05, 2.30, 4.05), (5.05, 2.30, 4.65),
-                (5.05, 1.50, 4.65), (5.05, 1.50, 4.05)],
-            ]
-            self.coordinates_image = [
-                ["#24364B", (5.05, 2.25, 4.1), (5.05, 2.25, 4.6),
-                (5.05, 1.55, 4.6), (5.05, 1.55, 4.1)],
-            ]
-        elif self.direction == "right":
-            self.coordinates_frame = [
-                ["#4A2B18", (5.05, 2.35, 4.0), (5.05, 2.35, 3.3),
-                (5.05, 1.45, 3.3), (5.05, 1.45, 4.0)],
-                ["#C79045", (5.05, 2.30, 3.95), (5.05, 2.30, 3.35),
-                (5.05, 1.50, 3.35), (5.05, 1.50, 3.95)],
-            ]
-            self.coordinates_image = [
-                ["#24364B", (5.05, 2.25, 3.9), (5.05, 2.25, 3.4),
-                (5.05, 1.55, 3.4), (5.05, 1.55, 3.9)],
-            ]
+
+        if self.draw_frame:
+            if self.direction == "front":
+                self.coordinates_frame = [
+                    ["#4A2B18", (5.05, 2.35, 4), (5.75, 2.35, 4),
+                    (5.75, 1.45, 4), (5.05, 1.45, 4)],
+                    ["#C79045", (5.10, 2.30, 4), (5.70, 2.30, 4),
+                    (5.70, 1.50, 4), (5.10, 1.50, 4)],
+                ]
+                self.coordinates_image = [
+                    ["#24364B", (5.15, 2.25, 4), (5.65, 2.25, 4),
+                    (5.65, 1.55, 4), (5.15, 1.55, 4)],
+                ]
+            elif self.direction == "left":
+                self.coordinates_frame = [
+                    ["#4A2B18", (5.05, 2.35, 4.0), (5.05, 2.35, 4.7),
+                    (5.05, 1.45, 4.7), (5.05, 1.45, 4.0)],
+                    ["#C79045", (5.05, 2.30, 4.05), (5.05, 2.30, 4.65),
+                    (5.05, 1.50, 4.65), (5.05, 1.50, 4.05)],
+                ]
+                self.coordinates_image = [
+                    ["#24364B", (5.05, 2.25, 4.1), (5.05, 2.25, 4.6),
+                    (5.05, 1.55, 4.6), (5.05, 1.55, 4.1)],
+                ]
+            elif self.direction == "right":
+                self.coordinates_frame = [
+                    ["#4A2B18", (5.05, 2.35, 4.0), (5.05, 2.35, 3.3),
+                    (5.05, 1.45, 3.3), (5.05, 1.45, 4.0)],
+                    ["#C79045", (5.05, 2.30, 3.95), (5.05, 2.30, 3.35),
+                    (5.05, 1.50, 3.35), (5.05, 1.50, 3.95)],
+                ]
+                self.coordinates_image = [
+                    ["#24364B", (5.05, 2.25, 3.9), (5.05, 2.25, 3.4),
+                    (5.05, 1.55, 3.4), (5.05, 1.55, 3.9)],
+                ]
             
         self.foto_image = None
         self.image_id = None
@@ -132,17 +151,30 @@ class Picture:
             graphics.draw(canvas,self.coordinates_frame,shift_coordinates=self.shift_coordinates)
             graphics.draw(canvas,self.coordinates_image,tag="picture",
                         shift_coordinates=self.shift_coordinates)
-        # draw image
-        x1, y1, x2, y2 = canvas.bbox(tag)
-        image_width = x2 - x1
-        image_heigth = y2 - y1
+            # draw image
+            x1, y1, x2, y2 = canvas.bbox(tag)
+            image_width = x2 - x1
+            image_height = y2 - y1
+        else:
+            (x1,y1)=self.pic_move_coord
         image = Image.open(self.image_location)
         
-        self.foto_image = ImageTk.PhotoImage(image, master=canvas)
-        if self.is_riddle:
-            self.image_id = canvas.create_image(x1, y1, anchor="nw", image=self.foto_image)
+        if self.pic_resize == None:
+            self.foto_image = ImageTk.PhotoImage(image, master=canvas)
         else:
-            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], anchor="nw", image=self.foto_image)
+            (image_width,image_height) = self.pic_resize
+            resized_image = image.resize((image_width, image_height), Image.Resampling.LANCZOS)
+            
+            # 2. Das skalierte Bild an ImageTk übergeben
+            self.foto_image = ImageTk.PhotoImage(resized_image, master=canvas)
+        
+        # 3. Das Bild auf dem Canvas wie gewohnt platzieren
+        if self.is_riddle:
+            self.image_id = canvas.create_image(x1, y1, anchor="nw", tags=self.unique_id, image=self.foto_image)
+        else:
+            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], 
+                                                tags=self.unique_id, anchor="nw", image=self.foto_image)
+
         if self.is_clickable:
             canvas.tag_bind(
                 self.image_id,
@@ -167,4 +199,34 @@ class Picture:
             self.speech_bubble.show_bubble(canvas)        
         elif self.action_sequence!=None:
             print("[DEBUG] execute action sequence of picture!")
-            ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
+        elif self.movement_vector!=None:
+            if self.room_state.object_is_moved("picture",self.unique_id): # check if object is already moved
+                return
+            canvas.delete(self.unique_id)
+            self.move_picture()
+            self.room_state.move("picture",self.unique_id)
+            self.draw(canvas,self.unique_id)
+            if self.trigger_object_draw != None:
+                (name,unique_id) = self.trigger_object_draw
+                ContextManager().get_room().triggerObjectDraw(name,unique_id)
+
+    def move_picture(self):
+        if self.movement_vector==None:
+            return
+        self.state = "moved"
+        if self.draw_frame:
+            (a,b,c) = self.shift_coordinates
+            if self.movement_vector[0]=="x":
+                a+=self.movement_vector[1]
+            elif self.movement_vector[0]=="y":
+                b+=self.movement_vector[1]
+            elif self.movement_vector[0]=="z":
+                c+=self.movement_vector[1]
+            self.shift_coordinates = (a,b,c)                    
+        else:
+            (a,b)=self.pic_move_coord
+            if self.movement_vector[0]=="x":
+                a+=self.movement_vector[1]
+            elif self.movement_vector[0]=="y":
+                b+=self.movement_vector[1]
+            self.pic_move_coord = (a,b)
