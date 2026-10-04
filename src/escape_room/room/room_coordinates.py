@@ -15,7 +15,10 @@ MOSAIC_TEXTURE = IMAGE_DIR / "mosaic_texture.jpg"
 WOOD_TEXTURE = IMAGE_DIR / "wood_texture.jpg"
 
 room_coord = {
-    "normal_room": [[("white",FLOOR_TEXTURE),
+    "normal_room": {
+                    "vanishing_point": {"x": 4},
+                    "coord": [
+                    [("white",FLOOR_TEXTURE),
                      (0,0,0), # floor
                      (8,0,0), 
                      (8,0,4), 
@@ -39,9 +42,12 @@ room_coord = {
                      (0, 0, 4), 
                      (8, 0, 4), 
                      (8, 3, 4), 
-                     (0, 3, 4)]                     
-                     ],
-    "doorway": [    # part 1: 1m in front
+                     (0, 3, 4)]
+                     ]
+                     },
+    "doorway": {
+                    "vanishing_point": {"x": 4},
+                    "coord": [    # part 1: 1m in front
                     [("white",FLOOR_TEXTURE), # #8B4513
                      (0,0,0), # floor
                      (8,0,0), 
@@ -99,8 +105,11 @@ room_coord = {
                      (6, 0, 4), 
                      (6, 3, 4), 
                      (2, 3, 4)]                     
-                    ],
-    "square room": [
+                    ]
+                    },
+    "square room": {
+                    "vanishing_point": {"x": 4},
+                    "coord": [
                     [("white", PEBBLE_FLOOR_TEXTURE), # floor
                     (2, 0, 0),
                     (6, 0, 0),
@@ -126,8 +135,11 @@ room_coord = {
                     (6, 0, 4),
                     (6, 3, 4),
                     (2, 3, 4)]
-                    ],
-    "hotel_door": [    # part 1: 1m in front
+                    ]
+                    },
+    "hotel_door": {    # part 1: 1m in front
+                    "vanishing_point": {"x": 4},
+                    "coord": [
                     [("white",STONE_PAVEMENT_TEXTURE2), # #8B4513
                      (0,0,0), # floor
                      (8,0,0), 
@@ -186,7 +198,11 @@ room_coord = {
                      (6, 3, 4), 
                      (2, 3, 4)]                     
                     ],
-    "lobby_room": [[("white",MOSAIC_TEXTURE),
+                    },
+    "lobby_room": {
+                    "vanishing_point": {"x": 7.5},
+                    "coord": [
+                    [("white",MOSAIC_TEXTURE),
                      (0,0,0), # floor
                      (15,0,0), 
                      (15,0,10), 
@@ -212,4 +228,5 @@ room_coord = {
                      (15, 8, 10), 
                      (0, 8, 10)]                     
                      ],
+                    }
 }

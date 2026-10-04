@@ -166,7 +166,7 @@ hotel_lobby = {
         "room_name": "hotel_lobby",
         "room_coordinates": "lobby_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)     
-        "pillar": [[(1, 0, 8),"pillar1","left"], [(1, 0, 2),"pillar2","left"], [(13, 0, 8),"pillar3","right"], [(13, 0, 8),"pillar4","right"],
+        "pillar": [[(1, 0, 8),"pillar1","left"], [(1, 0, 2),"pillar2","left"], [(13, 0, 8),"pillar3","right"], [(13, 0, 2),"pillar4","right"],
                 ],
         "reception_desk": [[(5, 0, 9),"reception_desk1"],
                 ],

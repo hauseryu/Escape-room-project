@@ -12,6 +12,7 @@ from src.escape_room.application.escape_app import StartScreen
 from src.escape_room.application.escape_app import EscapeClient
 from src.escape_room.application.escape_app import Room
 from src.escape_room.room import room_data
+from src.escape_room.gui_utilities import graphics
 
 from src.escape_room.objects.chair import Chair
 from src.escape_room.objects.door import Door
@@ -158,6 +159,7 @@ class EscapeRoomTest(unittest.TestCase):
         action_manager_factory = action_mgr_create
         ContextManager().set_action_manager_factory(action_manager_factory)
         room_state = RoomState()
+        graphics.set_vanishing_point({"x":4})
 
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
@@ -182,6 +184,10 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.figure = []
         app.room.hotel_door = []
         app.room.coin = []
+        app.room.chandelier = []
+        app.room.carpet = []
+        app.room.pillar = []
+        app.room.reception_desk = []
         app.room.bench = [MagicMock()]
         app.room.fireplace = [MagicMock()] # [Fireplace()]
         app.room.window = [Window()]
@@ -281,6 +287,7 @@ class EscapeRoomTest(unittest.TestCase):
         action_manager_factory = action_mgr_create
         ContextManager().set_action_manager_factory(action_manager_factory)
         room_state = RoomState()
+        graphics.set_vanishing_point({"x":4})
 
         app.room = Room.__new__(Room)
         app.room.canvas_area = FakeCanvas()
@@ -305,6 +312,10 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.figure = []
         app.room.hotel_door = []
         app.room.coin = []
+        app.room.chandelier = []
+        app.room.carpet = []
+        app.room.pillar = []
+        app.room.reception_desk = []
         app.room.bench = [MagicMock()]
         app.room.fireplace = [MagicMock()]
         app.room.window = [Window()]

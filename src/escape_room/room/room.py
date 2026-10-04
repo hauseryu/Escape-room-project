@@ -133,7 +133,9 @@ class Room(tkinter.Frame):
         
         # room coordinates in 3D space (x, y, z)
         room_coord_name = self.room_data["room_coordinates"]
-        self.room_coordinates = room_coord[room_coord_name]
+        self.room_coordinates = room_coord[room_coord_name]["coord"]
+        self.vanishing_point = room_coord[room_coord_name]["vanishing_point"]
+        graphics.set_vanishing_point(self.vanishing_point)
         self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()

@@ -8,15 +8,22 @@ import numpy as np
 
 
 # convert 3D coordinates to 2D coordinates
+vanishing_point = None
 def compute_2d_coordinates(x, y, z, win_width,win_height,shift_coordinates = (0,0,0)):
+    global vanishing_point
+    vanish_pnt_x = vanishing_point["x"]
     x+=shift_coordinates[0]
     y+=shift_coordinates[1]
     z+=shift_coordinates[2]
     y = -2*y+3
-    x_2d = 1.6*((300*(x-4))/(z+1))+(win_width/2)
+    x_2d = 1.6*((300*(x-vanish_pnt_x))/(z+1))+(win_width/2)
     y_2d = 0.953*((300*(y))/(z+1))+(win_height/2)+98
     
     return (x_2d, y_2d)
+
+def set_vanishing_point(point):
+    global vanishing_point
+    vanishing_point = point
 
 # convert from world to pixel coordinates
 # passed argument world_coordinates: list of polygons, each polygon = list of points, each point = (x,y,z)
