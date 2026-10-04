@@ -30,6 +30,10 @@ from src.escape_room.objects.fireplace import Fireplace
 from src.escape_room.objects.bench import Bench
 from src.escape_room.objects.window import Window
 from src.escape_room.objects.metal_cassette import MetalCassette
+from src.escape_room.objects.pillar import Pillar
+from src.escape_room.objects.carpet import Carpet
+from src.escape_room.objects.chandelier import Chandelier
+from src.escape_room.objects.reception_desk import ReceptionDesk
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -100,6 +104,10 @@ class Room(tkinter.Frame):
         self.diamond = []
         self.coin = []
         self.hotel_door = []
+        self.pillar = []
+        self.reception_desk = []
+        self.carpet = []
+        self.chandelier = []
 
         for door in self.door:
             door.is_open = False        
@@ -125,7 +133,9 @@ class Room(tkinter.Frame):
         
         # room coordinates in 3D space (x, y, z)
         room_coord_name = self.room_data["room_coordinates"]
-        self.room_coordinates = room_coord[room_coord_name]
+        self.room_coordinates = room_coord[room_coord_name]["coord"]
+        self.vanishing_point = room_coord[room_coord_name]["vanishing_point"]
+        graphics.set_vanishing_point(self.vanishing_point)
         self.image_path = ContextManager().get_image_path()
         if not next_room:
             self.inventory = inventory.Inventory()
@@ -311,6 +321,30 @@ class Room(tkinter.Frame):
                 obj = Bench(room_data,index,self.canvas_area,self.room_state)
                 self.bench.append(obj)
         except KeyError: pass
+        # create pillars
+        try:
+            for index,pillar in enumerate(self.room_data["pillar"]):
+                obj = Pillar(room_data,index)
+                self.pillar.append(obj)
+        except KeyError: pass
+        # create reception desk
+        try:
+            for index,reception_desk in enumerate(self.room_data["reception_desk"]):
+                obj = ReceptionDesk(room_data,index)
+                self.reception_desk.append(obj)
+        except KeyError: pass
+        # create carpets
+        try:
+            for index,carpet in enumerate(self.room_data["carpet"]):
+                obj = Carpet(room_data,index)
+                self.carpet.append(obj)
+        except KeyError: pass
+        # create chandeliers
+        try:
+            for index,chandelier in enumerate(self.room_data["chandelier"]):
+                obj = Chandelier(room_data,index)
+                self.chandelier.append(obj)
+        except KeyError: pass
 
         # create figures
         # check for state if figure has appeared
@@ -373,6 +407,10 @@ class Room(tkinter.Frame):
         # draw the lights
         for light in self.light:
             light.draw(self.canvas_area)
+
+        # draw the chandeliers
+        for chandelier in self.chandelier:
+            chandelier.draw(self.canvas_area)
         
         # draw the windows
         for window in self.window:
@@ -387,6 +425,10 @@ class Room(tkinter.Frame):
         # draw the pictures
         for picture in self.picture:
             picture.draw(self.canvas_area, tag="picture")
+
+        # draw the carpets
+        for carpet in self.carpet:
+            carpet.draw(self.canvas_area)
 
         # draw the fireplaces
         for fireplace in self.fireplace:
@@ -455,6 +497,14 @@ class Room(tkinter.Frame):
         # draw the benchs
         for bench in self.bench:
             bench.draw()
+
+        # draw the pillars
+        for pillar in self.pillar:
+            pillar.draw(self.canvas_area)
+
+        # draw the reception desk
+        for reception_desk in self.reception_desk:
+            reception_desk.draw(self.canvas_area)
 
         # trigger action sequences
         try: 

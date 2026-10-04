@@ -138,7 +138,7 @@ hotel_entrance = {
         "room_name": "hotel_entrance",
         "room_coordinates": "hotel_door",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
-        "hotel_door": [[(3.2, 0, 4),"hotel_door1","living_room_221b","check_hotel_door_activation"],  # -> next room
+        "hotel_door": [[(3.2, 0, 4),"hotel_door1","hotel_lobby","check_hotel_door_activation"],  # -> next room
                 ], 
         "picture": [
                     {"coord":(0.5,1,2),"image": "hotel_logo.png", "is_riddle": False,  
@@ -162,11 +162,26 @@ hotel_entrance = {
         ]
 }
 
+hotel_lobby = {  
+        "room_name": "hotel_lobby",
+        "room_coordinates": "lobby_room",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)     
+        "pillar": [[(1, 0, 8),"pillar1","left"], [(1, 0, 2),"pillar2","left"], [(13, 0, 8),"pillar3","right"], [(13, 0, 2),"pillar4","right"],
+                ],
+        "reception_desk": [[(5, 0, 9),"reception_desk1"],
+                ],
+        "carpet": [["#91261f", (6.5, 0, 0),(8.5, 0, 0),(8.5, 0, 8),(6.5, 0, 8),"carpet1"],["#91261f", (5, 0, 8),(5, 0, 6.5),(10, 0, 6.5),(10, 0, 8),"carpet1"],
+                ],
+        "chandelier": [[(5.3, 8, 6),"chandelier1"],
+                ],  
+}
+
 all_rooms = {
         "start_room": start_room,
         "mystery_room": mystery_room,
         "doorway": doorway,
         "riddle_key_room": riddle_key_room,
         "living_room_221b": living_room_221b,
-        "hotel_entrance": hotel_entrance
+        "hotel_entrance": hotel_entrance,
+        "hotel_lobby": hotel_lobby
 }

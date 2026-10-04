@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 import sys
+from src.escape_room.gui_utilities import graphics
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from unittest.mock import MagicMock
@@ -77,6 +78,8 @@ class DoorTest(unittest.TestCase):
         self.assertEqual(door.tag, "red_door")
 
     def test_draw_door_creates_canvas_shapes(self):
+
+        graphics.set_vanishing_point({"x":4})
 
         room_state = RoomState()
         canvas = MagicMock()
