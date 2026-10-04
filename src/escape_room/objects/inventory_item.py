@@ -53,8 +53,8 @@ class InventoryItem:
                 self.check_action_draw = None
 
         else: # in case magnifier is not created from room data
-            unique_id = unique_identifier 
             self.object_owner = object_owner
+            self.check_action_draw = None
 
         # set attributes
         self.canvas = None
