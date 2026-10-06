@@ -43,14 +43,16 @@ def figure_disappears(action_mgr,figure):
     ContextManager().get_room().remove_figure(figure)
     action_mgr.execute_next_action()
                    
-def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position=None):
+def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position="bottom"):
     print(f"[DEBUG] Person talks: {figure}")
-    speech_bubble = SpeechBubble([speech])  # ([speech])
-    speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
-    speech_bubble2 = SpeechBubble(["You:"])
-    bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),"bottom",skip_overlay=True,
-                                              entry_field=entry_field,position=position,
-                                              button_text=button_text,action_data="sherlock_client_disappears")
+    speech_bubble = SpeechBubble([speech]) 
+    speech_bubble.show_bubble(ContextManager().get_canvas(),position)
+    bubble_entry=None
+    if entry_field:
+        speech_bubble2 = SpeechBubble(["You:"])
+        bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),skip_overlay=True,
+                                                entry_field=entry_field,position=position,
+                                                button_text=button_text,action_data="sherlock_client_disappears")
     if bubble_entry!=None:
         bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
 
@@ -62,8 +64,7 @@ def letter_appears(action_mgr,unique_id,action_sequence=None):
     canvas = ContextManager().get_canvas()
     for index,letter in enumerate(room_data["letter"]):
         if letter[1] == unique_id:
-            act_sequence = action_data_dictionary[action_sequence]
-            obj = Letter(room_data,index,canvas,action_sequence=act_sequence)
+            obj = Letter(room_data,index,canvas,action_sequence=action_sequence)
             room.addObject(obj)
             break
     if obj != None:
@@ -211,12 +212,12 @@ class ActionManager():
 
     def evaluate_choices(self,choices,choice):
         print(f"[DEBUG] Evaluate choice {choice}")
-        self.action_sequence = choices[choice][1]
+        self.action_sequence = action_data_dictionary[choices[choice][1]] 
         self.execute_next_action()
 
     def execute_action_sequence(self,action_sequence):
         print(f"[DEBUG] Execute action sequence {action_sequence}")
-        act_sequence = action_data_dictionary[action_sequence] # action_data.__dict__
+        act_sequence = action_data_dictionary[action_sequence] 
         self.action_sequence = act_sequence.copy()
         return self.execute_next_action()
 

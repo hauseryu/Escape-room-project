@@ -18,8 +18,20 @@ check_hotel_door_activation = [
     [action.check_object_state,"hotel_door","hotel_door1","active"]
 ]
 
+check_secret_compartment_opened = [
+    [action.check_object_state,"fireplace","fireplace1","secret compartment opened"]
+]
+
 check_plant_moved = [
     [action.check_object_state,"picture","picture3","moved"]
+]
+
+check_safe_open = [
+    [action.check_object_state,"safe","safe1","OPEN"] 
+]
+
+check_metal_cassette_open = [
+    [action.check_object_state,"metal_cassette","metal_cassette1","opened"] 
 ]
 
 # specific action sequences
