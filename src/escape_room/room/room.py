@@ -140,6 +140,7 @@ class Room(tkinter.Frame):
         if not next_room:
             self.inventory = inventory.Inventory()
             ContextManager().set_inventory(self.inventory)
+            self.inventory.repo.load_inventory()
         if self.player_panel == None:
             self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                         icon_queue=self.icon_queue,

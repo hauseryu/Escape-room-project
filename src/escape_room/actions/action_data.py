@@ -1,5 +1,6 @@
-from src.escape_room.actions import action
 from src.escape_room.objects import speech_data
+from src.escape_room.actions import action
+from src.escape_room.actions.action import figure_talks
 
 # action sequences including check actions that return a value
 check_postman_in_room = [
