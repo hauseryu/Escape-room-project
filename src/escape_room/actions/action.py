@@ -108,15 +108,6 @@ def put_item_in_inventory(action_mgr,name,unique_id):
     obj.draw(canvas)
     action_mgr.execute_next_action()
 
-def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, figure_id, player_role):
-    if not hasattr(process_entry, "dialog"):
-        process_entry.dialog = Dialog()
-    dialog = process_entry.dialog
-    player_message = event.widget.get()
-    event.widget.delete(0, len(event.widget.get()))
-    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message)
-    figure_talks(figure, npc_response, figure_id, player_role)
-
 def play_sound(action_mgr,sound):
     _play_sound(sound)
     action_mgr.execute_next_action()
@@ -148,6 +139,15 @@ action_data_dictionary = None
 def set_action_data_dict(action_data_dict):
     global action_data_dictionary
     action_data_dictionary = action_data_dict
+
+def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, figure_id, player_role):
+    if not hasattr(process_entry, "dialog"):
+        process_entry.dialog = Dialog()
+    dialog = process_entry.dialog
+    player_message = event.widget.get()
+    event.widget.delete(0, len(event.widget.get()))
+    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message)
+    figure_talks(figure, npc_response, figure_id, player_role)
 
 def _play_sound(sound):
     if sound==None:
