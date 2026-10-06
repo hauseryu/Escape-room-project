@@ -140,6 +140,7 @@ class Room(tkinter.Frame):
         if not next_room:
             self.inventory = inventory.Inventory()
             ContextManager().set_inventory(self.inventory)
+            self.inventory.repo.load_inventory()
         if self.player_panel == None:
             self.player_panel = player_panel.PlayerPanel(self.master, self.image_path,
                                                         icon_queue=self.icon_queue,
@@ -268,13 +269,6 @@ class Room(tkinter.Frame):
                 obj = MetalCassette(room_data,index,self.room_state)
                 self.metal_cassette.append(obj)        
         except KeyError: pass
-        # create letters
-        try:
-            for index,letter in enumerate(self.room_data["letter"]):
-                obj = Letter.create(room_data,index,self.canvas_area)
-                if obj != None:
-                    self.letter.append(obj)   
-        except KeyError: pass
         # create revolver
         try:
             for index,revolver in enumerate(self.room_data["revolver"]):    
@@ -350,6 +344,14 @@ class Room(tkinter.Frame):
         # check for state if figure has appeared
         if self.figure == []:
             self.figure = self.room_state.get_objects("figure")
+        # create letters
+        try:
+            for index,letter in enumerate(self.room_data["letter"]):
+                obj = Letter.create(room_data,index,self.canvas_area)
+                if obj != None:
+                    self.letter.append(obj)   
+        except KeyError: pass
+
         # pass over player data to the room object
         self.update_player_data(self.player_name,self.player_icon_number)
 
@@ -470,10 +472,6 @@ class Room(tkinter.Frame):
         for table in self.table:
             table.draw(self.canvas_area)
 
-        # draw the letter
-        for letter in self.letter:
-            letter.draw(self.canvas_area)
-
         # draw the key
         for key in self.key:
             key.draw(self.canvas_area)
@@ -515,6 +513,10 @@ class Room(tkinter.Frame):
         # draw the figures (persons etc.)
         for figure in self.figure:
             figure.draw_image(self.canvas_area)
+
+        # draw the letter
+        for letter in self.letter:
+            letter.draw(self.canvas_area)
 
         # draw top bar (inventory, player panel etc.)
         self.draw_top_bar()
@@ -583,6 +585,7 @@ class Room(tkinter.Frame):
         for index,figure in enumerate(self.figure):
             if figure.figure_name == figure_name:
                 del self.figure[index]
+                self.room_state.remove_object("figure",figure)
                 break
 
     def get_figure(self,figure_name):

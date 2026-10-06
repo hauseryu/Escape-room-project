@@ -7,6 +7,12 @@ class MetalCassette():
 			self.shift_coordinates = (x-3.78,y-0.37,z-3.5)
 			self.unique_id = room_data["metal_cassette"][index][1] 
 			self.room_state = room_state
+			included_diamond_id = room_data["metal_cassette"][index][2]       
+			included_key_id = room_data["metal_cassette"][index][3]       
+			try:
+				self.check_action_draw = room_data["metal_cassette"][index][4] 
+			except IndexError: 
+				self.check_action_draw = None
 
 			self.metal_cassette_coordinates = [
 				["#74797E",(3.78, 0.40, 3.50),(4.22, 0.40, 3.50),(4.22, 0.57, 3.50),(3.78, 0.57, 3.50)], # back side
@@ -31,7 +37,6 @@ class MetalCassette():
 				["#292C2F",(3.99, 0.46, 3.19),(4.01, 0.46, 3.19),(4.01, 0.5, 3.19),(3.99, 0.5, 3.19)], # keyhole
 			]
 
-			included_diamond_id = room_data["metal_cassette"][index][2]       
 			diamond_found=False
 			# is some diamond included?
 			if(included_diamond_id!=""):
@@ -44,7 +49,6 @@ class MetalCassette():
 				diamond=None
 			self.diamond = diamond
 
-			included_key_id = room_data["metal_cassette"][index][3]       
 			key_found=False
 			# is some key included?
 			if(included_key_id!=""):
@@ -58,7 +62,10 @@ class MetalCassette():
 			self.key = key			
 
 		def draw(self, canvas, inventory, player_name):
-			if self.room_state.get_state_object("fireplace","fireplace1") == "secret compartment opened":
+			draw_allowed = True
+			if self.check_action_draw!=None:
+				draw_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action_draw)
+			if draw_allowed:
 				graphics.draw(canvas,self.metal_cassette_coordinates,object=self,tag="metal_cassette",shift_coordinates=self.shift_coordinates)
 				canvas.tag_bind("metal_cassette","<Button-1>", lambda event: self.clicked(self, canvas, inventory, player_name))
 				if self.room_state.get_state_object("metal_cassette","metal_cassette1") == "opened":
