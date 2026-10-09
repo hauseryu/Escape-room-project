@@ -9,6 +9,7 @@ class SpeechBubble:
         self.choices = choices
         self.evaluate_choices_callback = evaluate_choices_callback
         self.callback = None
+        self.text_area = None
 
     def show_bubble(self, canvas, position=None, skip_overlay=False, entry_field=False, button_text=None, action_data=None, 
                     callback=None, callback_arg=None, action_sequence=None):
@@ -81,7 +82,7 @@ class SpeechBubble:
         text_width = w - 2 * margin_x - 2 * arrow_space
 
         # current bubble text
-        canvas.create_text(
+        self.text_area = canvas.create_text(
             text_x,
             text_y,
             text=self.bubbles[self.current_bubble],
@@ -298,3 +299,7 @@ class SpeechBubble:
         self.bubbles[self.current_bubble] = new_text
         self.close_bubble(canvas)
         self.draw_bubble(canvas)
+
+    def add_word_to_text_area(self,word):
+        self.text_area.insert("end", word)
+        self.text_area.see("end")            

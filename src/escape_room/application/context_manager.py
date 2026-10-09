@@ -18,7 +18,7 @@ class ContextManager():
             self.initialized = True
             self.action_manager_factory = None
             self.room = None
-            self.llm_client = None
+            self.chatbot_client = None
             self.escape_app = None
             self.room_state = None
             self.inventory = None
@@ -34,6 +34,11 @@ class ContextManager():
         sound_path = Path(__file__).resolve().parent.parent / "assets" / "sounds"
         return sound_path
 
+    @staticmethod
+    def get_model_path() -> Path:
+        sound_path = Path(__file__).resolve().parent.parent.parent / "chatbot"
+        return sound_path
+
     # action manager access
     def get_action_manager(self):        
         return self.action_manager_factory()
@@ -41,11 +46,12 @@ class ContextManager():
     def set_action_manager_factory(self,action_manager_factory):
         self.action_manager_factory = action_manager_factory
 
-    # llm client access
-    def get_llm_client(self):
-        return self.llm_client
-    def set_llm_client(self,llm_client):
-        self.llm_client = llm_client
+    # chatbot client access
+    def get_chatbot_client(self):
+        return self.chatbot_client
+    
+    def set_chatbot_client(self,chatbot_client):
+        self.chatbot_client = chatbot_client
 
     # clock object set/get
     def set_clock(self,clock):

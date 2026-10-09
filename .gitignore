@@ -8,3 +8,4 @@ __pycache__/
 .env
 
 src/escape_room/assets/mydata.db
+src/chatbot/model_version.txt

@@ -35,6 +35,10 @@ check_metal_cassette_open = [
     [action.check_object_state,"metal_cassette","metal_cassette1","opened"] 
 ]
 
+check_client_not_yet_in_room = [
+    [action.check_figure_not_yet_in_room,"Mortimer Jackson"] 
+]
+
 # specific action sequences
 sherlock_client_talk = [
     [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0],
@@ -42,13 +46,13 @@ sherlock_client_talk = [
 
 hotel_portier_talk = [
     [action.stop_sequence_conditionally,action.check_object_state,"hotel_door","hotel_door1",None],
-    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0, None,False,"top"], # no button text, no entry field, positon (None/top/bottom)
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0, None,False], # no button text, no entry field, positon (None/top/bottom)
 ]
 
 sherlock_client_appears = [
     [action.time_elapse,3,"clock_tick.wav"], # 3 hours to pass until client comes, w/ sound
     [action.figure_appears,"Mortimer Jackson","sherlock_client.png",
-        880,660,160,300,"sherlock_client_talk"] # client of Sherlock! x + y coordinates, width, height
+        880,660,160,300,"sherlock_client_talk"], # client of Sherlock! x + y coordinates, width, height
 ]
 
 sherlock_client_disappears = [

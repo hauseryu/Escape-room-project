@@ -2,12 +2,12 @@ from google import genai
 from google.genai import types
 from google.genai import types
 from google.genai import errors
-from src.llm.dialog_information import general_information, information_zone, information_character
+from src.chatbot.dialog_information import general_information, information_zone, information_character
 from src.escape_room.application.context_manager import ContextManager
 
 class Dialog():
     def __init__(self):
-        self.client = ContextManager().get_llm_client().client
+        self.client = ContextManager().get_chatbot_client()
         self.first_message = True
         self.chat_id = None
 
@@ -30,30 +30,22 @@ class Dialog():
                 message += player1 + " says: " + player_message
             elif player == 1:
                 message += player2 + " says: " + player_message
-            try:
-                    interaction = self.client.interactions.create(
-                    model="gemini-3.8-flash",
-                    input=message
-                )
-            except errors.APIError as e:
-                print("Gemini API Fehler:")
-                print("Code:", e.code)
-                print("Nachricht:", e.message)
-                raise
+
         else:
             if player == 0:
                 message = player1 + " says: " + player_message
             elif player == 1:
                 message = player2 + " says: " + player_message
+
             interaction = self.client.interactions.create(
                 model="gemini-3.8-flash",
                 input=message,
                 previous_interaction_id=self.chat_id
             )
 
-        self.chat_id = interaction.id
-        return interaction.output_text
+        output_text = self.client.send_message(message,self.first_message)
+        return output_text
 
     def reset_dialog(self):
         self.first_message = True
-        self.chat_id = None
+        self.client.reset()

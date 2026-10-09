@@ -84,7 +84,8 @@ living_room_221b = {
         "safe": [[(1.0, 1.0, 4.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
                 ],
         "letter":[[(3.7, 0.6, 2.3),"letter1",letter_data.letter_to_holmes, # letter text
-                   letter_data.choices_letter_to_holmes,None], # letter choices, check action (if not fulfilled, letter is not (yet) shown)
+                   letter_data.choices_letter_to_holmes,
+                   "check_client_not_yet_in_room","check_client_not_yet_in_room"], # check action (if not fulfilled, letter is not shown)
                   [(1.2, 1.0, 1.0),"letter2",letter_data.letter_from_moriarty,None,"check_postman_in_room"],
                 ],
         "clock":[[(6, 0.42, 4.00)]

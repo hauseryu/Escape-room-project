@@ -98,6 +98,17 @@ class RoomState():
                 object.image_path, object.x_coord, object.y_coord, object.width, object.height, \
                 object.action_sequence_talk ]
 
+    def get_object_state(self,type,figure_name):
+        if type=='figure':
+            try:
+                figure = self.room_state[self.current_room]["figure"][figure_name]
+                if figure==None:
+                    return "gone"
+                else:
+                    return "in_room"
+            except KeyError:
+                return "not_in_room"
+
     def remove_object(self,type,object):
         if type=='figure':
             self.room_state[self.current_room]["figure"][object.figure_name] = None
