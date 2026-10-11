@@ -43,19 +43,24 @@ def figure_disappears(action_mgr,figure):
     ContextManager().get_room().remove_figure(figure)
     action_mgr.execute_next_action()
                    
-def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True):
+def figure_talks(action_mgr,figure,speech,figure_id,player_role,action_data=None,
+                 button_text="End Dialog",entry_field=True,speech_text=None):
     print(f"[DEBUG] Person talks: {figure}")
-    speech_bubble = SpeechBubble([speech]) 
+    if speech_text!=None:
+        speech_bubble = SpeechBubble([speech_text]) 
+    elif speech!=None:
+        speech_bubble = SpeechBubble([speech['text']]) 
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
+    ContextManager().set_current_speech_bubble(speech_bubble)
     bubble_entry=None
     if entry_field:
         speech_bubble2 = SpeechBubble(["You:"])
         bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),skip_overlay=True,
                                                 entry_field=entry_field,position="bottom",
-                                                button_text=button_text,action_data="sherlock_client_disappears")
+                                                button_text=button_text,action_data=action_data)
     if bubble_entry!=None:
         bubble_entry.bind("<Return>", lambda event: process_entry(action_mgr,event, bubble_entry, speech_bubble, 
-                                                                  figure, figure_id, player_role))
+                                                                  figure, figure_id, player_role,speech))
 
 def letter_appears(action_mgr,unique_id,action_sequence=None):
     print(f"[DEBUG] Letter appears: {unique_id}")
@@ -174,14 +179,14 @@ def set_action_data_dict(action_data_dict):
     global action_data_dictionary
     action_data_dictionary = action_data_dict
 
-def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, figure_id, player_role):
+def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, figure_id, player_role, speech):
     if not hasattr(process_entry, "dialog"):
         process_entry.dialog = Dialog()
     dialog = process_entry.dialog
     player_message = event.widget.get()
     event.widget.delete(0, len(event.widget.get()))
-    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message)
-    figure_talks(action_mgr,figure, npc_response, figure_id, player_role)
+    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message, speech, speech_bubble)
+    figure_talks(action_mgr,figure, speech, figure_id, player_role, speech_text=npc_response)
 
 def _play_sound(sound):
     if sound==None:

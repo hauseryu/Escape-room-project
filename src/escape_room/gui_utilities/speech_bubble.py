@@ -301,5 +301,13 @@ class SpeechBubble:
         self.draw_bubble(canvas)
 
     def add_word_to_text_area(self,word):
-        self.text_area.insert("end", word)
-        self.text_area.see("end")            
+        canvas = ContextManager().get_canvas()
+        canvas.insert(self.text_area, "end", word)
+        canvas.yview_moveto(1.0)
+        canvas.tag_raise(self.text_area)       
+
+    def delete_text_area(self):      
+        canvas = ContextManager().get_canvas()
+        canvas.itemconfig(self.text_area, text="")      
+        canvas.tag_raise(self.text_area)        
+        canvas.update_idletasks()     

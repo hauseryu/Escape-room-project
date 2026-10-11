@@ -160,6 +160,13 @@ class Picture:
         self.riddles.append(visible_part)
         self.correct_answers.append(answer_part)
         print(f"[DEBUG] riddle answer:{answer_part}")
+        if len(self.correct_answers)==3: # we have collected all 3 answers, update associated safe
+            safes = ContextManager().get_room().getObjectList("safe")
+            for safe in safes:
+                if safe.associated_picture == self.unique_id:
+                    safe.set_password(self.correct_answers)
+                    print("[DEBUG] safe password set!")
+                    break
 
     def draw(self, canvas, tag):
         # draw outline (frame)

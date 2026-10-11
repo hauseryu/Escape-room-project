@@ -23,6 +23,7 @@ class ContextManager():
             self.room_state = None
             self.inventory = None
             self.player_name  = None
+            self.current_speech_bubble = None
             
     @staticmethod
     def get_image_path() -> Path:
@@ -105,3 +106,10 @@ class ContextManager():
 
     def get_role(self):
         return self.role
+
+    def set_current_speech_bubble(self,speech_bubble):
+        self.current_speech_bubble = speech_bubble
+
+    def get_current_speech_bubble(self):
+        return self.current_speech_bubble
+

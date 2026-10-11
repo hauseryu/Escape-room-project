@@ -147,7 +147,7 @@ class Safe():
                 break
         if self.state == 0:
             if picture==None or picture.correct_answers==[]:
-                self.set_password(['1','1','1']) # default password
+                self.set_password(['-1','-1','-1']) # default password, safe cannot be opened
             else:
                 self.set_password(picture.correct_answers)
             graphics.draw(canvas, self.safe_coordinates, tag = "safe", object = self, shift_coordinates=self.shift_coordinates)    

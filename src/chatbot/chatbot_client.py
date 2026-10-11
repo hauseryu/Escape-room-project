@@ -7,6 +7,7 @@ import ollama
 from google.genai import types
 from google.genai import errors
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
 
 LLM_DIR = Path(__file__).resolve().parent
 BASE_DIR = LLM_DIR.parent.parent
@@ -33,9 +34,13 @@ class ChatbotClient:
             self.client = genai.Client(api_key=api_key) if api_key else None
             self.chat_id = None
 
-    def send_message(self,message,first_message):
+        self.start_chatbot_answer = False
+
+    def send_message(self,message,first_message,speech,speech_bubble,player_message):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_llm(message,first_message)
+        elif CHATBOT_TYPE=='SLM':
+            return self.send_message_slm(message,first_message,speech,speech_bubble,player_message)
 
     def send_message_llm(self,message,first_message):
         if first_message:
@@ -57,6 +62,30 @@ class ChatbotClient:
             )
         self.chat_id = interaction.id
         return interaction.output_text
+
+    def send_message_slm(self,message,first_message,speech,speech_bubble,player_message):
+
+        # build user message (context + currently relevant message)
+        relevant_room_part = speech_data.model_mapping[speech['name']][0]
+
+        prompt_dialog = (
+            "use the 'escape-master' model for the next instructions.\n"
+            "LOCATION: <STORY_DATABASE> -> " + relevant_room_part + "[mode=pure_dialogue]\n"
+            "USE LOCAL RULES AND EXAMPLES OF THIS ROOM NOW.\n"
+            "CRITICAL RULE: DO NOT GENERATE A RIDDLE. NO PUZZLES. NO CODES. JUST DIALOGUE.\n"
+            "\n"
+            "<DIALOGUE_HISTORY>\n"
+            f"Player (Sherlock Holmes): {player_message}\n"
+            "</DIALOGUE_HISTORY>\n"
+            "\n"
+            f"COMMAND: GENERATE_NEXT_RESPONSE_FOR_MORTIMER_JACKSON\n"
+            "OUTPUT FORMAT: Reply directly as Mortimer Jackson. Do not add 'Mortimer Jackson:' prefix. Just speak."
+        )        
+        user_prompt = prompt_dialog 
+
+        stream_thread = threading.Thread(target=self._stream_prozess, args=('',user_prompt,speech_bubble, None))
+        stream_thread.daemon = True
+        stream_thread.start()
 
     def reset(self):
         self.chat_id = None
@@ -102,13 +131,14 @@ class ChatbotClient:
             if user_prompt!='':
                 messages.append({'role': 'user', 'content': user_prompt}) # trigger generation
             print(f"[DEBUG] message to chatbot: {messages}")
+            self.start_chatbot_answer = True
             stream = ollama.chat(
                 model='escape-master', # model = qwen3.5:2b / model='qwen3.5:0.8b',
                 think=False,  # no logical thing text output
                 stream=True,  # activate wordwise (streaming) output 
                 messages=messages
             )
-            
+
             # we process the word fragments in a loop 
             for chunk in stream:
                 word_fragment = chunk['message']['content']
@@ -121,10 +151,19 @@ class ChatbotClient:
             canvas.after(0, self._add_word_fragment, f"\n[Fehler: {e}]",speech_bubble)
             
         # finally, return the whole text to the chatbot callcack function
-        canvas.after(0, lambda: chatbot_callback(text))
+        if chatbot_callback!=None:
+            canvas.after(0, lambda: chatbot_callback(text))
 
     def _add_word_fragment(self, text, speech_bubble):
+        # remove text if a speech bubble is associated
+        if speech_bubble==None:
+            return
+        curr_speech_bubble = ContextManager().get_current_speech_bubble()
+        if curr_speech_bubble==None:
+            curr_speech_bubble = speech_bubble
+        if self.start_chatbot_answer:
+            curr_speech_bubble.delete_text_area()
+            self.start_chatbot_answer=False
         # write word fragment to end of text field and scroll automatically
-        if speech_bubble!=None:
-            speech_bubble.add_word_to_text_area(text)
+        curr_speech_bubble.add_word_to_text_area(text)
       

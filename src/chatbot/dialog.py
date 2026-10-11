@@ -11,7 +11,7 @@ class Dialog():
         self.first_message = True
         self.chat_id = None
 
-    def talk_with_npc(self, npc, player, player_message):
+    def talk_with_npc(self, npc, player, player_message, speech, speech_bubble):
         if self.first_message:
             if npc <= 2:
                 zone_id = 0
@@ -37,13 +37,7 @@ class Dialog():
             elif player == 1:
                 message = player2 + " says: " + player_message
 
-            interaction = self.client.interactions.create(
-                model="gemini-3.8-flash",
-                input=message,
-                previous_interaction_id=self.chat_id
-            )
-
-        output_text = self.client.send_message(message,self.first_message)
+        output_text = self.client.send_message(message,self.first_message,speech,speech_bubble,player_message)
         return output_text
 
     def reset_dialog(self):

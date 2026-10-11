@@ -68,7 +68,7 @@ def generate_riddle(chatbot_callback=None):
 
     prompt_riddle = (
         "use the 'escape-master' model for the next instructions.\n"
-        "LOCATION: <STORY_DATABASE> -> <living_room_221b>\n"
+        "LOCATION: <STORY_DATABASE> -> <living_room_221b_riddle>\n"
         "USE LOCAL RULES AND EXAMPLES OF THIS ROOM NOW.\n"
         f"COMMAND: GENERATE_RIDDLE_WITH_TOPICS (topics={themes_text})"
     )
