@@ -55,8 +55,8 @@ def verify_model_version():
                 print("[SETUP] -> Update detected in Modelfile! Preparing rebuild...")
 
             # always do pulling of base model
-            print("[SETUP] -> Ensuring base model 'qwen3.5:2b' is present...")
-            subprocess.run(["ollama", "pull", "qwen3.5:2b"], check=True)
+            print("[SETUP] -> Ensuring base model 'qwen3.5:4b' is present...")
+            subprocess.run(["ollama", "pull", "qwen3.5:4b"], check=True)
             
             # build model
             print("[SETUP] -> Building custom 'escape-master' from Modelfile...")

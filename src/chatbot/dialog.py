@@ -10,36 +10,33 @@ class Dialog():
         self.client = ContextManager().get_chatbot_client()
         self.first_message = True
         self.chat_id = None
+        self.messages = []
 
-    def talk_with_npc(self, npc, player, player_message, speech, speech_bubble):
-        if self.first_message:
-            if npc <= 2:
-                zone_id = 0
-                player1 = "Sherlock Holmes"
-                player2 = "Dr. John Watson"
-            elif npc <= 4:
-                zone_id = 1
-                player1 = "Harry Potter"
-                player2 = "Hermione Granger"
+    def talk_with_npc(self, player_role, figure, player_message, speech, speech_bubble):
+        chatbot_type = self.client.get_chatbot_type()
+        if chatbot_type=='LLM':
+            zone_id = speech.model_mapping[speech['name']]['information_zone']
+            npc = speech.model_mapping[speech['name']]['non_player_character']
+            if self.first_message:
+                message = general_information + information_zone[zone_id] + information_character[npc]
+                message += player_role + " says: " + player_message
             else:
-                zone_id = 2
-                player1 = "Player 1"
-                player2 = "Player 2"
-            message = general_information + information_zone[zone_id] + information_character[npc]
-            if player == 0:
-                message += player1 + " says: " + player_message
-            elif player == 1:
-                message += player2 + " says: " + player_message
-
-        else:
-            if player == 0:
-                message = player1 + " says: " + player_message
-            elif player == 1:
-                message = player2 + " says: " + player_message
-
-        output_text = self.client.send_message(message,self.first_message,speech,speech_bubble,player_message)
+                message = player_role + " says: " + player_message
+        elif chatbot_type=='SLM':
+            message = "User (" + player_role + "): " + player_message
+        output_text = self.client.send_message(message,self.first_message,player_role,figure,speech,speech_bubble,self)
         return output_text
 
     def reset_dialog(self):
         self.first_message = True
         self.client.reset()
+        self.messages = []
+
+    def add_message(self,message,figure_name):
+        self.messages.append((message,figure_name))
+
+    def get_message_history(self):
+        text = ""
+        for (message,_) in self.messages:
+            text += message + '\n'
+        return text

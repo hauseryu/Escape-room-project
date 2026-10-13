@@ -36,11 +36,11 @@ class ChatbotClient:
 
         self.start_chatbot_answer = False
 
-    def send_message(self,message,first_message,speech,speech_bubble,player_message):
+    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_llm(message,first_message)
         elif CHATBOT_TYPE=='SLM':
-            return self.send_message_slm(message,first_message,speech,speech_bubble,player_message)
+            return self.send_message_slm(message,first_message,player_role,figure,speech,speech_bubble,dialog)
 
     def send_message_llm(self,message,first_message):
         if first_message:
@@ -63,11 +63,14 @@ class ChatbotClient:
         self.chat_id = interaction.id
         return interaction.output_text
 
-    def send_message_slm(self,message,first_message,speech,speech_bubble,player_message):
+    def send_message_slm(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
 
         # build user message (context + currently relevant message)
-        relevant_room_part = speech_data.model_mapping[speech['name']][0]
+        relevant_room_part = speech_data.model_mapping[speech['name']]['slm_location_path']
 
+        # add player message to dialog message history
+        dialog.add_message(message,player_role)
+        message_history = dialog.get_message_history()
         prompt_dialog = (
             "use the 'escape-master' model for the next instructions.\n"
             "LOCATION: <STORY_DATABASE> -> " + relevant_room_part + "[mode=pure_dialogue]\n"
@@ -75,20 +78,25 @@ class ChatbotClient:
             "CRITICAL RULE: DO NOT GENERATE A RIDDLE. NO PUZZLES. NO CODES. JUST DIALOGUE.\n"
             "\n"
             "<DIALOGUE_HISTORY>\n"
-            f"Player (Sherlock Holmes): {player_message}\n"
+            f"{message_history}\nAssistant ({figure}):"
             "</DIALOGUE_HISTORY>\n"
             "\n"
-            f"COMMAND: GENERATE_NEXT_RESPONSE_FOR_MORTIMER_JACKSON\n"
-            "OUTPUT FORMAT: Reply directly as Mortimer Jackson. Do not add 'Mortimer Jackson:' prefix. Just speak."
+            f"COMMAND: GENERATE_NEXT_RESPONSE_FOR_{figure}\n"
+            f"OUTPUT FORMAT: Reply directly as {figure}. Do not add '{figure}:' prefix. Just speak."
         )        
         user_prompt = prompt_dialog 
 
-        stream_thread = threading.Thread(target=self._stream_prozess, args=('',user_prompt,speech_bubble, None))
+        stream_thread = threading.Thread(target=self._stream_prozess, 
+                                         args=('',user_prompt,speech_bubble, None, dialog, figure))
         stream_thread.daemon = True
         stream_thread.start()
+        return '' # return empty string => start text should not show up again
 
     def reset(self):
         self.chat_id = None
+
+    def get_chatbot_type(self):
+        return CHATBOT_TYPE
 
     def send_message_simple(self,system_prompt,user_prompt,speech_bubble=None,chatbot_callback=None):
         if CHATBOT_TYPE=='LLM':
@@ -120,7 +128,7 @@ class ChatbotClient:
         stream_thread.daemon = True
         stream_thread.start()
 
-    def _stream_prozess(self, system_prompt,user_prompt, speech_bubble, chatbot_callback):
+    def _stream_prozess(self, system_prompt,user_prompt, speech_bubble, chatbot_callback, dialog=None, figure=None):
         canvas = ContextManager().get_room().canvas_area
         text = ''
         try:
@@ -153,6 +161,9 @@ class ChatbotClient:
         # finally, return the whole text to the chatbot callcack function
         if chatbot_callback!=None:
             canvas.after(0, lambda: chatbot_callback(text))
+        if CHATBOT_TYPE=='SLM' and speech_bubble!=None and dialog!=None and figure!=None:
+            text=f"Assistant ({figure}):" + text
+            dialog.add_message(text,figure)
 
     def _add_word_fragment(self, text, speech_bubble):
         # remove text if a speech bubble is associated

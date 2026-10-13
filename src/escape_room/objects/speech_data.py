@@ -16,5 +16,8 @@ story_hotel_portier = {
 }
 
 model_mapping = {
-        "story_mortimer_jackson": ["<living_room_221b_talk_client>"]
+        "story_mortimer_jackson": {
+            "slm_location_path": "<living_room_221b_talk_client>",
+            "information_zone": 0,
+            "non_player_character": 0}
 }

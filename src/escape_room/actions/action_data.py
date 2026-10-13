@@ -41,12 +41,13 @@ check_client_not_yet_in_room = [
 
 # specific action sequences
 sherlock_client_talk = [
-    [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, 0, 0, "sherlock_client_disappears"],
+    [action.figure_talks,"Mortimer Jackson",speech_data.story_mortimer_jackson, "Sherlock Holmes", 
+     "sherlock_client_disappears"],
 ]
 
 hotel_portier_talk = [
     [action.stop_sequence_conditionally,action.check_object_state,"hotel_door","hotel_door1",None],
-    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, 0, 0, None,
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, "Sherlock Holmes", None,
         None,False], # no button text, no entry field, positon (None/top/bottom)
 ]
 
