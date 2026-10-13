@@ -4,3 +4,4 @@ scapy
 pillow 
 pytest
 numpy
+ollama
