@@ -11,6 +11,11 @@ class Letter():
         text = room_data["letter"][index][2] # get letter text
         choices = room_data["letter"][index][3] # get choices for letter
         check_action = room_data["letter"][index][4] # get action that checks preconditions
+        try:
+            check_action_draw = room_data["letter"][index][5] # get action that checks preconditions
+        except IndexError:
+            check_action_draw = None
+
         shift_coordinates = (x-3.5,y-0,z-2)
 
         # set attributes
@@ -20,6 +25,7 @@ class Letter():
         self.choices = choices
         self.unique_id = unique_id
         self.check_action = check_action
+        self.check_action_draw = check_action_draw
         self.speech_bubble = SpeechBubble([text],choices,
                                           evaluate_choices_callback=
                                           ContextManager().get_action_manager().evaluate_choices)
@@ -50,6 +56,10 @@ class Letter():
             return None # check failed => forbid creation
     
     def draw(self,canvas):
+        if self.check_action_draw!=None:
+            draw_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action_draw)
+            if not draw_allowed:
+                return
         graphics.draw(canvas,self.coordinates,tag=self.unique_id,object=self,shift_coordinates=self.shift_coordinates)
         graphics.draw_arc(canvas, *self.coordinates_stamp[0], tag=self.unique_id, shift_coordinates=self.shift_coordinates)
 

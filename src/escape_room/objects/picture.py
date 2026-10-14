@@ -1,5 +1,5 @@
 from PIL import Image, ImageTk
-from llm.riddle_generator import generate_riddle
+from chatbot.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
@@ -133,17 +133,40 @@ class Picture:
 
             for _ in range(3):
                 try:
-                    (riddle, correct_answer) = generate_riddle()
+                    (riddle, correct_answer) = generate_riddle(self.chatbot_callback)
                 except ValueError:
                     riddle="riddle not available"
                     correct_answer=""
 
-                self.riddles.append(riddle)
-                self.correct_answers.append(correct_answer)
+                if riddle!=None and correct_answer!=None:
+                    self.riddles.append(riddle)
+                    self.correct_answers.append(correct_answer)
             print("[GAME] Riddle answers: ", end="")
             print(self.correct_answers)        
             self.room_state.set_state_object("picture",self.unique_id,
                                             self.riddles + self.correct_answers)
+
+    def chatbot_callback(self,text):
+        print(f"[DEBUG] chatbot: -> {text}")
+        if "Correct answer (only the number):" not in text:
+            raise ValueError("Chatbot response does not contain 'Correct answer:'")
+
+        visible_part, answer_part = text.split(
+            "Correct answer (only the number):",
+            1
+        )
+        visible_part = visible_part.replace("Riddle:", "", 1).strip()
+        answer_part = answer_part.strip()        
+        self.riddles.append(visible_part)
+        self.correct_answers.append(answer_part)
+        print(f"[DEBUG] riddle answer:{answer_part}")
+        if len(self.correct_answers)==3: # we have collected all 3 answers, update associated safe
+            safes = ContextManager().get_room().getObjectList("safe")
+            for safe in safes:
+                if safe.associated_picture == self.unique_id:
+                    safe.set_password(self.correct_answers)
+                    print("[DEBUG] safe password set!")
+                    break
 
     def draw(self, canvas, tag):
         # draw outline (frame)

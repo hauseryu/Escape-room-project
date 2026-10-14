@@ -16,7 +16,8 @@ from src.escape_room.actions.action import action_mgr_create
 from src.escape_room.actions.action import put_item_in_inventory
 from src.escape_room.actions import action_data
 from src.escape_room.actions import action
-from src.llm.llm_client import LlmClient
+from src.chatbot.chatbot_client import ChatbotClient
+from src.chatbot import chatbot_setup
 from src.escape_room.repositories.inventory_repository import set_function_put_in_inventory
 
 IMAGE_DIR = ContextManager.get_image_path()
@@ -35,9 +36,9 @@ class EscapeApp():
         action_data_dic = action_data.__dict__
         action.set_action_data_dict(action_data_dic)
 
-        # create LLM client and pass it to context manager
-        self.llm_client = LlmClient()
-        self.context_manager.set_llm_client(self.llm_client)
+        # create chatbot client and pass it to context manager
+        self.chatbot_client = ChatbotClient()
+        self.context_manager.set_chatbot_client(self.chatbot_client)
         self.context_manager.set_escape_app(self)
 
         # create canvas frame
@@ -46,6 +47,8 @@ class EscapeApp():
         # initialization complete!
         # create room and inventory bar
         self.room.init_room(self.game_client)
+        # initialize chatbot modelfile
+        chatbot_setup.verify_model_version()                
         # show the start screen => start screen will then call the start_game function
         self.show_start_screen()
         
