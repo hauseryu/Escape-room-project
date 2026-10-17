@@ -626,6 +626,7 @@ class Room(tkinter.Frame):
             if obj.unique_id == unique_id:
                 obj.draw(self.canvas_area)
 
+    # Event processing (based on kind of event: network event, GUI event, chat event)
     def on_network_event(self, event):
         """is called as soon as the network thread fires a signal."""
 
@@ -679,25 +680,35 @@ class Room(tkinter.Frame):
             pass
 
     def on_icon_event(self, event):
-        """is called when a player icon is clicked."""
         # as an event was triggered, there should be something in the queue
+        parameter_container = {}
         event_data = self.icon_queue.get_nowait()
+        parameter_container["event_data"]=event_data
         event_type = event_data.get("action")
-        (object,object_id,object_owner) = self.inventory.getSelectedObject()
-        if object == None: # if nothing is selected, we quit
-            return
+        parameter_container["event_type"]=event_type
+        """is called when a player icon is clicked."""        
         if event_type == "send_inventory":
+            (object,object_id,object_owner) = self.inventory.getSelectedObject()
+            if object == None: # if nothing is selected, we quit
+                return
+            parameter_container["object_id"]=object_id
+            parameter_container["object_owner"]=object_owner
             inventory = event_data.get("inventory")
-            player = event_data.get("player_name")
+            player_name = event_data.get("player_name")
             print(f"[GUI Event] received send_inventory event for inventory {inventory},",
-                   f"owner {object_owner} for player {player}")
-            self.game_client.send_action(event_type,player,inventory,object_id,object_owner)
+                   f"owner {object_owner} for player {player_name}")
+            self.game_client.send_action(event_type,parameter_container=parameter_container)
             # remove key image from canvas
             self.inventory.remove_inventory_pictures()
             # remove from inventory
             self.inventory.delObject(object,object_id,object_owner)
             self.inventory.redraw_inventory()
-
+        """is called when player talks in a dialogue"""  
+        if event_type == "send_chatbot_message":
+            print(f"[GUI Event] received send_chatbot_message event")
+            parameter_container["player_name"]=self.player_name # server is to sent message to own player
+            self.game_client.send_action(event_type,parameter_container=parameter_container)
+        
     def on_message_event(self, event):
         """Event handler triggered automatically when a new chat item lands in the queue."""
         print("[ROOM] <<ChatEvent>> received! Processing queue items...")

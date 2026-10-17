@@ -36,7 +36,27 @@ class ChatbotClient:
 
         self.start_chatbot_answer = False
 
-    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
+    # on the client side, we call the server to communicate with the chatbot
+    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):    
+    # def on_player_icon_click(self, event, player_name):
+        """Event handler triggered when message has to be sent to chatbot."""
+        print(f"[Client] send action 'send_chatbot_message' to server!")       
+        # transfer player list to GUI
+        event_send_chatbot_message = {
+            "action": "send_chatbot_message", 
+            "message": message,
+            "first_message": first_message,
+            "player_role": player_role,
+            "figure": figure,
+            "story_index": speech['story_index']
+        }
+        room = ContextManager().get_room()
+        room.icon_queue.put(event_send_chatbot_message)
+        # fire event for the canvas master window
+        room.master.event_generate("<<IconEvent>>", when="tail")
+
+    # on the server side, we call the chatbot directly
+    def _send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_llm(message,first_message)
         elif CHATBOT_TYPE=='SLM':
@@ -63,7 +83,8 @@ class ChatbotClient:
         self.chat_id = interaction.id
         return interaction.output_text
 
-    def send_message_slm(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
+    def send_message_slm(self,message,first_message,player_role,figure,speech,
+                         speech_bubble=None,dialog=None):
 
         # build user message (context + currently relevant message)
         relevant_room_part = speech_data.model_mapping[speech['name']]['slm_location_path']

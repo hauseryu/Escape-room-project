@@ -3,6 +3,8 @@ import threading
 import queue
 import json
 import time
+from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
 
 PORT = 50000
 
@@ -49,8 +51,39 @@ class EscapeServer():
                         else:
                             outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
 
+                # SCENARIO: calling server to generate chatbot message
+                elif action == "send_chatbot_message":
+                    player_name = game_data.get("player_name") # player to whom chatbot message is to be sent
+                    message = game_data.get("message") # message to chatbot
+                    first_message = game_data.get("first_message") # first message to chatbot?
+                    player_role = game_data.get("player_role") # role of player (like Sherlock Holmes)
+                    figure = game_data.get("figure") # dialog partner
+                    story_index = game_data.get("story_index") # speech data, index to the story
+                    print(f"[DEBUG] Server [action: {action}] received from player {player_name}, message: {message}")
+
+                    # send message to chatbot client
+                    chatbot_client = ContextManager().get_chatbot_client()
+                    speech = speech_data.story_list[story_index]
+                    chatbot_client._send_message(message,first_message,player_role,figure,speech,
+                                                 speech_bubble=None,dialog=None)
+                    pass
+                    # with players_lock:
+                        # if target in active_players:
+                        #     # we put the event directly into the send queue of the target player!
+                        #     payload = {"action": "inventory_received", 
+                        #                "from": player_name, 
+                        #                "inventory": inventory,
+                        #                "object_id": object_id,
+                        #                "owner": owner}
+                        #     active_players[target]["queue"].put(json.dumps(payload))
+                            
+                        #     # confirmation to the sender
+                        #     outgoing_queue.put(json.dumps({"event": "system", "msg": f"{inventory} passed over to {target} ."}))
+                        # else:
+                        #     outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
+
                 # SCENARIO: passing over message to all players ("chat_message")
-                if action == "chat_message":
+                elif action == "chat_message":
                     sent_from = game_data.get("sent_from")
                     text = game_data.get("text")
                     print(f"[SERVER] Received chat message from {sent_from}:{text}")
@@ -60,7 +93,7 @@ class EscapeServer():
                     json_string = json.dumps(payload)
                     self.broadcast_message(json_string,sent_from)
 
-                if action == "update_player_list":
+                elif action == "update_player_list":
                     player_name = game_data.get("player_name")       # who changed?
                     role = game_data.get("role")                     # which role?
                     active_players[player_name]["role"] = role
