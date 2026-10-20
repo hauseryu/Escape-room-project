@@ -24,6 +24,7 @@ class ContextManager():
             self.inventory = None
             self.player_name  = None
             self.current_speech_bubble = None
+            self.current_dialog = None
             
     @staticmethod
     def get_image_path() -> Path:
@@ -113,3 +114,8 @@ class ContextManager():
     def get_current_speech_bubble(self):
         return self.current_speech_bubble
 
+    def set_current_dialog(self,dialog):
+        self.current_dialog = dialog
+
+    def get_current_dialog(self):
+        return self.current_dialog

@@ -181,7 +181,7 @@ def set_action_data_dict(action_data_dict):
 
 def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, player_role, speech):
     if not hasattr(process_entry, "dialog"):
-        process_entry.dialog = Dialog()
+        process_entry.dialog = ContextManager().get_current_dialog()
     dialog = process_entry.dialog
     player_message = event.widget.get()
     event.widget.delete(0, len(event.widget.get()))

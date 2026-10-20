@@ -670,6 +670,17 @@ class Room(tkinter.Frame):
                     # draw the key and inventory
                     key.draw(self.canvas_area) # draw key into inventory
 
+                elif event_type == "chatbot_answer":
+                    text = event_data.get("message")
+                    start_flag = event_data.get("start_flag", False)
+                    print(f"[GUI Event] received chatbot answer: {text}, start_flag={start_flag}")
+                    curr_speech_bubble = ContextManager().get_current_speech_bubble()
+                    if curr_speech_bubble != None:
+                        if start_flag:
+                            curr_speech_bubble.delete_text_area()  # clear text area if this is the start of a new answer
+                        # write word fragment to end of text field and scroll automatically
+                        curr_speech_bubble.add_word_to_text_area(text)
+
                 elif event_type == "chat_message":
                     print("[GUI Event] received chat message")
                     text = event_data.get("text")

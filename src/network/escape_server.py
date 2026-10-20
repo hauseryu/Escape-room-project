@@ -64,23 +64,8 @@ class EscapeServer():
                     # send message to chatbot client
                     chatbot_client = ContextManager().get_chatbot_client()
                     speech = speech_data.story_list[story_index]
-                    chatbot_client._send_message(message,first_message,player_role,figure,speech,
-                                                 speech_bubble=None,dialog=None)
-                    pass
-                    # with players_lock:
-                        # if target in active_players:
-                        #     # we put the event directly into the send queue of the target player!
-                        #     payload = {"action": "inventory_received", 
-                        #                "from": player_name, 
-                        #                "inventory": inventory,
-                        #                "object_id": object_id,
-                        #                "owner": owner}
-                        #     active_players[target]["queue"].put(json.dumps(payload))
-                            
-                        #     # confirmation to the sender
-                        #     outgoing_queue.put(json.dumps({"event": "system", "msg": f"{inventory} passed over to {target} ."}))
-                        # else:
-                        #     outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
+                    chatbot_client._send_message(message,first_message,player_name,player_role,figure,speech,
+                                                 speech_bubble=None,dialog=None,server_instance=self)
 
                 # SCENARIO: passing over message to all players ("chat_message")
                 elif action == "chat_message":
@@ -90,7 +75,7 @@ class EscapeServer():
                     payload = {"action": "chat_message", 
                                 "sent_from": sent_from,
                                 "text": text}
-                    json_string = json.dumps(payload)
+                    json_string = json.dumps(payload)                    
                     self.broadcast_message(json_string,sent_from)
 
                 elif action == "update_player_list":
@@ -136,6 +121,20 @@ class EscapeServer():
                 client_socket.sendall(message.encode("utf-8"))
             except Exception:
                 break
+
+    def client_send_update(self, action, parameter_container):
+        # send message to client
+        if action == "chatbot_answer":
+            payload = {
+                "action": action,
+                "message": parameter_container["message"],
+                "start_flag": parameter_container["start_flag"]
+            }
+            json_string = json.dumps(payload)
+            player_name = parameter_container["player_name"]
+            with players_lock:
+                if player_name in active_players:
+                    active_players[player_name]["queue"].put(json_string)
 
     def handle_new_connection(self,client_socket, client_address):
         """ ask once for name and start threads."""

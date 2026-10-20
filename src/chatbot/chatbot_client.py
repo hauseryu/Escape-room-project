@@ -56,11 +56,13 @@ class ChatbotClient:
         room.master.event_generate("<<IconEvent>>", when="tail")
 
     # on the server side, we call the chatbot directly
-    def _send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):
+    def _send_message(self,message,first_message,player_name,player_role,figure,speech,
+                      speech_bubble=None,dialog=None,server_instance=None):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_llm(message,first_message)
         elif CHATBOT_TYPE=='SLM':
-            return self.send_message_slm(message,first_message,player_role,figure,speech,speech_bubble,dialog)
+            return self.send_message_slm(message,first_message,player_name,player_role,
+                                         figure,speech,speech_bubble,dialog,server_instance)
 
     def send_message_llm(self,message,first_message):
         if first_message:
@@ -83,13 +85,15 @@ class ChatbotClient:
         self.chat_id = interaction.id
         return interaction.output_text
 
-    def send_message_slm(self,message,first_message,player_role,figure,speech,
-                         speech_bubble=None,dialog=None):
+    def send_message_slm(self,message,first_message,player_name,player_role,figure,speech,
+                         speech_bubble=None,dialog=None,server_instance=None):
 
         # build user message (context + currently relevant message)
         relevant_room_part = speech_data.model_mapping[speech['name']]['slm_location_path']
 
         # add player message to dialog message history
+        if dialog==None:
+            dialog = ContextManager().get_current_dialog()
         dialog.add_message(message,player_role)
         message_history = dialog.get_message_history()
         prompt_dialog = (
@@ -108,7 +112,7 @@ class ChatbotClient:
         user_prompt = prompt_dialog 
 
         stream_thread = threading.Thread(target=self._stream_prozess, 
-                                         args=('',user_prompt,speech_bubble, None, dialog, figure))
+                                         args=('',user_prompt,speech_bubble, None, dialog, player_name, figure, server_instance))
         stream_thread.daemon = True
         stream_thread.start()
         return '' # return empty string => start text should not show up again
@@ -149,7 +153,8 @@ class ChatbotClient:
         stream_thread.daemon = True
         stream_thread.start()
 
-    def _stream_prozess(self, system_prompt,user_prompt, speech_bubble, chatbot_callback, dialog=None, figure=None):
+    def _stream_prozess(self, system_prompt,user_prompt, speech_bubble, chatbot_callback, 
+                        dialog=None, player_name=None, figure=None, server_instance=None):
         canvas = ContextManager().get_room().canvas_area
         text = ''
         try:
@@ -174,28 +179,40 @@ class ChatbotClient:
                 text+=word_fragment
                 
                 # each fragment is passed to GUI via .after() 
-                canvas.after(0, self._add_word_fragment, word_fragment,speech_bubble)
+                canvas.after(0, self._add_word_fragment, word_fragment,speech_bubble, player_name, server_instance)
                 
         except Exception as e:
-            canvas.after(0, self._add_word_fragment, f"\n[Fehler: {e}]",speech_bubble)
+            canvas.after(0, self._add_word_fragment, f"\n[Fehler: {e}]",speech_bubble, player_name, server_instance)
             
         # finally, return the whole text to the chatbot callcack function
         if chatbot_callback!=None:
             canvas.after(0, lambda: chatbot_callback(text))
-        if CHATBOT_TYPE=='SLM' and speech_bubble!=None and dialog!=None and figure!=None:
+        if CHATBOT_TYPE=='SLM' and speech_bubble!=None and figure!=None:
             text=f"Assistant ({figure}):" + text
-            dialog.add_message(text,figure)
+            if dialog!=None:
+                dialog.add_message(text,figure)
+            else:
+                dialog = ContextManager().get_current_dialog()
+                dialog.add_message(text,figure)
 
-    def _add_word_fragment(self, text, speech_bubble):
+    def _add_word_fragment(self, text, speech_bubble, player_name, server_instance):
         # remove text if a speech bubble is associated
-        if speech_bubble==None:
-            return
-        curr_speech_bubble = ContextManager().get_current_speech_bubble()
-        if curr_speech_bubble==None:
-            curr_speech_bubble = speech_bubble
-        if self.start_chatbot_answer:
-            curr_speech_bubble.delete_text_area()
-            self.start_chatbot_answer=False
-        # write word fragment to end of text field and scroll automatically
-        curr_speech_bubble.add_word_to_text_area(text)
+        if speech_bubble!=None:
+            curr_speech_bubble = ContextManager().get_current_speech_bubble()
+            if curr_speech_bubble==None:
+                curr_speech_bubble = speech_bubble
+            if self.start_chatbot_answer:
+                curr_speech_bubble.delete_text_area()
+                self.start_chatbot_answer=False
+            # write word fragment to end of text field and scroll automatically
+            curr_speech_bubble.add_word_to_text_area(text)
+        if server_instance!=None:
+            action = "chatbot_answer"
+            parameter_container = {}
+            parameter_container["message"] = text
+            parameter_container["start_flag"] = self.start_chatbot_answer
+            parameter_container["player_name"] = player_name
+            if self.start_chatbot_answer:
+                self.start_chatbot_answer=False
+            server_instance.client_send_update(action,parameter_container)
       
