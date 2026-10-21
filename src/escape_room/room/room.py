@@ -34,6 +34,8 @@ from src.escape_room.objects.pillar import Pillar
 from src.escape_room.objects.carpet import Carpet
 from src.escape_room.objects.chandelier import Chandelier
 from src.escape_room.objects.reception_desk import ReceptionDesk
+from src.escape_room.objects.key_shelf import KeyShelf
+from src.escape_room.objects.lift_door import LiftDoor
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -108,6 +110,8 @@ class Room(tkinter.Frame):
         self.reception_desk = []
         self.carpet = []
         self.chandelier = []
+        self.key_shelf = []
+        self.lift_door = []
 
         for door in self.door:
             door.is_open = False        
@@ -338,6 +342,18 @@ class Room(tkinter.Frame):
             for index,chandelier in enumerate(self.room_data["chandelier"]):
                 obj = Chandelier(room_data,index)
                 self.chandelier.append(obj)
+        except KeyError: pass        
+        # create key shelf
+        try:
+            for index,key_shelf in enumerate(self.room_data["key_shelf"]):
+                obj = KeyShelf(room_data,index)
+                self.key_shelf.append(obj)
+        except KeyError: pass
+        # create lift door
+        try:
+            for index,lift_door in enumerate(self.room_data["lift_door"]):
+                obj = LiftDoor(room_data,index)
+                self.lift_door.append(obj)
         except KeyError: pass
 
         # create figures
@@ -500,9 +516,17 @@ class Room(tkinter.Frame):
         for pillar in self.pillar:
             pillar.draw(self.canvas_area)
 
+        # draw the lift door
+        for lift_door in self.lift_door:
+            lift_door.draw(self.canvas_area)
+
+        # draw the key shelf
+        for key_shelf in self.key_shelf:
+            key_shelf.draw(self.canvas_area)
+
         # draw the reception desk
         for reception_desk in self.reception_desk:
-            reception_desk.draw(self.canvas_area)
+            reception_desk.draw(self.canvas_area)        
 
         # trigger action sequences
         try: 
