@@ -17,6 +17,7 @@ from src.escape_room.actions.action import put_item_in_inventory
 from src.escape_room.actions import action_data
 from src.escape_room.actions import action
 from src.chatbot.chatbot_client import ChatbotClient
+from src.chatbot.dialog import Dialog
 from src.chatbot import chatbot_setup
 from src.escape_room.repositories.inventory_repository import set_function_put_in_inventory
 
@@ -40,6 +41,8 @@ class EscapeApp():
         self.chatbot_client = ChatbotClient()
         self.context_manager.set_chatbot_client(self.chatbot_client)
         self.context_manager.set_escape_app(self)
+        self.current_dialog = Dialog()
+        self.context_manager.set_current_dialog(self.current_dialog)
 
         # create canvas frame
         self.room = Room(master, self)

@@ -3,6 +3,8 @@ import threading
 import queue
 import json
 import time
+from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
 
 PORT = 50000
 
@@ -49,18 +51,34 @@ class EscapeServer():
                         else:
                             outgoing_queue.put(json.dumps({"event": "system", "msg": f"player {target} not found."}))
 
+                # SCENARIO: calling server to generate chatbot message
+                elif action == "send_chatbot_message":
+                    player_name = game_data.get("player_name") # player to whom chatbot message is to be sent
+                    message = game_data.get("message") # message to chatbot
+                    first_message = game_data.get("first_message") # first message to chatbot?
+                    player_role = game_data.get("player_role") # role of player (like Sherlock Holmes)
+                    figure = game_data.get("figure") # dialog partner
+                    story_index = game_data.get("story_index") # speech data, index to the story
+                    print(f"[DEBUG] Server [action: {action}] received from player {player_name}, message: {message}")
+
+                    # send message to chatbot client
+                    chatbot_client = ContextManager().get_chatbot_client()
+                    speech = speech_data.story_list[story_index]
+                    chatbot_client._send_message(message,first_message,player_name,player_role,figure,speech,
+                                                 speech_bubble=None,dialog=None,server_instance=self)
+
                 # SCENARIO: passing over message to all players ("chat_message")
-                if action == "chat_message":
+                elif action == "chat_message":
                     sent_from = game_data.get("sent_from")
                     text = game_data.get("text")
                     print(f"[SERVER] Received chat message from {sent_from}:{text}")
                     payload = {"action": "chat_message", 
                                 "sent_from": sent_from,
                                 "text": text}
-                    json_string = json.dumps(payload)
+                    json_string = json.dumps(payload)                    
                     self.broadcast_message(json_string,sent_from)
 
-                if action == "update_player_list":
+                elif action == "update_player_list":
                     player_name = game_data.get("player_name")       # who changed?
                     role = game_data.get("role")                     # which role?
                     active_players[player_name]["role"] = role
@@ -103,6 +121,20 @@ class EscapeServer():
                 client_socket.sendall(message.encode("utf-8"))
             except Exception:
                 break
+
+    def client_send_update(self, action, parameter_container):
+        # send message to client
+        if action == "chatbot_answer":
+            payload = {
+                "action": action,
+                "message": parameter_container["message"],
+                "start_flag": parameter_container["start_flag"]
+            }
+            json_string = json.dumps(payload)
+            player_name = parameter_container["player_name"]
+            with players_lock:
+                if player_name in active_players:
+                    active_players[player_name]["queue"].put(json_string)
 
     def handle_new_connection(self,client_socket, client_address):
         """ ask once for name and start threads."""
