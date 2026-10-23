@@ -64,9 +64,14 @@ class KeyShelf():
     def draw(self, canvas):
         # draw outline
         graphics.draw(canvas,self.key_shelf_coordinates,shift_coordinates=self.shift_coordinates)
+        numbers = [10, 11, 12, 13,
+                   20, 21, 22, 23,
+                   30, 31, 32, 33, 
+                   40, 41, 42, 43,
+                   50, 51, 52, 53]
         for row in range(5):
             for col in range(4):
-                number = row * 4 + col + 1
+                number = numbers[row * 4 + col]
 
                 x = [3.175, 4.375, 5.625, 6.825][col]
                 y = 2.82 - row * 0.27

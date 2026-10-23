@@ -184,7 +184,7 @@ hotel_lobby = {
                      "is_clickable": True,"pic_resize": (35,41),
                      "action_sequence": "call_hotel_receptionist"}
                 ],
-        "lift_door": [[(0, 0, 4),"lift_door1"],
+        "lift_door": [[(0, 0, 4),"lift_door1",4],
                 ]
 }
 

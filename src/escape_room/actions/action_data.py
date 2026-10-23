@@ -116,6 +116,10 @@ call_hotel_receptionist = [
             1100,580,120,180]
 ]
 
+lift_moves_to_ground = [
+    [action.lift_floor_change,-4,"room_bell.wav"],    
+]
+
 game_over = [
     [action.game_over]
 ]
