@@ -170,12 +170,22 @@ hotel_lobby = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)     
         "pillar": [[(1, 0, 8),"pillar1","left"], [(1, 0, 2),"pillar2","left"], [(13, 0, 8),"pillar3","right"], [(13, 0, 2),"pillar4","right"],
                 ],
-        "reception_desk": [[(5, 0, 9),"reception_desk1"],
+        "reception_desk": [[(2.5, 0, 9),"reception_desk1"],
                 ],
-        "carpet": [["#91261f", (6.5, 0, 0),(8.5, 0, 0),(8.5, 0, 8),(6.5, 0, 8),"carpet1"],["#91261f", (5, 0, 8),(5, 0, 6.5),(10, 0, 6.5),(10, 0, 8),"carpet1"],
+        "carpet": [["#91261f", (2.5, 0, 8),(2.5, 0, 6.5),(9.5, 0, 6.5),(9.5, 0, 8),"carpet1"],["#91261f", (6.5, 0, 0),(8.5, 0, 0),(8.5, 0, 8),(6.5, 0, 8),"carpet2"],
+                   ["#91261f", (0, 0, 4),(6.5, 0, 4),(6.5, 0, 5.5),(0, 0, 5.5),"carpet3"],
                 ],
-        "chandelier": [[(5.3, 8, 6),"chandelier1"],
-                ],  
+        "chandelier": [[(6, 8, 6),"chandelier1"],
+                ],        
+        "key_shelf": [[(2.5, 1.5, 10.0),"key_shelf1"],
+                ],
+        "picture": [{"coord":(2, 1.1, 9),"image": "desk_bell.png", "is_riddle": False,  # (desk bell to call for hotel receptionist)
+                     "direction": "right","unique_id": "picture1", "pic_move_coord": (1040,625), "draw_frame": False,
+                     "is_clickable": True,"pic_resize": (35,41),
+                     "action_sequence": "call_hotel_receptionist"}
+                ],
+        "lift_door": [[(0, 0, 4),"lift_door1",4],
+                ]
 }
 
 all_rooms = {

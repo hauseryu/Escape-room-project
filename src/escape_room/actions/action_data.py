@@ -110,6 +110,16 @@ call_mrs_hudson = [
     [action.inventory_item_appears,"water_glass","water_glass1","water_glass.png",(50, 100),(40, 80)]
 ]
 
+call_hotel_receptionist = [
+    [action.play_sound,"room_bell.wav"],
+    [action.figure_appears,"Hotel_Receptionist","hotel_receptionist.png",
+            1100,580,120,180]
+]
+
+lift_moves_to_ground = [
+    [action.lift_floor_change,-4,"room_bell.wav"],    
+]
+
 game_over = [
     [action.game_over]
 ]

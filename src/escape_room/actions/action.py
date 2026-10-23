@@ -27,6 +27,20 @@ def time_elapse(action_mgr,time,sound=None):
     else:
         action_mgr.execute_next_action()
 
+def lift_floor_change(action_mgr,floor,sound=None):
+    print(f"[DEBUG] Lift floor changes to: {floor}")    
+    lift = ContextManager().get_lift()
+    canvas = ContextManager().get_canvas()
+    counter = floor  # Assuming a fixed time for lift movement
+    if lift != None and canvas != None and counter != 0:
+        if counter<0:
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift,canvas,sound)
+        else:
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift,canvas,sound)
+    else:
+        action_mgr.execute_next_action()
+
+
 def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,
                    action_sequence_talk=None,action_sequence_generic=None):
     print(f"[DEBUG] Person appears: {figure}")
@@ -215,6 +229,23 @@ def time_elapse_callback(action_mgr,counter,clock,canvas,sound):
 
 def show_speechbubble_callback(action_mgr):
     action_mgr.execute_next_action()
+
+def lift_floor_change_callback(action_mgr, counter, lift, canvas, sound):   
+    lift.draw_delete()
+    current_floor = lift.get_floor()
+    if counter<0:
+        lift.set_floor(current_floor-1)
+    elif counter>0:
+        lift.set_floor(current_floor+1)
+    lift.draw(canvas)
+    _play_sound(sound)
+    if counter!=0:
+        if counter<0:
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter+1,lift,canvas,sound)
+        else:
+            canvas.after(ELAPSE_TIME,time_elapse_callback,action_mgr,counter-1,lift,canvas,sound)
+    else:
+        action_mgr.execute_next_action()
 
 # check actions (return a boolean value which can be evaluated by caller)
 def check_figure_in_room(action_mgr,figure_name):

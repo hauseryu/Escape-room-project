@@ -9,7 +9,7 @@ import numpy as np
 
 # convert 3D coordinates to 2D coordinates
 vanishing_point = None
-def compute_2d_coordinates(x, y, z, win_width,win_height,shift_coordinates = (0,0,0)):
+def compute_2d_coordinates(x, y, z, win_width = globals.canvas_width, win_height = globals.canvas_height, shift_coordinates = (0,0,0)):
     global vanishing_point
     vanish_pnt_x = vanishing_point["x"]
     x+=shift_coordinates[0]
@@ -191,7 +191,8 @@ def draw_arc(canvas, x, y, z, radius, color, start, extent, tag=None, shift_coor
 def clicked(event,tag,object,canvas,world_coordinates,arc_coordinates=None):
     if tag == "light_switch" or tag[0:6] == "letter":
         object.clicked(event,tag,object,canvas,world_coordinates,arc_coordinates)
-    if tag == "safe" or tag == "wardrobe" or tag == "bench" or tag == "chair" or tag == "table" or tag == "hotel_door":
+    if tag == "safe" or tag == "wardrobe" or tag == "bench" or tag == "chair" or \
+        tag == "table" or tag == "hotel_door" or tag == "lift_button":
         object.clicked(event,tag,object,canvas,world_coordinates)
 
 

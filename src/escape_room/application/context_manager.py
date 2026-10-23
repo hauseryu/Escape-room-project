@@ -62,6 +62,13 @@ class ContextManager():
     def get_clock(self):
         return self.clock
 
+    # lift object set/get
+    def set_lift(self,lift):
+        self.lift = lift
+
+    def get_lift(self):
+        return self.lift
+
     # canvas set/get
     def set_canvas(self,canvas):
         self.canvas = canvas

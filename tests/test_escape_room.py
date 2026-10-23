@@ -25,6 +25,7 @@ from src.escape_room.objects.letter import Letter
 from src.escape_room.objects.fireplace import Fireplace
 from src.escape_room.objects.window import Window
 from src.escape_room.objects.metal_cassette import MetalCassette
+from src.escape_room.objects.lift_door import LiftDoor
 from src.escape_room.application.context_manager import ContextManager
 from src.escape_room.actions.action import ActionManager
 from src.escape_room.room.room_state import RoomState
@@ -181,6 +182,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.poker = [FakeDrawable()]
         app.room.diamond = [FakeDrawable()]
         app.room.metal_cassette = [MagicMock()] #[MetalCassette()]
+        app.room.lift_door = [MagicMock()] #[LiftDoor()]
+        app.room.key_shelf = [MagicMock()] # [KeyShelf()]
         app.room.figure = []
         app.room.hotel_door = []
         app.room.coin = []
@@ -309,6 +312,8 @@ class EscapeRoomTest(unittest.TestCase):
         app.room.poker = [FakeDrawable()]
         app.room.diamond = [FakeDrawable()]
         app.room.metal_cassette = [MagicMock()] #[MetalCassette()]
+        app.room.lift_door = [MagicMock()] #[LiftDoor()]
+        app.room.key_shelf = [MagicMock()] # [KeyShelf()]
         app.room.figure = []
         app.room.hotel_door = []
         app.room.coin = []
