@@ -6,7 +6,7 @@ from escape_room.objects.letter import Letter
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.objects.figure import Figure
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
-from src.llm.dialog import Dialog
+from src.chatbot.dialog import Dialog
 import winsound
 
 # specific actions
@@ -43,18 +43,24 @@ def figure_disappears(action_mgr,figure):
     ContextManager().get_room().remove_figure(figure)
     action_mgr.execute_next_action()
                    
-def figure_talks(action_mgr,figure,speech,figure_id,player_role,button_text="End Dialog",entry_field=True,position="bottom"):
+def figure_talks(action_mgr,figure,speech,player_role,action_data=None,
+                 button_text="End Dialog",entry_field=True,speech_text=None):
     print(f"[DEBUG] Person talks: {figure}")
-    speech_bubble = SpeechBubble([speech]) 
-    speech_bubble.show_bubble(ContextManager().get_canvas(),position)
+    if speech_text!=None:
+        speech_bubble = SpeechBubble([speech_text]) 
+    elif speech!=None:
+        speech_bubble = SpeechBubble([speech['text']]) 
+    speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
+    ContextManager().set_current_speech_bubble(speech_bubble)
     bubble_entry=None
     if entry_field:
         speech_bubble2 = SpeechBubble(["You:"])
         bubble_entry = speech_bubble2.show_bubble(ContextManager().get_canvas(),skip_overlay=True,
-                                                entry_field=entry_field,position=position,
-                                                button_text=button_text,action_data="sherlock_client_disappears")
+                                                entry_field=entry_field,position="bottom",
+                                                button_text=button_text,action_data=action_data)
     if bubble_entry!=None:
-        bubble_entry.bind("<Return>", lambda event: process_entry(event, bubble_entry, speech_bubble, figure, figure_id, player_role))
+        bubble_entry.bind("<Return>", lambda event: process_entry(action_mgr,event, bubble_entry, speech_bubble, 
+                                                                  figure, player_role,speech))
 
 def letter_appears(action_mgr,unique_id,action_sequence=None):
     print(f"[DEBUG] Letter appears: {unique_id}")
@@ -141,15 +147,6 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     obj.draw(canvas)
     action_mgr.execute_next_action()
 
-def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, figure_id, player_role):
-    if not hasattr(process_entry, "dialog"):
-        process_entry.dialog = Dialog()
-    dialog = process_entry.dialog
-    player_message = event.widget.get()
-    event.widget.delete(0, len(event.widget.get()))
-    npc_response = dialog.talk_with_npc(figure_id, player_role, player_message)
-    figure_talks(figure, npc_response, figure_id, player_role)
-
 def play_sound(action_mgr,sound):
     _play_sound(sound)
     action_mgr.execute_next_action()
@@ -182,6 +179,15 @@ def set_action_data_dict(action_data_dict):
     global action_data_dictionary
     action_data_dictionary = action_data_dict
 
+def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, player_role, speech):
+    if not hasattr(process_entry, "dialog"):
+        process_entry.dialog = ContextManager().get_current_dialog()
+    dialog = process_entry.dialog
+    player_message = event.widget.get()
+    event.widget.delete(0, len(event.widget.get()))
+    npc_response = dialog.talk_with_npc(player_role, figure, player_message, speech, speech_bubble)
+    figure_talks(action_mgr,figure, speech, player_role, speech_text=npc_response)
+    
 def _play_sound(sound):
     if sound==None:
         return
@@ -218,6 +224,13 @@ def check_figure_in_room(action_mgr,figure_name):
     else:
         return True
 
+def check_figure_not_yet_in_room(action_mgr,figure_name):
+    state = ContextManager().get_room_state().get_object_state("figure",figure_name)
+    if state=="not_in_room":
+        return True
+    else:
+        return False
+    
 def check_object_state(action_mgr,object,unique_id,value):
     room_state = ContextManager().get_room_state()
     state = room_state.get_state_object(object,unique_id)

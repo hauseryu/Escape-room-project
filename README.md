@@ -44,6 +44,22 @@ python -m unittest discover -s tests
 2) restart the Python development environment
 3) run the EscapeApp
 
+## Usage of Ollama (small language model = SLM)
+1) download Ollama
+https://ollama.com/download
+==> after installation, Ollama is shown in the system tray
+==> right-click the symbol and select "quit" to terminate the process
+==> with "ollama server", ollama can be started within normal cmd terminal
+
+2) load qwen model
+ollama run qwen3.5:2b --think=false
+==> you get an ollama prompt where you can try out the model
+==> the --think option blocks output of the thinking process
+
+3) set system environment variable OLLAMA_IGPU_ENABLE to 1
+=> when the model is used, the GPU usage should go up
+(this can be checked in the Windows task manager -> performance(Leistung))
+
 ## Project Structure
 
 ```text

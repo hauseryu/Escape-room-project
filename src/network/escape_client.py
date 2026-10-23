@@ -101,12 +101,13 @@ class EscapeClient:
         if self.client_socket:
             self.client_socket.close()
 
-    def send_action(self, action_type, player=None, inventory=None, object_id=None, owner=None, json_payload = None):
+    def send_action(self, action_type, json_payload = None, parameter_container=None):
         """ useful method to send actions to the sever via the GUI class."""
         if not self.client_socket:
             print("⚠️ No active server connection.")
             return
-            
+        if parameter_container!=None:
+            event_data=parameter_container['event_data']
         if action_type == "chat_message":
             payload = json_payload
         elif action_type == "update_player_list":
@@ -115,13 +116,23 @@ class EscapeClient:
                 "player_name": self.player_name,
                 "role": self.role
             }
-        else:
+        elif action_type == 'send_inventory':
             payload = {
                 "action": action_type,
-                "player_name": player,
-                "inventory": inventory,
-                "object_id": object_id,
-                "owner": owner
+                "player_name": event_data.get("player_name"),
+                "inventory": event_data.get("inventory"),
+                "object_id": parameter_container["object_id"],
+                "owner": parameter_container["object_owner"]
+            }
+        elif action_type == "send_chatbot_message":
+            payload = {
+                "action": action_type,
+                "player_name": parameter_container["player_name"],
+                "message": event_data.get("message"),
+                "first_message": event_data.get("first_message"),
+                "player_role": event_data.get("player_role"),
+                "figure": event_data.get("figure"),
+                "story_index": event_data.get("story_index")
             }
         try:
             json_string = json.dumps(payload)
