@@ -77,7 +77,9 @@ def generate_riddle(chatbot_callback=None):
             f"COMMAND: GENERATE_RIDDLE_WITH_TOPICS (topics={themes_text})"
         )
 
-    text = ContextManager().get_chatbot_client().send_message_simple(system_prompt,prompt_riddle,None,chatbot_callback)            
+    player_name = ContextManager().get_player_name()
+    text = ContextManager().get_chatbot_client().send_message_simple(system_prompt,prompt_riddle,player_name,
+                                                                     None,chatbot_callback)            
 
     if text == None:
         return (None,None)

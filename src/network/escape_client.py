@@ -134,6 +134,13 @@ class EscapeClient:
                 "figure": event_data.get("figure"),
                 "story_index": event_data.get("story_index")
             }
+        elif action_type == "send_chatbot_message_simple":
+            payload = {
+                "action": action_type,
+                "player_name": event_data.get("player_name"),
+                "system_prompt": event_data.get("system_prompt"),
+                "user_prompt": event_data.get("user_prompt"),
+            }
         try:
             json_string = json.dumps(payload)
             self.client_socket.sendall(json_string.encode("utf-8"))

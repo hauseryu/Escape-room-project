@@ -38,7 +38,6 @@ class ChatbotClient:
 
     # on the client side, we call the server to communicate with the chatbot
     def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):    
-    # def on_player_icon_click(self, event, player_name):
         """Event handler triggered when message has to be sent to chatbot."""
         print(f"[Client] send action 'send_chatbot_message' to server!")       
         # transfer player list to GUI
@@ -112,7 +111,8 @@ class ChatbotClient:
         user_prompt = prompt_dialog 
 
         stream_thread = threading.Thread(target=self._stream_prozess, 
-                                         args=('',user_prompt,speech_bubble, None, dialog, player_name, figure, server_instance))
+                                         args=('',user_prompt,speech_bubble, None, dialog, player_name, 
+                                               figure, server_instance))
         stream_thread.daemon = True
         stream_thread.start()
         return '' # return empty string => start text should not show up again
@@ -123,11 +123,30 @@ class ChatbotClient:
     def get_chatbot_type(self):
         return CHATBOT_TYPE
 
-    def send_message_simple(self,system_prompt,user_prompt,speech_bubble=None,chatbot_callback=None):
+    def send_message_simple(self,system_prompt,user_prompt,player_name,speech_bubble=None,chatbot_callback=None):
+        """Event handler triggered when message has to be sent to chatbot."""
+        print(f"[Client] send action 'send_chatbot_message' to server!")       
+        # set callback function for the GUI to handle the chatbot answer
+        ContextManager().set_chatbot_callback(chatbot_callback)
+        # transfer player list to GUI
+        event_send_chatbot_message = {
+            "action": "send_chatbot_message_simple", 
+            "player_name": player_name,
+            "system_prompt": system_prompt,
+            "user_prompt": user_prompt
+        }
+        room = ContextManager().get_room()
+        room.icon_queue.put(event_send_chatbot_message)
+        # fire event for the canvas master window
+        room.master.event_generate("<<IconEvent>>", when="tail")
+
+    def _send_message_simple(self,system_prompt,user_prompt,player_name,speech_bubble=None,chatbot_callback=None,
+                             server_instance=None):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_simple_llm(system_prompt+user_prompt)
         elif CHATBOT_TYPE=='SLM':
-            return self.send_message_simple_slm(system_prompt,user_prompt,speech_bubble,chatbot_callback)
+            return self.send_message_simple_slm(system_prompt,user_prompt,player_name,speech_bubble,
+                                                chatbot_callback,server_instance)
         
     def send_message_simple_llm(self,message):
 
@@ -148,13 +167,15 @@ class ChatbotClient:
             text = "riddle currently not available!"
         return text
 
-    def send_message_simple_slm(self,system_prompt,user_prompt,speech_bubble,chatbot_callback):
-        stream_thread = threading.Thread(target=self._stream_prozess, args=(system_prompt,user_prompt,speech_bubble, chatbot_callback))
+    def send_message_simple_slm(self,system_prompt,user_prompt,player_name,speech_bubble,chatbot_callback,server_instance):
+        stream_thread = threading.Thread(target=self._stream_prozess, 
+                                         args=(system_prompt,user_prompt,speech_bubble, chatbot_callback,None,
+                                               player_name,None,server_instance,True))
         stream_thread.daemon = True
         stream_thread.start()
 
     def _stream_prozess(self, system_prompt,user_prompt, speech_bubble, chatbot_callback, 
-                        dialog=None, player_name=None, figure=None, server_instance=None):
+                        dialog=None, player_name=None, figure=None, server_instance=None, simple_mode=False):
         canvas = ContextManager().get_room().canvas_area
         text = ''
         try:
@@ -178,8 +199,9 @@ class ChatbotClient:
                 word_fragment = chunk['message']['content']
                 text+=word_fragment
                 
-                # each fragment is passed to GUI via .after() 
-                canvas.after(0, self._add_word_fragment, word_fragment,speech_bubble, player_name, server_instance)
+                # each fragment is passed to GUI via .after() -> only in normal mode (simple_mode=False)                 
+                if not simple_mode:
+                    canvas.after(0, self._add_word_fragment, word_fragment,speech_bubble, player_name, server_instance)
                 
         except Exception as e:
             canvas.after(0, self._add_word_fragment, f"\n[Fehler: {e}]",speech_bubble, player_name, server_instance)
@@ -194,6 +216,12 @@ class ChatbotClient:
             else:
                 dialog = ContextManager().get_current_dialog()
                 dialog.add_message(text,figure)
+        if server_instance!=None and simple_mode:
+            action = "chatbot_answer_simple"
+            parameter_container = {}
+            parameter_container["message"] = text
+            parameter_container["player_name"] = player_name
+            server_instance.client_send_update(action,parameter_container)
 
     def _add_word_fragment(self, text, speech_bubble, player_name, server_instance):
         # remove text if a speech bubble is associated

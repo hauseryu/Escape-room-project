@@ -67,6 +67,18 @@ class EscapeServer():
                     chatbot_client._send_message(message,first_message,player_name,player_role,figure,speech,
                                                  speech_bubble=None,dialog=None,server_instance=self)
 
+                # SCENARIO: passing over message to all players ("send_chat_message_simple")
+                elif action == "send_chatbot_message_simple":
+                    player_name = game_data.get("player_name") # player to whom chatbot message is to be sent
+                    system_prompt = game_data.get("system_prompt") # system prompt for chatbot
+                    user_prompt = game_data.get("user_prompt") # user prompt for chatbot
+                    print(f"[DEBUG] Server [action: {action}] received from player {player_name}," \
+                          f"system_prompt: {system_prompt}, user_prompt: {user_prompt}")
+
+                    # send message to chatbot client
+                    chatbot_client = ContextManager().get_chatbot_client()
+                    chatbot_client._send_message_simple(system_prompt,user_prompt,player_name,server_instance=self)
+
                 # SCENARIO: passing over message to all players ("chat_message")
                 elif action == "chat_message":
                     sent_from = game_data.get("sent_from")
@@ -129,6 +141,16 @@ class EscapeServer():
                 "action": action,
                 "message": parameter_container["message"],
                 "start_flag": parameter_container["start_flag"]
+            }
+            json_string = json.dumps(payload)
+            player_name = parameter_container["player_name"]
+            with players_lock:
+                if player_name in active_players:
+                    active_players[player_name]["queue"].put(json_string)
+        elif action == "chatbot_answer_simple":
+            payload = {
+                "action": action,
+                "message": parameter_container["message"]
             }
             json_string = json.dumps(payload)
             player_name = parameter_container["player_name"]
