@@ -25,6 +25,7 @@ class ContextManager():
             self.player_name  = None
             self.current_speech_bubble = None
             self.current_dialog = None
+            self.chatbot_callback = None
             
     @staticmethod
     def get_image_path() -> Path:
@@ -126,3 +127,9 @@ class ContextManager():
 
     def get_current_dialog(self):
         return self.current_dialog
+
+    def set_chatbot_callback(self,callback):
+        self.chatbot_callback = callback
+
+    def get_chatbot_callback(self):
+        return self.chatbot_callback
