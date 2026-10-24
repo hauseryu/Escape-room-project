@@ -14,19 +14,40 @@ active_players = {}
 players_lock = threading.Lock() # protects dictionary against competing access from different threads
 
 class EscapeServer():
+
+    def receive_messages(self,client_socket):
+        """ read data from socket and return complete, single messages back to caller """
+        data_buffer = ""
+        
+        while True:
+            # 1. get new data, if delimiter is not in buffer
+            if '\n' not in data_buffer:
+                chunk = client_socket.recv(1024).decode('utf-8')
+                if not chunk:
+                    return # connection closed, finish generator
+                data_buffer += chunk
+
+            # 2. process all complete messages from the buffer
+            while '\n' in data_buffer:
+                message, data_buffer = data_buffer.split('\n', 1)
+                if message.strip():
+                    yield message  # return complete message to caller
+
     def client_receive_loop(self,client_socket, player_name, outgoing_queue):
         """ receives actions of player and processes escape room logic."""
         print(f"[SERVER] {player_name} has entered the room.")
-        
-        while True:
-            try:
-                data = client_socket.recv(1024)
-                if not data:
-                    print(f"[SERVER] Player {player_name} has closed the connection.")
-                    break
-                    
-                # we use JSON for structured game data
-                game_data = json.loads(data.decode("utf-8"))
+
+        try:
+            for message in self.receive_messages(client_socket):
+
+                # 1. Validierung: Versuchen zu parsen
+                try:
+                    # we use JSON for structured game data
+                    game_data = json.loads(message)
+                except json.JSONDecodeError:
+                    print(f"[SERVER] Invalid JSON format from {player_name}. Ignoring message.")
+                    continue  # jump to next message
+                
                 action = game_data.get("action")
                 
                 # SCENARIO: passing over item ("send_inventory")
@@ -96,13 +117,9 @@ class EscapeServer():
                     active_players[player_name]["role"] = role
                     self.broadcast_player_list()
 
-            except json.JSONDecodeError:
-                print(f"[FEHLER] invalid data format from {player_name}")
-            except Exception as excp:
-                break
-            except (ConnectionResetError, BrokenPipeError):
-                # Fall B: Client-App wurde abrupt beendet (z.B. Task-Manager oder Absturz)
-                print(f"connection to player {player_name} unexpectedly broken.")
+        except (ConnectionResetError, BrokenPipeError, TimeoutError):
+            # Fall B: Client-App wurde abrupt beendet (z.B. Task-Manager oder Absturz)
+            print(f"connection to player {player_name} unexpectedly broken.")
 
         # player leaves the game
         print(f"[ROOM] {player_name} has left the game.")

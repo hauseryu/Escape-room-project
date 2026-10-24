@@ -33,7 +33,9 @@ class EscapeClient:
                 "icon": self.player_icon_number,
                 "role": self.role
             }
-            self.client_socket.sendall(json.dumps(reg_payload).encode("utf-8"))
+            json_string = json.dumps(reg_payload)
+            package = (json_string + "\n").encode('utf-8')
+            self.client_socket.sendall(package)
             print(f"[CLIENT] Registered successfully as '{self.player_name}'.")
 
             # 4. create background thread for permanent reception thread 
@@ -143,7 +145,8 @@ class EscapeClient:
             }
         try:
             json_string = json.dumps(payload)
-            self.client_socket.sendall(json_string.encode("utf-8"))
+            package = (json_string + "\n").encode('utf-8')
+            self.client_socket.sendall(package)
             print(f"[DEBUG] Client->Server [action:{action_type}]")
         except Exception as e:
             print(f"error during sending: {e}")
