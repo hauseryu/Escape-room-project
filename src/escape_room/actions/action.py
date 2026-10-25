@@ -237,9 +237,9 @@ def lift_floor_change_callback(action_mgr, counter, lift, canvas, sound):
         lift.set_floor(current_floor-1)
     elif counter>0:
         lift.set_floor(current_floor+1)
-    lift.draw(canvas)
-    _play_sound(sound)
+    lift.draw(canvas)    
     if counter!=0:
+        _play_sound(sound)
         if counter<0:
             canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter+1,lift,canvas,sound)
         else:

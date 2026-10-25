@@ -352,7 +352,7 @@ class Room(tkinter.Frame):
         # create lift door
         try:
             for index,lift_door in enumerate(self.room_data["lift_door"]):
-                obj = LiftDoor(room_data,index)
+                obj = LiftDoor(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
                 self.lift_door.append(obj)
         except KeyError: pass
 

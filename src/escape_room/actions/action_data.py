@@ -19,6 +19,10 @@ check_hotel_door_activation = [
     [action.check_object_state,"hotel_door","hotel_door1","active"]
 ]
 
+check_lift_door_activation = [
+    [action.check_object_state,"lift_door","lift_door1","active"]
+]
+
 check_secret_compartment_opened = [
     [action.check_object_state,"fireplace","fireplace1","secret compartment opened"]
 ]
