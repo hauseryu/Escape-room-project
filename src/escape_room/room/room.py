@@ -705,6 +705,13 @@ class Room(tkinter.Frame):
                         # write word fragment to end of text field and scroll automatically
                         curr_speech_bubble.add_word_to_text_area(text)
 
+                elif event_type == "chatbot_answer_simple":
+                    text = event_data.get("message")
+                    print(f"[GUI Event] received chatbot answer (simple mode): {text}")
+                    callback = ContextManager().get_chatbot_callback()
+                    if callback is not None:
+                        callback(text)  # call the callback function with the received text
+
                 elif event_type == "chat_message":
                     print("[GUI Event] received chat message")
                     text = event_data.get("text")
@@ -742,6 +749,10 @@ class Room(tkinter.Frame):
         if event_type == "send_chatbot_message":
             print(f"[GUI Event] received send_chatbot_message event")
             parameter_container["player_name"]=self.player_name # server is to sent message to own player
+            self.game_client.send_action(event_type,parameter_container=parameter_container)
+        if event_type == "send_chatbot_message_simple":
+            print(f"[GUI Event] received send_chat_message_simple event")
+            parameter_container["event_data"]=event_data 
             self.game_client.send_action(event_type,parameter_container=parameter_container)
         
     def on_message_event(self, event):
