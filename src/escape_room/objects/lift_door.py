@@ -1,17 +1,22 @@
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.gui_utilities.confirmation_popup import ConfirmationPopup
 
 import math
 
 class LiftDoor():
-    def __init__(self, room_data, index):
+    def __init__(self, room_data, index, room_state, next_room_callback=None):
 
         # evaluate room data
         (x,y,z) = room_data["lift_door"][index][0] # get lift door coordinates (first element in list)
         self.unique_id = room_data["lift_door"][index][1]
         self.floor = room_data["lift_door"][index][2]
+        self.next_room = room_data["lift_door"][index][3]
+        self.check_action = room_data["lift_door"][index][4]
         self.index = index
         self.room_data = room_data
+        self.room_state = room_state
+        self.next_room_callback = next_room_callback
         self.shift_coordinates = (x-0,y-0,z-5)
         
         self.elevator_gate_coordinates = [
@@ -121,15 +126,17 @@ class LiftDoor():
         ]
         ContextManager().set_lift(self)
         self.set_floor(self.floor)
+        self.state = "closed"
 
 
-    def draw(self, canvas):
-        # draw outline
-        graphics.draw(canvas,self.stone_arch_coordinates,shift_coordinates=self.shift_coordinates, tag="lift_door")
-        #graphics.draw(canvas,self.elevator_gate_open_coordinates, shift_coordinates=self.shift_coordinates)
-        graphics.draw(canvas,self.elevator_gate_coordinates, shift_coordinates=self.shift_coordinates, tag="lift_door")
+    def draw(self, canvas):        
+        graphics.draw(canvas,self.stone_arch_coordinates,shift_coordinates=self.shift_coordinates)
         graphics.draw(canvas,self.call_button, object=self, shift_coordinates=self.shift_coordinates, tag = "lift_button")
-
+        
+        if self.state == "closed":
+            graphics.draw(canvas,self.elevator_gate_coordinates, object=self, shift_coordinates=self.shift_coordinates, tag="lift_door")
+        elif self.state == "open":
+            graphics.draw(canvas,self.elevator_gate_open_coordinates, object=self, shift_coordinates=self.shift_coordinates, tag="lift_door")        
 
         floors = ["5", "4", "3", "2", "1", "G"]
         for i, floor in enumerate(floors):
@@ -153,6 +160,8 @@ class LiftDoor():
 
     def set_floor(self, floor):
         self.floor = floor
+        if self.floor == 0:
+            self.room_state.set_state_object("lift_door", self.unique_id, "active")
         angle_add = [0, 3, 7, 10, 18, 20]
         hand_x, hand_y = self.calculate_circle_pos(radius=0.1, angle=(floor * 36 + 270 + angle_add[floor]), x=-1, y=-1, z=-1)
         self.coordinates_hand = [
@@ -168,5 +177,34 @@ class LiftDoor():
         ContextManager().get_canvas().delete("lift_hand")
 
     def clicked(self, event, tag, object, canvas, world_coordinates):
-        if self.floor>3:
+        if tag == "lift_button" and self.floor>3:
             ContextManager().get_action_manager().execute_action_sequence("lift_moves_to_ground")
+        elif tag == "lift_door" and self.state == "closed":
+            print("[DEBUG] lift door clicked!")
+            open_allowed = True
+            if self.check_action != None:
+                open_allowed = ContextManager().get_action_manager().execute_action_sequence(self.check_action)
+            if not open_allowed:
+                print("[DEBUG] opening lift door not allowed!")
+                return
+            
+            main_window = event.widget.winfo_toplevel()                
+            # Call our custom English popup instead of messagebox
+            popup = ConfirmationPopup(
+                parent_window=main_window,
+                title="Change Room",
+                message="Do you want to enter the lift?",
+                mouse_x=event.x_root, # global position of mouse coordinates
+                mouse_y=event.y_root
+            )
+            # The code pauses until the user clicks a button, then checks popup.result
+            if popup.result:
+                print("[GAME] Player decided to change the room.")
+                if self.next_room_callback != None:
+                    self.next_room_callback(self.next_room, True)
+            else:
+                print("[GAME] Player decided to stay in the current room.")
+            
+            self.state = "open" # now open
+            self.draw_delete()
+            self.draw(canvas)
