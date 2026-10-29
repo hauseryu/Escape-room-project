@@ -124,6 +124,13 @@ lift_moves_to_ground = [
     [action.lift_floor_change,-4,"room_bell.wav"],    
 ]
 
+lift_boy_appears = [
+    [action.figure_appears,"Lift_Boy","lift_boy.png", # appears at hotel entrance
+            590,320,500,1000, # 755x1507
+            None, # "hotel_portier_talk", # action sequence for talk
+            None ] # "hotel_portier_receive_coin"],  # generic sequence
+]
+
 game_over = [
     [action.game_over]
 ]

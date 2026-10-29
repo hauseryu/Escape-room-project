@@ -161,7 +161,7 @@ hotel_entrance = {
                   "check_action_draw": "check_plant_moved"}, 
                 ],                
         "action_sequence": [ "hotel_portier_appears"
-        ]
+                ]
 }
 
 hotel_lobby = {  
@@ -184,8 +184,31 @@ hotel_lobby = {
                      "is_clickable": True,"pic_resize": (35,41),
                      "action_sequence": "call_hotel_receptionist"}
                 ],
-        "lift_door": [[(0, 0, 4),"lift_door1",4,"hotel_entrance","check_lift_door_activation"],
+        "lift_door": [[(0, 0, 4),"lift_door1",4,"hotel_lift","check_lift_door_activation"],
                 ]
+}
+
+hotel_lift = {  
+        "room_name": "hotel_lift",
+        "room_coordinates": "hotel_lift",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)     
+        "lift": [[(0.02, 0.10, 0.30),"lift1"],
+                ],
+        "picture": [{"coord":(0.5,1,2),"image": "Lift_lamp.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture1", "pic_move_coord": (960,290), 
+                     "pic_resize": (135,202), # original size: 270,404
+                     "draw_frame": False},
+                    {"coord":(0.5,1,2),"image": "lift_control_element.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture2", "pic_move_coord": (523,440), 
+                     "pic_resize": (110,346), # original size: 155,346
+                     "draw_frame": False},     
+                    {"coord":(0.5,1,2),"image": "floor_indicator.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture3", "pic_move_coord": (673,260), 
+                     "pic_resize": (145,130), # original size: 186,168
+                     "draw_frame": False},                                         
+                   ],
+        "action_sequence": [ "lift_boy_appears"
+                ]                   
 }
 
 all_rooms = {
@@ -195,5 +218,6 @@ all_rooms = {
         "riddle_key_room": riddle_key_room,
         "living_room_221b": living_room_221b,
         "hotel_entrance": hotel_entrance,
-        "hotel_lobby": hotel_lobby
+        "hotel_lobby": hotel_lobby,
+        "hotel_lift": hotel_lift
 }

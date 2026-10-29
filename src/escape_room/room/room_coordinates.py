@@ -13,6 +13,7 @@ BRICK_WALL = IMAGE_DIR / "brick_wall.jpg"
 MARBLE_TEXTURE = IMAGE_DIR / "marble_texture.jpg"
 MOSAIC_TEXTURE = IMAGE_DIR / "mosaic_texture.jpg"
 WOOD_TEXTURE = IMAGE_DIR / "wood_texture.jpg"
+LIFT_MARBLE_TEXTURE = IMAGE_DIR / "texture_lift_marble.jpg"
 
 room_coord = {
     "normal_room": {
@@ -228,5 +229,55 @@ room_coord = {
                      (15, 8, 10), 
                      (0, 8, 10)]                     
                      ],
-                    }
+                    },
+    "hotel_lift": {
+                    "vanishing_point": {"x": 1}, #4
+                    "coord": [
+                    # [("white",FLOOR_TEXTURE),
+                    #  (0,0,0), # floor
+                    #  (8,0,0), 
+                    #  (8,0,4), 
+                    #  (0,0,4)], 
+                    # ["white",
+                    #  (0,3,0), # ceiling
+                    #  (8,3,0), 
+                    #  (8,3,4), 
+                    #  (0,3,4)],                
+                    # ["white",
+                    #  (0,0,0), # wall left
+                    #  (0,3,0),
+                    #  (0,3,4), 
+                    #  (0,0,4)],               
+                    # ["white",
+                    #  (8,0,0), # wall right
+                    #  (8,3,0), 
+                    #  (8,3,4), 
+                    #  (8,0,4)],                 
+                    # ["white", # back wall
+                    #  (0, 0, 4), 
+                    #  (8, 0, 4), 
+                    #  (8, 3, 4), 
+                    #  (0, 3, 4)]
+
+                    # Floor
+                    [("white",LIFT_MARBLE_TEXTURE), (0, 0, 0), (2, 0, 0),
+                    (2, 0, 2), (0, 0, 2)],
+
+                    # Ceiling
+                    [("white",LIFT_MARBLE_TEXTURE), (0, 3, 0), (2, 3, 0),
+                    (2, 3, 2), (0, 3, 2)],
+
+                    # Back wall
+                    ["#38251B", (0, 0, 2), (2, 0, 2),
+                    (2, 3, 2), (0, 3, 2)],
+
+                    # Left wall
+                    ["#D8D6D1", (0, 0, 0), (0, 0, 2),
+                    (0, 3, 2), (0, 3, 0)],
+
+                    # Right wall
+                    ["#38251B", (2, 0, 0), (2, 0, 2),
+                    (2, 3, 2), (2, 3, 0)],                    
+                                ]
+                     }               
 }

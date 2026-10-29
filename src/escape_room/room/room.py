@@ -36,6 +36,7 @@ from src.escape_room.objects.chandelier import Chandelier
 from src.escape_room.objects.reception_desk import ReceptionDesk
 from src.escape_room.objects.key_shelf import KeyShelf
 from src.escape_room.objects.lift_door import LiftDoor
+from src.escape_room.objects.lift import Lift
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -112,12 +113,13 @@ class Room(tkinter.Frame):
         self.chandelier = []
         self.key_shelf = []
         self.lift_door = []
+        self.lift = []
 
         for door in self.door:
             door.is_open = False        
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room,next_room=False):
+    def init_room(self,game_client,room_data = room_data.start_room,next_room=False): # start_room
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
@@ -355,6 +357,12 @@ class Room(tkinter.Frame):
                 obj = LiftDoor(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
                 self.lift_door.append(obj)
         except KeyError: pass
+        # create lift 
+        try:
+            for index,lift in enumerate(self.room_data["lift"]):
+                obj = Lift(room_data,index,self.room_state)
+                self.lift.append(obj)
+        except KeyError: pass
 
         # create figures
         # check for state if figure has appeared
@@ -413,6 +421,10 @@ class Room(tkinter.Frame):
             # draw the floor and walls with textures
             graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
                                         shift_coordinates=shift_coord)
+
+        # draw the lift
+        for lift in self.lift:
+            lift.draw(self.canvas_area)
 
         # draw the doors
         for index,door in enumerate(self.door):
