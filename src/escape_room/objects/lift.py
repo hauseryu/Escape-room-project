@@ -36,6 +36,7 @@ class Lift():
         self.room_state = room_state
         self.set_floor(0) # default floor is 0 (ground floor)
         self.unique_id = room_data["lift"][index][1]
+        ContextManager().set_lift(self)
 
 # ============================================================
 # 1. Left elevator gate
@@ -140,6 +141,12 @@ class Lift():
                       tag="elevator_right_wall",object=self)
         graphics.draw(canvas, self.elevator_front_wall_coordinates, shift_coordinates=self.shift_coordinates,
                       tag="elevator_front_wall",object=self)
+        graphics.draw(canvas,self.coordinates_hand, shift_coordinates=self.shift_coordinates, tag="lift_hand")
+
+    def draw_hand_delete(self,canvas):
+        canvas.delete("lift_hand")
+
+    def draw_hand(self,canvas):
         graphics.draw(canvas,self.coordinates_hand, shift_coordinates=self.shift_coordinates, tag="lift_hand")
 
     def calculate_circle_pos(self, radius, angle, x, y, z):

@@ -63,6 +63,13 @@ class ContextManager():
     def get_clock(self):
         return self.clock
 
+    # lift door object set/get
+    def set_lift_door(self,lift):
+        self.lift_door = lift
+
+    def get_lift_door(self):
+        return self.lift_door
+
     # lift object set/get
     def set_lift(self,lift):
         self.lift = lift

@@ -119,7 +119,7 @@ class Room(tkinter.Frame):
             door.is_open = False        
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room,next_room=False): # start_room
+    def init_room(self,game_client,room_data = room_data.hotel_lift,next_room=False): # start_room
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
