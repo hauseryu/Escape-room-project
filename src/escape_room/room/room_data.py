@@ -161,7 +161,7 @@ hotel_entrance = {
                   "check_action_draw": "check_plant_moved"}, 
                 ],                
         "action_sequence": [ "hotel_portier_appears"
-        ]
+                ]
 }
 
 hotel_lobby = {  
@@ -184,8 +184,93 @@ hotel_lobby = {
                      "is_clickable": True,"pic_resize": (35,41),
                      "action_sequence": "call_hotel_receptionist"}
                 ],
-        "lift_door": [[(0, 0, 4),"lift_door1",4,"hotel_entrance","check_lift_door_activation"],
+        "lift_door": [[(0, 0, 4),"lift_door1",4,"hotel_lift","check_lift_door_activation"],
                 ]
+}
+
+hotel_lift = {  
+        "room_name": "hotel_lift",
+        "room_coordinates": "hotel_lift",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)     
+        "lift": [[(0.02, 0.10, 0.30),"lift1",
+                  0,"hotel_lobby",
+                  1,"hotel_floor1",
+                  2,"hotel_floor2",
+                  3,"hotel_floor3",
+                  4,"hotel_floor4",
+                  5,"hotel_floor5"],
+                ],
+        "picture": [{"coord":(0.5,1,2),"image": "Lift_lamp.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture1", "pic_move_coord": (960,290), 
+                     "pic_resize": (135,202), # original size: 270,404
+                     "draw_frame": False},
+                    {"coord":(0.5,1,2),"image": "lift_control_element.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture2", "pic_move_coord": (523,440), 
+                     "pic_resize": (110,346), # original size: 155,346
+                     "draw_frame": False},     
+                    {"coord":(0.5,1,2),"image": "floor_indicator.png", "is_riddle": False,  
+                     "direction": "front","unique_id": "picture3", "pic_move_coord": (673,260), 
+                     "pic_resize": (145,130), # original size: 186,168
+                     "draw_frame": False},                                         
+                   ],
+        "action_sequence": [ "lift_boy_appears"
+                ]                   
+}
+
+# doorway to hotel floor 1
+hotel_floor1 = {  
+        "room_name": "hotel_floor1",
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [
+                 [(2, 0, 2.2), "brown", "left", "door1", 
+                  True, True, False, "","door1"], # door1: player door, can be opened
+                 [(3.8, 0, 4), "brown", "front", "door2", True, True, False, "","door2"],
+                 [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
+                 [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
+                ],      
+        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+                ],       
+}
+
+# doorway to hotel floor 2
+hotel_floor2 = {  
+        "room_name": "hotel_floor2",    
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, True, "doorway","door1"],   # door1: player door, can be opened
+                ],                 
+}
+
+# doorway to hotel floor 3
+hotel_floor3 = {  
+        "room_name": "hotel_floor3",    
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, True, "doorway","door1"],   # door1: player door, can be opened
+                ],                 
+}
+
+# doorway to hotel floor 4
+hotel_floor4 = {  
+        "room_name": "hotel_floor4",    
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, True, "doorway","door1"],   # door1: player door, can be opened
+                ],                 
+}
+
+# doorway to hotel floor 5      
+hotel_floor5 = {  
+        "room_name": "hotel_floor5",    
+        "room_coordinates": "doorway",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
+                  True, True, "doorway","door1"],   # door1: player door, can be opened
+                ],                 
 }
 
 all_rooms = {
@@ -195,5 +280,11 @@ all_rooms = {
         "riddle_key_room": riddle_key_room,
         "living_room_221b": living_room_221b,
         "hotel_entrance": hotel_entrance,
-        "hotel_lobby": hotel_lobby
+        "hotel_lobby": hotel_lobby,
+        "hotel_lift": hotel_lift,
+        "hotel_floor1": hotel_floor1,
+        "hotel_floor2": hotel_floor2,
+        "hotel_floor3": hotel_floor3,
+        "hotel_floor4": hotel_floor4,
+        "hotel_floor5": hotel_floor5
 }

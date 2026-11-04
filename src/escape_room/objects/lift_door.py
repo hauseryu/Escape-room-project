@@ -124,7 +124,7 @@ class LiftDoor():
             ["#9e9065",(0.00, 1.3, 6.55),(0.00, 1.3, 6.7),(0.00, 1.45, 6.7),(0.00, 1.45, 6.55)],
             ["#f5e9c4",(0.00, 1.33, 6.58),(0.00, 1.33, 6.67),(0.00, 1.42, 6.625)],           
         ]
-        ContextManager().set_lift(self)
+        ContextManager().set_lift_door(self)
         self.set_floor(self.floor)
         self.state = "closed"
 

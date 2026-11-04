@@ -36,6 +36,7 @@ from src.escape_room.objects.chandelier import Chandelier
 from src.escape_room.objects.reception_desk import ReceptionDesk
 from src.escape_room.objects.key_shelf import KeyShelf
 from src.escape_room.objects.lift_door import LiftDoor
+from src.escape_room.objects.lift import Lift
 from src.escape_room.objects.inventory_item import InventoryItem
 from src.escape_room.toolbar.menu import Menu
 from src.escape_room.application.context_manager import ContextManager
@@ -99,6 +100,7 @@ class Room(tkinter.Frame):
         self.bench = []
         self.fireplace = []
         self.magnifier = []
+        self.book = []
         self.water_glass = []
         self.window = []
         self.poker = []
@@ -112,12 +114,13 @@ class Room(tkinter.Frame):
         self.chandelier = []
         self.key_shelf = []
         self.lift_door = []
+        self.lift = []
 
         for door in self.door:
             door.is_open = False        
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room,next_room=False):
+    def init_room(self,game_client,room_data = room_data.start_room,next_room=False): # start_room
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
@@ -289,6 +292,14 @@ class Room(tkinter.Frame):
                 if obj!=None:
                     self.magnifier.append(obj)
         except KeyError: pass
+        # create books
+        try:
+            for index,book in enumerate(self.room_data["book"]):
+                obj = InventoryItem.create("book",room_data,index,
+                                    "book.png",self.inventory,self.room_state, resize_inventory=(50, 50))
+                if obj!=None:
+                    self.book.append(obj)
+        except KeyError: pass
         # create glass of water
         try:
             for index,water_glass in enumerate(self.room_data["water_glass"]):
@@ -355,6 +366,12 @@ class Room(tkinter.Frame):
                 obj = LiftDoor(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
                 self.lift_door.append(obj)
         except KeyError: pass
+        # create lift 
+        try:
+            for index,lift in enumerate(self.room_data["lift"]):
+                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
+                self.lift.append(obj)
+        except KeyError: pass
 
         # create figures
         # check for state if figure has appeared
@@ -392,6 +409,8 @@ class Room(tkinter.Frame):
             revolver.object_owner = self.player_name
         for water_glass in self.water_glass:
             water_glass.object_owner = self.player_name
+        for book in self.book:
+            book.object_owner = self.player_name
         for poker in self.poker:
             poker.object_owner = self.player_name
         for diamond in self.diamond:
@@ -413,6 +432,10 @@ class Room(tkinter.Frame):
             # draw the floor and walls with textures
             graphics.draw_textured_polygon(self.canvas_area, polygon, texture, color,
                                         shift_coordinates=shift_coord)
+
+        # draw the lift
+        for lift in self.lift:
+            lift.draw(self.canvas_area)
 
         # draw the doors
         for index,door in enumerate(self.door):
@@ -499,6 +522,10 @@ class Room(tkinter.Frame):
         # draw the magnifier
         for magnifier in self.magnifier:
             magnifier.draw(self.canvas_area)
+
+        # draw the books
+        for book in self.book:
+            book.draw(self.canvas_area)
 
         # draw the glass of water
         for water_glass in self.water_glass:
@@ -629,6 +656,7 @@ class Room(tkinter.Frame):
         elif object.name == "revolver": object_list = self.revolver
         elif object.name == "water_glass": object_list = self.water_glass
         elif object.name == "magnifier": object_list = self.magnifier
+        elif object.name == "book": object_list = self.book
         elif object.name == "letter": object_list = self.letter
         elif object.name == "poker": object_list = self.poker
         elif object.name == "diamond": object_list = self.diamond

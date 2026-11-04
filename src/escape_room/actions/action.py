@@ -9,6 +9,9 @@ from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.chatbot.dialog import Dialog
 import winsound
 
+# parameter container, used to pass parameters to callback functions
+parameter_container = {}
+
 # specific actions
 def game_over(action_mgr):
     canvas = ContextManager().get_canvas()
@@ -29,17 +32,28 @@ def time_elapse(action_mgr,time,sound=None):
 
 def lift_floor_change(action_mgr,floor,sound=None):
     print(f"[DEBUG] Lift floor changes to: {floor}")    
-    lift = ContextManager().get_lift()
+    lift_door = ContextManager().get_lift_door()
     canvas = ContextManager().get_canvas()
     counter = floor  # Assuming a fixed time for lift movement
-    if lift != None and canvas != None and counter != 0:
+    
+    if lift_door != None and canvas != None and counter != 0:
         if counter<0:
-            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift,canvas,sound)
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift_door,canvas,sound)
         else:
-            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift,canvas,sound)
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter,lift_door,canvas,sound)
     else:
         action_mgr.execute_next_action()
 
+def lift_room_floor_change(action_mgr,sound=None):
+    floor = parameter_container.get("choice")
+    print(f"[DEBUG] Lift floor changes to: {floor}")    
+    lift = ContextManager().get_lift()
+    canvas = ContextManager().get_canvas()
+    current_floor = lift.get_floor()
+    if lift != None and canvas != None and floor != current_floor:
+        canvas.after(ELAPSE_TIME,lift_room_floor_change_callback,action_mgr,lift,canvas,sound)
+    else:
+        action_mgr.execute_next_action()
 
 def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,
                    action_sequence_talk=None,action_sequence_generic=None):
@@ -58,12 +72,14 @@ def figure_disappears(action_mgr,figure):
     action_mgr.execute_next_action()
                    
 def figure_talks(action_mgr,figure,speech,player_role,action_data=None,
-                 button_text="End Dialog",entry_field=True,speech_text=None):
+                 button_text="End Dialog",entry_field=True,speech_text=None,speech_choices=None,
+                 speech_choices_action_sequence=None):
     print(f"[DEBUG] Person talks: {figure}")
+    parameter_container["speech_choices_action_sequence"] = speech_choices_action_sequence
     if speech_text!=None:
-        speech_bubble = SpeechBubble([speech_text]) 
+        speech_bubble = SpeechBubble([speech_text],speech_choices,choice_callback,action_mgr) 
     elif speech!=None:
-        speech_bubble = SpeechBubble([speech['text']]) 
+        speech_bubble = SpeechBubble([speech['text']],speech_choices,choice_callback,action_mgr) 
     speech_bubble.show_bubble(ContextManager().get_canvas(),"top")
     ContextManager().set_current_speech_bubble(speech_bubble)
     bubble_entry=None
@@ -156,6 +172,13 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
                             image,inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_room=(70, 130), 
                             resize_inventory=(40, 80))    
+
+    if name == "book":
+        image = "book.png"
+        obj = InventoryItem("book", None, None,
+                            image, inventory, room_state, unique_id=unique_id,
+                            object_owner=object_owner, resize_room=(100, 150),
+                            resize_inventory=(50, 75))
     
     inventory.addObject(name,unique_id, object_owner,obj)
     obj.draw(canvas)
@@ -230,20 +253,42 @@ def time_elapse_callback(action_mgr,counter,clock,canvas,sound):
 def show_speechbubble_callback(action_mgr):
     action_mgr.execute_next_action()
 
-def lift_floor_change_callback(action_mgr, counter, lift, canvas, sound):   
-    lift.draw_delete()
-    current_floor = lift.get_floor()
+def lift_floor_change_callback(action_mgr, counter, lift_door, canvas, sound):   
+    lift_door.draw_delete()
+    current_floor = lift_door.get_floor()
     if counter<0:
-        lift.set_floor(current_floor-1)
+        lift_door.set_floor(current_floor-1)
     elif counter>0:
-        lift.set_floor(current_floor+1)
-    lift.draw(canvas)    
+        lift_door.set_floor(current_floor+1)
+    lift_door.draw(canvas)    
     if counter!=0:
         _play_sound(sound)
         if counter<0:
-            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter+1,lift,canvas,sound)
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter+1,lift_door,canvas,sound)
         else:
-            canvas.after(ELAPSE_TIME,time_elapse_callback,action_mgr,counter-1,lift,canvas,sound)
+            canvas.after(ELAPSE_TIME,lift_floor_change_callback,action_mgr,counter-1,lift_door,canvas,sound)
+    else:
+        action_mgr.execute_next_action()
+
+def choice_callback(choices,choice,action_mgr):
+    print(f"[DEBUG] Choice made: {choice}")
+    parameter_container["choice"] = choice
+    action_sequence = parameter_container.get("speech_choices_action_sequence")
+    if action_sequence != None:
+        action_mgr.execute_action_sequence(action_sequence)
+
+def lift_room_floor_change_callback(action_mgr, lift, canvas, sound):   
+    lift.draw_hand_delete(canvas)
+    floor = parameter_container.get("choice")
+    current_floor = lift.get_floor()
+    if floor<current_floor:
+        lift.set_floor(current_floor-1)
+    elif floor>current_floor:
+        lift.set_floor(current_floor+1)
+    lift.draw_hand(canvas)    
+    if floor!=current_floor:
+        _play_sound(sound)
+        canvas.after(ELAPSE_TIME,lift_room_floor_change_callback,action_mgr,lift,canvas,sound)
     else:
         action_mgr.execute_next_action()
 
@@ -275,7 +320,14 @@ def check_is_selected_inventory(action_mgr,name,unique_id):
     inv = ContextManager().get_inventory()
     player = ContextManager().get_player_name()
     return inv.objectIsSelected(name,unique_id,player)
-    
+
+def check_inventory_contains(action_mgr,name,unique_id):
+    inv = ContextManager().get_inventory()
+    player = ContextManager().get_player_name()
+    if inv.objectInInventory(name,unique_id,player):
+        return False
+    return True
+
 # factory to create manager instances
 def action_mgr_create():
     return ActionManager()
