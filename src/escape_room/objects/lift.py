@@ -1,5 +1,8 @@
+from numpy.strings import index
+
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.gui_utilities.confirmation_popup import ConfirmationPopup
 import math
 
 # Room dimensions:
@@ -29,14 +32,26 @@ def quad_z(z, x1, y1, x2, y2, color):
     ]
 
 class Lift():
-    def __init__(self, room_data, index, room_state):
+    def __init__(self, room_data, index, room_state, next_room_callback=None):
         coord = room_data["lift"][index][0] # get lift coordinates (first element in list)
         shift_coord = (coord[0]-0.02,coord[1]-0.10,coord[2]-0.30)        
         self.shift_coordinates = shift_coord
         self.room_state = room_state
         self.set_floor(0) # default floor is 0 (ground floor)
         self.unique_id = room_data["lift"][index][1]
+        self.state = "closed" # default state is closed
+        self.next_room_callback = next_room_callback
         ContextManager().set_lift(self)
+        ind = 2 # start index to read from room_data
+        self.floor_room = []
+        try:
+            while True:
+                floor = room_data["lift"][index][ind] # get floor to exit
+                next_room = room_data["lift"][index][ind+1] # get next room to go to
+                self.floor_room.append((floor, next_room))
+                ind+=2
+        except IndexError:
+            pass
 
 # ============================================================
 # 1. Left elevator gate
@@ -178,3 +193,31 @@ class Lift():
         # ContextManager().get_canvas().delete("lift_door")
         ContextManager().get_canvas().delete("lift_button")
         ContextManager().get_canvas().delete("lift_hand")
+
+    def clicked(self, event, tag, object, canvas, world_coordinates):
+        if tag=="elevator_gate" and self.state == "closed":
+            print("[DEBUG] elevator gate clicked!")
+            main_window = event.widget.winfo_toplevel()                
+            # Call our custom English popup instead of messagebox
+            popup = ConfirmationPopup(
+                parent_window=main_window,
+                title="Change Room",
+                message="Do you want to exit the lift?",
+                mouse_x=event.x_root, # global position of mouse coordinates
+                mouse_y=event.y_root
+            )
+            # The code pauses until the user clicks a button, then checks popup.result
+            if popup.result:
+                print("[GAME] Player decided to change the room.")
+                for (floor, next_room) in self.floor_room:
+                    if floor == self.floor:
+                        print(f"[GAME] Changing to room: {next_room}")
+                        if self.next_room_callback != None:
+                            self.next_room_callback(next_room, True)
+                        else:
+                            print("[GAME] No next room callback defined.")
+                        break
+            else:
+                print("[GAME] Player decided to stay in the current room.")
+            
+            self.state = "open" # now open

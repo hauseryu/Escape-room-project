@@ -360,7 +360,7 @@ class Room(tkinter.Frame):
         # create lift 
         try:
             for index,lift in enumerate(self.room_data["lift"]):
-                obj = Lift(room_data,index,self.room_state)
+                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
                 self.lift.append(obj)
         except KeyError: pass
 

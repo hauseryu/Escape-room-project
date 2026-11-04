@@ -253,7 +253,7 @@ def lift_floor_change_callback(action_mgr, counter, lift_door, canvas, sound):
         lift_door.set_floor(current_floor-1)
     elif counter>0:
         lift_door.set_floor(current_floor+1)
-    lift_door.draw_hand(canvas)    
+    lift_door.draw(canvas)    
     if counter!=0:
         _play_sound(sound)
         if counter<0:

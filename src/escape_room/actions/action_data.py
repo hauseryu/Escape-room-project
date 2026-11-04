@@ -136,10 +136,14 @@ lift_moves = [
 ]
 
 lift_boy_appears = [
-    [action.figure_appears,"Lift_Boy","lift_boy.png", # appears at hotel entrance
-            590,320,500,1000, # 755x1507
+    [action.figure_appears,"Lift_Boy","lift_boy1.png", # appears at hotel entrance
+            798,320,274,1000, # original: 755x1507 -> 590,320 -> 500,1000
             "lift_boy_talk", # action sequence for talk
-            None ] # "hotel_portier_receive_coin"],  # generic sequence
+            None ], 
+    [action.figure_appears,"Lift_Boy","lift_boy2.png", # appears at hotel entrance
+            590,531,207,102, # original: 755x1507 -> 590,320
+            None, 
+            None ], 
 ]
 
 game_over = [
