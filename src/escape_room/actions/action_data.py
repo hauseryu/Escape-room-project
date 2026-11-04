@@ -55,6 +55,24 @@ hotel_portier_talk = [
         None,False], # no button text, no entry field, positon (None/top/bottom)
 ]
 
+hotel_receptionist_talk = [
+    [action.skip_actions_if_false,1,action.check_inventory_contains,"book","book1"],
+    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist, "Sherlock Holmes", 
+        "hotel_receptionist_give_guestbook"], 
+    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist2, "Sherlock Holmes"]
+]
+
+hotel_receptionist_give_guestbook = [
+    [action.show_speechbubble,"Here is the guestbook. It may help you with your investigation."],
+    [action.put_item_in_inventory,"book","book1"],
+]
+
+call_hotel_receptionist = [
+    [action.play_sound,"room_bell.wav"],
+    [action.figure_appears,"Hotel_Receptionist","hotel_receptionist.png",
+            1100,580,120,180, "hotel_receptionist_talk"]
+]
+
 sherlock_client_appears = [
     [action.time_elapse,3,"clock_tick.wav"], # 3 hours to pass until client comes, w/ sound
     [action.figure_appears,"Mortimer Jackson","sherlock_client.png",
@@ -112,12 +130,6 @@ call_mrs_hudson = [
     [action.figure_appears,"MrsHudson","Mrs_Hudson_with_tablet.png",
             1200,605,340,480],
     [action.inventory_item_appears,"water_glass","water_glass1","water_glass.png",(50, 100),(40, 80)]
-]
-
-call_hotel_receptionist = [
-    [action.play_sound,"room_bell.wav"],
-    [action.figure_appears,"Hotel_Receptionist","hotel_receptionist.png",
-            1100,580,120,180]
 ]
 
 lift_moves_to_ground = [

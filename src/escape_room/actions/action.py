@@ -156,6 +156,13 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
                             image,inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_room=(70, 130), 
                             resize_inventory=(40, 80))    
+
+    if name == "book":
+        image = "book.png"
+        obj = InventoryItem("book", None, None,
+                            image, inventory, room_state, unique_id=unique_id,
+                            object_owner=object_owner, resize_room=(100, 150),
+                            resize_inventory=(50, 75))
     
     inventory.addObject(name,unique_id, object_owner,obj)
     obj.draw(canvas)
@@ -275,7 +282,14 @@ def check_is_selected_inventory(action_mgr,name,unique_id):
     inv = ContextManager().get_inventory()
     player = ContextManager().get_player_name()
     return inv.objectIsSelected(name,unique_id,player)
-    
+
+def check_inventory_contains(action_mgr,name,unique_id):
+    inv = ContextManager().get_inventory()
+    player = ContextManager().get_player_name()
+    if inv.objectInInventory(name,unique_id,player):
+        return False
+    return True
+
 # factory to create manager instances
 def action_mgr_create():
     return ActionManager()

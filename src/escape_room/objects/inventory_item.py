@@ -6,6 +6,8 @@ from PIL import Image, ImageTk, ImageOps
 from src.escape_room.application import globals
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
+from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 
 class InventoryItem:
     # normal constructor should not be called directly => see below create method
@@ -45,7 +47,10 @@ class InventoryItem:
             # coin
             if name == "coin": 
                 image = "gold_coin.png" # original size of picture: 201, 152
-                shift_coordinates = (x-0.5,y-1.25,z-5.0)                          
+                shift_coordinates = (x-0.5,y-1.25,z-5.0)        
+            if name == "book":
+                image = "book.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)
             self.object_owner = ""
             try:
                 self.check_action_draw = room_data[name][index]["check_action_draw"] # get action that checks preconditions for drawing
@@ -179,6 +184,9 @@ class InventoryItem:
             ContextManager().get_room().removeObject(self)
         else:
             self.inventory.selectObject(self.name, self.unique_id, self.object_owner)
+            if self.name == "book":
+                book_display = SpeechBubble(speech_data.guest_book_content)
+                book_display.show_bubble(self.canvas)
         self.draw(self.canvas)
 
     def _show_tooltip(self, event, x, y, text, tooltip_data):
