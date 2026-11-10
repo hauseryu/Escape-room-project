@@ -45,15 +45,6 @@ class Figure():
         # safeguard: check if pixel_x and pixel_y are within the image dimensions
         if not (0 <= pixel_x < img_w and 0 <= pixel_y < img_h):
             return
-        if self.image.getpixel((pixel_x, pixel_y))[3] == 0: # check if the pixel is transparent (alpha channel = 0)
-            print(f"[DEBUG]: clicked on transparent pixel of figure {self.figure_name}")
-            # unbind the click event for this figure and generate a new click event for the canvas at the same coordinates
-            canvas.tag_bind(self.image_id,"<Button-1>","") 
-            canvas.event_generate("<Button-1>", x=event.x, y=event.y, warp=True)
-            # rebind the click event for this figure
-            canvas.tag_bind(self.image_id,"<Button-1>",
-                lambda e: self.figure_clicked(canvas, e))
-            return # event processing stops here, no further action for this figure
         # evaluate generic action sequence
         if self.action_sequence_generic!=None:            
             ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_generic)
