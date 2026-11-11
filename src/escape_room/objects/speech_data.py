@@ -46,7 +46,7 @@ story_hotel_receptionist2 = {
                     'text': f"""
                     Dear sir, is there something else I can help you with?
                     """,
-                    'name': 'story_hotel_receptionist',
+                    'name': 'story_hotel_receptionist2',
                     'story_index': 4
 }
 
