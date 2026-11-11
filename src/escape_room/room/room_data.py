@@ -229,7 +229,7 @@ hotel_floor1 = {
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
-        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+        "lift_door": [[(0, 0, 0.2),"lift_door1",1,"hotel_lift",None,1], # 1 => set lift floor to 1 (hotel floor 1) when lift door is opened
                 ],       
         "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
                 ],                   
@@ -269,7 +269,7 @@ hotel_floor2 = {
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
-        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+        "lift_door": [[(0, 0, 0.2),"lift_door1",2,"hotel_lift",None,2], # 2 => set lift floor to 2 (hotel floor 2) when lift door is opened                          
                 ],    
         "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
                 ],                   
@@ -309,7 +309,7 @@ hotel_floor3 = {
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
-        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+        "lift_door": [[(0, 0, 0.2),"lift_door1",3,"hotel_lift",None,3], # 3 => set lift floor to 3 (hotel floor 3) when lift door is opened                          
                 ],   
         "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
                 ],                   
@@ -349,7 +349,7 @@ hotel_floor4 = {
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
-        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",None,4], # 4 => set lift floor to 4 (hotel floor 4) when lift door is opened                        
                 ],       
         "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
                 ],                   
@@ -389,7 +389,7 @@ hotel_floor5 = {
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
-        "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
+        "lift_door": [[(0, 0, 0.2),"lift_door1",5,"hotel_lift",None,5], # 5 => set lift floor to 5 (hotel floor 5) when lift door is opened                          
                 ],       
         "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
                 ],

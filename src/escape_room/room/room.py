@@ -80,6 +80,7 @@ class Room(tkinter.Frame):
         self.room_state = RoomState()
         ContextManager().set_room_state(self.room_state)
         self.reset_objects()
+        self.set_lift_floor = None
 
     # reset objects to initial state
     def reset_objects(self):
@@ -360,7 +361,8 @@ class Room(tkinter.Frame):
         # create lift 
         try:
             for index,lift in enumerate(self.room_data["lift"]):
-                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
+                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback,
+                           set_lift_floor=self.set_lift_floor)
                 self.lift.append(obj)
         except KeyError: pass
 
@@ -598,9 +600,10 @@ class Room(tkinter.Frame):
                     self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
-    def next_room_callback(self,next_room,exec_room_switch=False):
+    def next_room_callback(self,next_room,exec_room_switch=False,set_lift_floor=None):
         self.goto_next_room = True
         self.next_room = next_room
+        self.set_lift_floor = set_lift_floor
         if exec_room_switch:
             self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
 

@@ -13,6 +13,10 @@ class LiftDoor():
         self.floor = room_data["lift_door"][index][2]
         self.next_room = room_data["lift_door"][index][3]
         self.check_action = room_data["lift_door"][index][4]
+        try:
+            self.set_lift_floor = room_data["lift_door"][index][5] # optional: set lift floor when lift door is opened
+        except IndexError:
+            self.set_lift_floor = None
         self.index = index
         self.room_data = room_data
         self.room_state = room_state
@@ -201,7 +205,7 @@ class LiftDoor():
             if popup.result:
                 print("[GAME] Player decided to change the room.")
                 if self.next_room_callback != None:
-                    self.next_room_callback(self.next_room, True)
+                    self.next_room_callback(self.next_room, True, self.set_lift_floor)
             else:
                 print("[GAME] Player decided to stay in the current room.")
             

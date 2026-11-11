@@ -32,12 +32,15 @@ def quad_z(z, x1, y1, x2, y2, color):
     ]
 
 class Lift():
-    def __init__(self, room_data, index, room_state, next_room_callback=None):
+    def __init__(self, room_data, index, room_state, next_room_callback=None, set_lift_floor=None):
         coord = room_data["lift"][index][0] # get lift coordinates (first element in list)
         shift_coord = (coord[0]-0.02,coord[1]-0.10,coord[2]-0.30)        
         self.shift_coordinates = shift_coord
         self.room_state = room_state
-        self.set_floor(0) # default floor is 0 (ground floor)
+        if set_lift_floor is not None:
+            self.set_floor(set_lift_floor) # set lift floor if provided
+        else:
+            self.set_floor(0) # default floor is 0 (ground floor)
         self.unique_id = room_data["lift"][index][1]
         self.state = "closed" # default state is closed
         self.next_room_callback = next_room_callback
