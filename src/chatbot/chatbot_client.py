@@ -40,6 +40,7 @@ class ChatbotClient:
     def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog,speech_number=None):    
         """Event handler triggered when message has to be sent to chatbot."""
         print(f"[Client] send action 'send_chatbot_message' to server!")       
+        print("Speech number:", speech_number)
         # transfer player list to GUI
         event_send_chatbot_message = {
             "action": "send_chatbot_message", 
