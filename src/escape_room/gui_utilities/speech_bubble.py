@@ -3,11 +3,12 @@ from src.escape_room.application.context_manager import ContextManager
 
 class SpeechBubble:
 
-    def __init__(self,bubbles,choices=None,evaluate_choices_callback=None):
+    def __init__(self,bubbles,choices=None,evaluate_choices_callback=None,evaluate_choices_param=None):
         self.current_bubble = None
         self.bubbles = bubbles
         self.choices = choices
         self.evaluate_choices_callback = evaluate_choices_callback
+        self.evaluate_choices_param = evaluate_choices_param
         self.callback = None
         self.text_area = None
 
@@ -275,7 +276,11 @@ class SpeechBubble:
         print("[DEBUG] choice selected:",tag)
         choice=int(tag[6:]) # get choice number
         self.close_bubble(canvas) # after selection close the bubble
-        self.evaluate_choices_callback(self.choices,choice) # call callback to further evaluate the choice action sequence
+        if self.evaluate_choices_callback != None:
+            if self.evaluate_choices_param != None:
+                self.evaluate_choices_callback(self.choices,choice,self.evaluate_choices_param) # call callback to further evaluate choice
+            else:
+                self.evaluate_choices_callback(self.choices,choice) # call callback to further evaluate the choice
 
     def on_button_click(self, canvas, action_data=None):
         print("[DEBUG] button clicked!")

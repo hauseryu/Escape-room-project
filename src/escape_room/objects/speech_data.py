@@ -17,9 +17,27 @@ story_hotel_portier = {
                     'story_index': 1
 }
 
+story_lift_boy = {
+                    'text': f"""
+                    Dear sir, which floor do you want to go to?
+                    """,
+                    'name': 'story_lift_boy',
+                    'story_index': 2
+}
+
+choices_story_lift_boy = [
+    ("--> floor G","G"),
+    ("--> floor 1","1"),
+    ("--> floor 2","2"),
+    ("--> floor 3","3"),
+    ("--> floor 4","4"),
+    ("--> floor 5","5")
+]
+
 story_list = [
     story_mortimer_jackson,
-    story_hotel_portier
+    story_hotel_portier,
+    story_lift_boy
 ]
 
 model_mapping = {

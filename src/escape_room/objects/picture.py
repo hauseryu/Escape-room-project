@@ -169,6 +169,14 @@ class Picture:
                     break
 
     def draw(self, canvas, tag):
+        # determine pic movement coordinates, either 2d or 3d coordinates
+        # get move coordinates, either 2d or 3d coordinates
+        if len(self.pic_move_coord) == 2:
+            pic_move_x, pic_move_y = self.pic_move_coord
+        else:
+            x, y, z = self.pic_move_coord
+            # convert 3d coordinates to 2d coordinates
+            pic_move_x, pic_move_y = graphics.compute_2d_coordinates(x, y, z)
         # draw outline (frame)
         if self.draw_frame:
             graphics.draw(canvas,self.coordinates_frame,shift_coordinates=self.shift_coordinates)
@@ -179,9 +187,11 @@ class Picture:
             image_width = x2 - x1
             image_height = y2 - y1
         else:
-            (x1,y1)=self.pic_move_coord
-        image = Image.open(self.image_location)
+            # get move coordinates, either 2d or 3d coordinates
+           x1,y1 = pic_move_x, pic_move_y
         
+        image = Image.open(self.image_location)        
+
         if self.pic_resize == None:
             self.foto_image = ImageTk.PhotoImage(image, master=canvas)
         else:
@@ -191,11 +201,11 @@ class Picture:
             # 2. Das skalierte Bild an ImageTk übergeben
             self.foto_image = ImageTk.PhotoImage(resized_image, master=canvas)
         
-        # 3. Das Bild auf dem Canvas wie gewohnt platzieren
+        # position image on canvas 
         if self.is_riddle:
             self.image_id = canvas.create_image(x1, y1, anchor="nw", tags=self.unique_id, image=self.foto_image)
         else:
-            self.image_id = canvas.create_image(self.pic_move_coord[0], self.pic_move_coord[1], 
+            self.image_id = canvas.create_image(pic_move_x, pic_move_y, 
                                                 tags=self.unique_id, anchor="nw", image=self.foto_image)
 
         if self.is_clickable:

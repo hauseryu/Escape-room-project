@@ -13,6 +13,9 @@ BRICK_WALL = IMAGE_DIR / "brick_wall.jpg"
 MARBLE_TEXTURE = IMAGE_DIR / "marble_texture.jpg"
 MOSAIC_TEXTURE = IMAGE_DIR / "mosaic_texture.jpg"
 WOOD_TEXTURE = IMAGE_DIR / "wood_texture.jpg"
+LIFT_MARBLE_TEXTURE = IMAGE_DIR / "texture_lift_marble.jpg"
+WOOD_PARQUET_TEXTURE = IMAGE_DIR / "Texture_Wood_parquet.jpg"
+WALLPAPER_CLASSIC = IMAGE_DIR / "wallpaper_classic.jpg"
 
 room_coord = {
     "normal_room": {
@@ -45,20 +48,20 @@ room_coord = {
                      (0, 3, 4)]
                      ]
                      },
-    "doorway": {
+    "hotel_doorway": {
                     "vanishing_point": {"x": 4},
                     "coord": [    # part 1: 1m in front
-                    [("white",FLOOR_TEXTURE), # #8B4513
+                    [("white",WOOD_PARQUET_TEXTURE), # #8B4513
                      (0,0,0), # floor
                      (8,0,0), 
                      (8,0,2), 
                      (0,0,2)],
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (0,0,0), # wall left
                      (0,3,0), 
                      (0,3,2), 
                      (0,0,2)],
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (8,0,0), # wall right
                      (8,3,0), 
                      (8,3,2), 
@@ -69,28 +72,28 @@ room_coord = {
                      (8,3,2), 
                      (0,3,2)],
                     # part 2: wall left & right
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (0,0,2), # wall left upfront
                      (2,0,2), 
                      (2,3,2), 
                      (0,3,2)],
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (8,0,2), # wall right upfront
                      (6,0,2), 
                      (6,3,2), 
                      (8,3,2)],
                      # part 3: doorway
-                     [("white",FLOOR_TEXTURE), # #8B4513
+                     [("white",WOOD_PARQUET_TEXTURE), # #8B4513
                      (2,0,2), # floor
                      (6,0,2), 
                      (6,0,4), 
                      (2,0,4)],
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (2,0,2), # wall left
                      (2,3,2), 
                      (2,3,4), 
                      (2,0,4)],
-                    ["white",
+                    [("white",WALLPAPER_CLASSIC),
                      (6,0,2), # wall right
                      (6,3,2), 
                      (6,3,4), 
@@ -100,7 +103,7 @@ room_coord = {
                      (6,3,2), 
                      (6,3,4), 
                      (2,3,4)],
-                    ["white", # back wall
+                    [("white",WALLPAPER_CLASSIC), # back wall
                      (2, 0, 4), 
                      (6, 0, 4), 
                      (6, 3, 4), 
@@ -228,5 +231,30 @@ room_coord = {
                      (15, 8, 10), 
                      (0, 8, 10)]                     
                      ],
-                    }
+                    },
+    "hotel_lift": {
+                    "vanishing_point": {"x": 1}, #4
+                    "coord": [
+
+                    # Floor
+                    [("white",LIFT_MARBLE_TEXTURE), (0, 0, 0), (2, 0, 0),
+                    (2, 0, 2), (0, 0, 2)],
+
+                    # Ceiling
+                    [("white",LIFT_MARBLE_TEXTURE), (0, 3, 0), (2, 3, 0),
+                    (2, 3, 2), (0, 3, 2)],
+
+                    # Back wall
+                    ["#38251B", (0, 0, 2), (2, 0, 2),
+                    (2, 3, 2), (0, 3, 2)],
+
+                    # Left wall
+                    ["#D8D6D1", (0, 0, 0), (0, 0, 2),
+                    (0, 3, 2), (0, 3, 0)],
+
+                    # Right wall
+                    ["#38251B", (2, 0, 0), (2, 0, 2),
+                    (2, 3, 2), (2, 3, 0)],                    
+                                ]
+                     }               
 }

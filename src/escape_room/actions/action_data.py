@@ -52,7 +52,14 @@ sherlock_client_talk = [
 hotel_portier_talk = [
     [action.stop_sequence_conditionally,action.check_object_state,"hotel_door","hotel_door1",None],
     [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier, "Sherlock Holmes", None,
-        None,False], # no button text, no entry field, positon (None/top/bottom)
+        None,False], # no button text, no entry field, 
+]
+
+lift_boy_talk = [
+    [action.figure_talks,"Lift_Boy",speech_data.story_lift_boy, "Sherlock Holmes", None,
+        None,False,None, # no button text, no entry field, no speech text
+        speech_data.choices_story_lift_boy, # choices for the dialog box
+        "lift_moves"], # action sequence to be executed after the choice is made
 ]
 
 sherlock_client_appears = [
@@ -122,6 +129,21 @@ call_hotel_receptionist = [
 
 lift_moves_to_ground = [
     [action.lift_floor_change,-4,"room_bell.wav"],    
+]
+
+lift_moves = [
+    [action.lift_room_floor_change,"room_bell.wav"],    
+]
+
+lift_boy_appears = [
+    [action.figure_appears,"Lift_Boy","lift_boy1.png", # appears at hotel entrance
+            798,320,274,1000, # original: 755x1507 -> 590,320 -> 500,1000
+            "lift_boy_talk", # action sequence for talk
+            None ], 
+    [action.figure_appears,"Lift_Boy","lift_boy2.png", # appears at hotel entrance
+            590,531,207,102, # original: 755x1507 -> 590,320
+            None, 
+            None ], 
 ]
 
 game_over = [

@@ -13,6 +13,10 @@ class LiftDoor():
         self.floor = room_data["lift_door"][index][2]
         self.next_room = room_data["lift_door"][index][3]
         self.check_action = room_data["lift_door"][index][4]
+        try:
+            self.set_lift_floor = room_data["lift_door"][index][5] # optional: set lift floor when lift door is opened
+        except IndexError:
+            self.set_lift_floor = None
         self.index = index
         self.room_data = room_data
         self.room_state = room_state
@@ -124,7 +128,7 @@ class LiftDoor():
             ["#9e9065",(0.00, 1.3, 6.55),(0.00, 1.3, 6.7),(0.00, 1.45, 6.7),(0.00, 1.45, 6.55)],
             ["#f5e9c4",(0.00, 1.33, 6.58),(0.00, 1.33, 6.67),(0.00, 1.42, 6.625)],           
         ]
-        ContextManager().set_lift(self)
+        ContextManager().set_lift_door(self)
         self.set_floor(self.floor)
         self.state = "closed"
 
@@ -201,7 +205,7 @@ class LiftDoor():
             if popup.result:
                 print("[GAME] Player decided to change the room.")
                 if self.next_room_callback != None:
-                    self.next_room_callback(self.next_room, True)
+                    self.next_room_callback(self.next_room, True, self.set_lift_floor)
             else:
                 print("[GAME] Player decided to stay in the current room.")
             
