@@ -49,7 +49,7 @@ mystery_room = {
 # from mystery room -> front door 
 doorway = {  
         "room_name": "doorway",
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [[(3.2, 0, 4), "white", "front", "white_door", True, 
                   True, True, "doorway","door1"],   # door1: player door, can be opened
@@ -220,7 +220,7 @@ hotel_lift = {
 # doorway to hotel floor 1
 hotel_floor1 = {  
         "room_name": "hotel_floor1",
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
@@ -231,6 +231,8 @@ hotel_floor1 = {
                 ],      
         "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
                 ],       
+        "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
+                ],                   
         "picture": [
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_10_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (2,2.45,2.15), 
@@ -247,14 +249,18 @@ hotel_floor1 = {
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_13_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (8,3,1.6), 
                   "pic_resize": (308,205), # original size: 308, 205
-                  "draw_frame": False},                                      
+                  "draw_frame": False},       
+                 {"coord":(0.3,3,2),"image": "painting_young_woman.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
+                  "pic_resize": (228,284), # original size
+                  "draw_frame": False},       
                 ]
 }
 
-# doorway to hotel floor 2
+# hotel_doorway to hotel floor 2
 hotel_floor2 = {  
         "room_name": "hotel_floor2",    
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
@@ -264,7 +270,9 @@ hotel_floor2 = {
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
         "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
-                ],       
+                ],    
+        "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
+                ],                   
         "picture": [
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_20_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (2,2.45,2.15), 
@@ -281,14 +289,18 @@ hotel_floor2 = {
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_23_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (8,3,1.6), 
                   "pic_resize": (308,205), # original size: 308, 205
-                  "draw_frame": False},                                     
+                  "draw_frame": False},        
+                 {"coord":(0.3,3,2),"image": "painting_rich_man.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
+                  "pic_resize": (229,269), # original size
+                  "draw_frame": False},       
                 ]            
 }
 
 # doorway to hotel floor 3
 hotel_floor3 = {  
         "room_name": "hotel_floor3",    
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
@@ -298,7 +310,9 @@ hotel_floor3 = {
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
                 ],      
         "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
-                ],       
+                ],   
+        "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
+                ],                   
         "picture": [
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_30_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (2,2.45,2.15), 
@@ -315,14 +329,18 @@ hotel_floor3 = {
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_33_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (8,3,1.6), 
                   "pic_resize": (308,205), # original size: 308, 205
-                  "draw_frame": False},                                   
+                  "draw_frame": False},      
+                 {"coord":(0.3,3,2),"image": "painting_mona_lisa.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
+                  "pic_resize": (230,303), # original size
+                  "draw_frame": False},                                                      
                 ]               
 }
 
 # doorway to hotel floor 4
 hotel_floor4 = {  
         "room_name": "hotel_floor4",    
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
@@ -333,6 +351,8 @@ hotel_floor4 = {
                 ],      
         "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
                 ],       
+        "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
+                ],                   
         "picture": [
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_40_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (2,2.45,2.15), 
@@ -349,14 +369,18 @@ hotel_floor4 = {
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_43_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (8,3,1.6), 
                   "pic_resize": (308,205), # original size: 308, 205
-                  "draw_frame": False},                                   
+                  "draw_frame": False},      
+                 {"coord":(0.3,3,2),"image": "painting_woman_pearl_earring.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
+                  "pic_resize": (185,210), # original size
+                  "draw_frame": False},                                                  
                 ]              
 }
 
 # doorway to hotel floor 5      
 hotel_floor5 = {  
         "room_name": "hotel_floor5",    
-        "room_coordinates": "doorway",
+        "room_coordinates": "hotel_doorway",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
@@ -367,6 +391,8 @@ hotel_floor5 = {
                 ],      
         "lift_door": [[(0, 0, 0.2),"lift_door1",4,"hotel_lift",""],                           
                 ],       
+        "chandelier": [[(3.5, 3, 1.5),"chandelier1"],
+                ],
         "picture": [
                  {"coord":(0.5,1,2),"image": "hotel_door_plate_50_proj.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (2,2.45,2.15), 
@@ -384,6 +410,11 @@ hotel_floor5 = {
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (8,3,1.6), 
                   "pic_resize": (308,205), # original size: 308, 205
                   "draw_frame": False},                                 
+                 {"coord":(0.3,3,2),"image": "painting_bridge_over_pond.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
+                  "pic_resize": (229,223), # original size
+                  "draw_frame": False},                                                      
+
                 ]             
 }
 
