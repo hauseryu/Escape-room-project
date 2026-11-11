@@ -101,7 +101,7 @@ You must strictly follow the local RULES and EXAMPLES defined inside the active 
 
     </living_room_221b_talk_client>
 
-    <hotel_lobby_talk_receptionist mode="pure_dialogue" allows_riddle="false">
+    <hotel_lobby_talk_receptionist1 mode="pure_dialogue" allows_riddle="false">
         <description>At the receptionist desk of the Regency by Nestor hotel</description>
         
         You are the receptionist of the Regency by Nestor hotel where the diamond of a guest was stolen. Now you are talking to Sherlock Holmes and Dr. Watson who are investigating the case.
@@ -124,11 +124,11 @@ You must strictly follow the local RULES and EXAMPLES defined inside the active 
             </local_rules>
 
         <local_examples>
-        User: COMMAND: GENERATE_NEXT_RESPONSE_FOR_receptionist
+        User: COMMAND: GENERATE_NEXT_RESPONSE_FOR_Hotel_Receptionist1
 
         </local_examples>
 
-    </hotel_lobby_talk_receptionist>
+    </hotel_lobby_talk_receptionist1>
 
     <hotel_lobby_talk_receptionist2 mode="pure_dialogue" allows_riddle="false">
         <description>At the receptionist desk of the Regency by Nestor hotel</description>
@@ -152,7 +152,7 @@ You must strictly follow the local RULES and EXAMPLES defined inside the active 
             </local_rules>
 
         <local_examples>
-        User: COMMAND: GENERATE_NEXT_RESPONSE_FOR_receptionist2
+        User: COMMAND: GENERATE_NEXT_RESPONSE_FOR_Hotel_Receptionist2
 
         </local_examples>
 

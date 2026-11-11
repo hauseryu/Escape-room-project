@@ -12,7 +12,7 @@ class Dialog():
         self.chat_id = None
         self.messages = []
 
-    def talk_with_npc(self, player_role, figure, player_message, speech, speech_bubble):
+    def talk_with_npc(self, player_role, figure, player_message, speech, speech_bubble, speech_number=None):
         chatbot_type = self.client.get_chatbot_type()
         if chatbot_type=='LLM':
             zone_id = speech.model_mapping[speech['name']]['information_zone']
@@ -24,7 +24,7 @@ class Dialog():
                 message = player_role + " says: " + player_message
         elif chatbot_type=='SLM':
             message = "User (" + player_role + "): " + player_message
-        output_text = self.client.send_message(message,self.first_message,player_role,figure,speech,speech_bubble,self)
+        output_text = self.client.send_message(message,self.first_message,player_role,figure,speech,speech_bubble,self,speech_number)
         return output_text
 
     def reset_dialog(self):

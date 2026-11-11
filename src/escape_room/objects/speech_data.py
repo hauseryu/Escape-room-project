@@ -34,11 +34,11 @@ choices_story_lift_boy = [
     ("--> floor 5","5")
 ]
 
-story_hotel_receptionist = {
+story_hotel_receptionist1 = {
                     'text': f"""
                     Dear sir, how can I help you?
                     """,
-                    'name': 'story_hotel_receptionist',
+                    'name': 'story_hotel_receptionist1',
                     'story_index': 3
 }
 
@@ -54,7 +54,7 @@ story_list = [
     story_mortimer_jackson,
     story_hotel_portier,
     story_lift_boy,
-    story_hotel_receptionist,
+    story_hotel_receptionist1,
     story_hotel_receptionist2
 ]
 
@@ -63,8 +63,8 @@ model_mapping = {
             "slm_location_path": "<living_room_221b_talk_client>",
             "information_zone": 0,
             "non_player_character": 0},
-        "story_hotel_receptionist": {
-            "slm_location_path": "<hotel_lobby_talk_receptionist>",
+        "story_hotel_receptionist1": {
+            "slm_location_path": "<hotel_lobby_talk_receptionist1>",
             "information_zone": 0,
             "non_player_character": 1},
         "story_hotel_receptionist2": {

@@ -73,7 +73,7 @@ def figure_disappears(action_mgr,figure):
                    
 def figure_talks(action_mgr,figure,speech,player_role,action_data=None,
                  button_text="End Dialog",entry_field=True,speech_text=None,speech_choices=None,
-                 speech_choices_action_sequence=None):
+                 speech_choices_action_sequence=None,speech_number=None):
     print(f"[DEBUG] Person talks: {figure}")
     parameter_container["speech_choices_action_sequence"] = speech_choices_action_sequence
     if speech_text!=None:
@@ -90,7 +90,7 @@ def figure_talks(action_mgr,figure,speech,player_role,action_data=None,
                                                 button_text=button_text,action_data=action_data)
     if bubble_entry!=None:
         bubble_entry.bind("<Return>", lambda event: process_entry(action_mgr,event, bubble_entry, speech_bubble, 
-                                                                  figure, player_role,speech))
+                                                                  figure, player_role,speech,speech_number))
 
 def letter_appears(action_mgr,unique_id,action_sequence=None):
     print(f"[DEBUG] Letter appears: {unique_id}")
@@ -216,14 +216,14 @@ def set_action_data_dict(action_data_dict):
     global action_data_dictionary
     action_data_dictionary = action_data_dict
 
-def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, player_role, speech):
+def process_entry(action_mgr,event, bubble_entry, speech_bubble, figure, player_role, speech, speech_number=None):
     if not hasattr(process_entry, "dialog"):
         process_entry.dialog = ContextManager().get_current_dialog()
     dialog = process_entry.dialog
     player_message = event.widget.get()
     event.widget.delete(0, len(event.widget.get()))
-    npc_response = dialog.talk_with_npc(player_role, figure, player_message, speech, speech_bubble)
-    figure_talks(action_mgr,figure, speech, player_role, speech_text=npc_response)
+    npc_response = dialog.talk_with_npc(player_role, figure, player_message, speech, speech_bubble, speech_number)
+    figure_talks(action_mgr,figure, speech, player_role, speech_text=npc_response, speech_number=speech_number)
     
 def _play_sound(sound):
     if sound==None:

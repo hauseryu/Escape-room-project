@@ -64,7 +64,7 @@ lift_boy_talk = [
 
 hotel_receptionist_talk = [
     [action.skip_actions_if_false,1,action.check_inventory_contains,"book","book1"],
-    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist, "Sherlock Holmes", 
+    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist1, "Sherlock Holmes", 
         "hotel_receptionist_give_guestbook"], 
     [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist2, "Sherlock Holmes"]
 ]
