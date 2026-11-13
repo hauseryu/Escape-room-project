@@ -20,7 +20,7 @@ class InventoryItem:
             (x,y,z) = (0,0,0)
                     
         map_name_to_attributes = {
-            "key": ("key_transparent.png", (x-6.5, y-0.78, z-3.0),(40, 80)),
+            "key": ("key_transparent.png", (x-6.5, y-0.78, z-3.0),(50, 100)),
             "revolver": ("revolver.png", (x-6.5, y-0.78, z-3.0),(40, 80)),
             "magnifier": ("magnifier.png", (x-6.5, y-0.78, z-3.0),(40, 80)),
             "water_glass": ("water_glass.png", (x-5.0, y-1.0, z-3.0),(40, 80)),

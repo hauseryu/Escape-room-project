@@ -132,6 +132,10 @@ def inventory_item_appears(action_mgr,name,unique_id,image,resize_room=None,resi
 
 def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     inventory = ContextManager().get_inventory()
+    if inventory.inventoryIsFull():
+        print("[DEBUG] Inventory is full. Cannot add item.")
+        action_mgr.execute_next_action()
+        return
     room_state = ContextManager().get_room_state()
     canvas = ContextManager().get_canvas()
     if object_owner == None:
