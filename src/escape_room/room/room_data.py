@@ -71,8 +71,10 @@ living_room_221b = {
                 ],
         "chair": [[(4.00,0,2.00),"front","chair1"] 
                 ],
-        "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1","check_action_draw": "check_safe_open"}, 
-                {"coord": (4, 0.6, 3.90),"unique_id": "key2","check_action_draw": "check_metal_cassette_open"}
+        "key": [{"coord": (0.5,1.25,5.0),"unique_id": "key1",
+                 "check_action_draw": "check_safe_open","allow_transfer": True}, 
+                {"coord": (4, 0.6, 3.90),"unique_id": "key2",
+                 "check_action_draw": "check_metal_cassette_open","allow_transfer": True}
                 ],
         "picture": [{"coord":(1.35, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
                      "direction": "front","unique_id": "picture1", "needed_inventory": "magnifier", "is_clickable": True}, 
@@ -90,7 +92,7 @@ living_room_221b = {
                 ],
         "clock":[[(6, 0.42, 4.00)]
                 ],
-        "revolver":[{"coord": (-1,0, 3.1), "unique_id": "revolver1","role": "watson"} # revolver only available for role watson
+        "revolver":[{"coord": (-1,0, 3.1), "unique_id": "revolver1","role": "watson", "allow_transfer": False} # revolver only available for role watson
                 ],
         "bench": [[(1, 0.4, 1.8),"left","bench1",("x",1)] # movement vector: in x direction move 1 meter
                 ],
@@ -123,7 +125,7 @@ riddle_key_room = {
                 ],
         "chair": [ [(5.00,0,2.35),"right","chair1",("x",-1)] # movement vector in x-direction
                 ],
-        "key": [{"coord": (5.3,1.25,5.0),"unique_id": "key1"} # key 1 => key1 is a global identifier of the key!
+        "key": [{"coord": (5.3,1.25,5.0),"unique_id": "key1", "allow_transfer": True} # key 1 => key1 is a global identifier of the key!
                 ],
         "picture": [{"coord":(6.05, 2.35, 3.985),"image": "riddle_not_readable.png", "is_riddle": True, 
                      "direction": "front","unique_id": "picture1", "is_clickable": True},
