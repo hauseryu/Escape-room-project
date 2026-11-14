@@ -109,7 +109,10 @@ hotel_portier_appears = [
 
 hotel_portier_receive_coin = [
     [action.stop_sequence_conditionally,action.check_is_selected_inventory,"coin","coin1"],
-    [action.set_object_state,"hotel_door","hotel_door1","active"]
+    [action.set_object_state,"hotel_door","hotel_door1","active"],
+    [action.remove_selected_item_from_inventory],
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier_thanks, "Sherlock Holmes", None,
+        None,False] # no button text, no entry field, 
 ]
 
 call_mrs_hudson = [

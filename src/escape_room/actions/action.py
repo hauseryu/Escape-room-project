@@ -174,6 +174,17 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     obj.draw(canvas)
     action_mgr.execute_next_action()
 
+def remove_selected_item_from_inventory(action_mgr):
+    inventory = ContextManager().get_inventory()
+    canvas = ContextManager().get_canvas()
+    (name,unique_id,object_owner) = inventory.getSelectedObject()
+    (_,object_ref,_) = inventory.getObject(name,unique_id,object_owner)
+    canvas.delete(object_ref.obj_id)
+    canvas.delete(object_ref.selection_id)
+    inventory.delObject(name,unique_id,object_owner)
+    inventory.redraw_inventory()
+    action_mgr.execute_next_action()
+
 def play_sound(action_mgr,sound):
     _play_sound(sound)
     action_mgr.execute_next_action()
