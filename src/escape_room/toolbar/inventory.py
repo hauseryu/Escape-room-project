@@ -94,6 +94,12 @@ class Inventory():
             self.inventory[key] = (index,object_ref,selection)
             index += 1
 
+    def inventoryIsFull(self):
+        if len(self.inventory) >= 10:
+            return True
+        else:
+            return False
+
     def objectInInventory(self,object,object_id,object_owner):
         try:
             (_,_,_) = self.getObject(object,object_id,object_owner)
@@ -106,7 +112,10 @@ class Inventory():
         return objIndex
 
     def getObjectCoordinates(self,object_index):
-        return (28 + object_index*60, 80)
+        if object_index < 5:
+            return (28 + object_index*60, 80)
+        else:
+            return (28 + (object_index-5)*60, 140)
 
     def objectIsSelected(self,object,object_id,object_owner):
         try:
