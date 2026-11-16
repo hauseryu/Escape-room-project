@@ -256,5 +256,57 @@ room_coord = {
                     ["#38251B", (2, 0, 0), (2, 0, 2),
                     (2, 3, 2), (2, 3, 0)],                    
                                 ]
-                     }               
+                     },
+    "hotel_room": {
+                    "vanishing_point": {"x": 2},
+                    "coord": [
+                    [("white",WOOD_PARQUET_TEXTURE), # #8B4513
+                     (0,0,0), # floor 
+                     (8,0,0), 
+                     (8,0,2), 
+                     (0,0,2)],
+                    [("white",WALLPAPER_CLASSIC),
+                     (0,0,0), # wall left (until 4 meters deep)
+                     (0,3,0), 
+                     (0,3,4), 
+                     (0,0,4)],
+                    [("white",WALLPAPER_CLASSIC),
+                     (8,0,0), # wall right
+                     (8,3,0), 
+                     (8,3,2), 
+                     (8,0,2)],
+                    ["white",
+                     (0,3,0), # ceiling
+                     (8,3,0), 
+                     (8,3,2), 
+                     (0,3,2)],
+                    # part 2: wall right
+                    [("white",WALLPAPER_CLASSIC),
+                     (8,0,2), # wall right upfront
+                     (5,0,2), 
+                     (5,3,2), 
+                     (8,3,2)],
+                     # part 3: back part of room
+                     [("white",WOOD_PARQUET_TEXTURE), # #8B4513
+                     (0,0,2), # floor
+                     (5,0,2), 
+                     (5,0,4), 
+                     (0,0,4)],
+                    [("white",WALLPAPER_CLASSIC),
+                     (5,0,2), # wall right
+                     (5,3,2), 
+                     (5,3,4), 
+                     (5,0,4)],
+                    ["white",
+                     (0,3,2), # ceiling
+                     (5,3,2), 
+                     (5,3,4), 
+                     (0,3,4)],
+                    [("white",WALLPAPER_CLASSIC), # back wall
+                     (0, 0, 4), 
+                     (5, 0, 4), 
+                     (5, 3, 4), 
+                     (0, 3, 4)]                     
+                    ]
+                     }                                    
 }

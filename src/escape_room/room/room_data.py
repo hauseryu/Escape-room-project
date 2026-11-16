@@ -226,7 +226,7 @@ hotel_floor1 = {
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
         "door": [
                  [(2, 0, 2.2), "brown", "left", "door1", 
-                  True, True, False, "","door1"], # door1: player door, can be opened
+                  True, True, True, "hotel_room_10","door1"], # door1: player door, can be opened
                  [(3.8, 0, 4), "brown", "front", "door2", True, True, False, "","door2"],
                  [(6.3, 0, 2), "brown", "front", "door3", True, True, False, "","door3"],
                  [(8, 0, 1.5), "brown", "right", "door4", True, True, False, "","door4"],
@@ -416,8 +416,51 @@ hotel_floor5 = {
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (0.3,2.4,2), 
                   "pic_resize": (229,223), # original size
                   "draw_frame": False},                                                      
-
                 ]             
+}
+
+hotel_room_10 = {  
+        "room_name": "hotel_room_10",
+        "room_coordinates": "hotel_room",
+        "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "picture": [
+                 {"coord":(0,2,4),"image": "bedside_table.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (-0.3,0.7,4), 
+                  "pic_resize": (113,118), # original size 793, 826
+                  "draw_frame": False},                                                      
+                 {"coord":(0,2,4),"image": "bedside_lamp.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (-0.3,1.7,4), 
+                  "pic_resize": (84,130), # original size 591, 912
+                  "draw_frame": False},                                                      
+                 {"coord":(4,2,4),"image": "bedside_table.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (4.3,0.7,4), 
+                  "pic_resize": (113,118), # original size 793, 826
+                  "draw_frame": False},                                                      
+                 {"coord":(0,2,4),"image": "bedside_lamp.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (4.3,1.7,4), 
+                  "pic_resize": (84,130), # original size 591, 912
+                  "draw_frame": False},                                                      
+                 {"coord":(0,2,4),"image": "hotel_bed.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0,2,4), 
+                  "pic_resize": (512,341), # original size 1536, 1024
+                  "draw_frame": False},                                                      
+                 {"coord":(0,2,4),"image": "window_with_curtains.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (5,3,2), 
+                  "pic_resize": (341,512), # original size 1024, 1536
+                  "draw_frame": False},                                                      
+                 {"coord":(-2,0,3),"image": "carpet.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0,0,2), 
+                  "pic_resize": (1650,328), # original size 2484, 495
+                  "draw_frame": False},                                                      
+                 {"coord":(-2,0,3),"image": "hotel_table.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (6.6,0.6,3.3), 
+                  "pic_resize": (332,274), # original size 897, 742
+                  "draw_frame": False},                                                      
+                 {"coord":(-2,0,3),"image": "hotel_chair.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture1", "pic_move_coord": (9.7,1,3.8), 
+                  "pic_resize": (237,395), # original size 594, 988
+                  "draw_frame": False},                                                      
+                ]              
 }
 
 all_rooms = {
@@ -433,5 +476,6 @@ all_rooms = {
         "hotel_floor2": hotel_floor2,
         "hotel_floor3": hotel_floor3,
         "hotel_floor4": hotel_floor4,
-        "hotel_floor5": hotel_floor5
+        "hotel_floor5": hotel_floor5,
+        "hotel_room_10": hotel_room_10
 }
