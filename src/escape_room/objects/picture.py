@@ -59,6 +59,10 @@ class Picture:
             trigger_object_draw = room_data["picture"][index]["trigger_object_draw"]
         except:
             trigger_object_draw = None            
+        try:
+            show = room_data["picture"][index]["show"]
+        except:
+            show = True            
         shift_coordinates = (x-5.05,y-2.35,z-4.0)            
 
         # set attributes
@@ -77,6 +81,7 @@ class Picture:
         self.movement_vector = movement_vector
         self.trigger_object_draw = trigger_object_draw
         self.action_sequence = action_sequence
+        self.show = show
 
         if self.draw_frame:
             if self.direction == "front":
@@ -169,6 +174,9 @@ class Picture:
                     break
 
     def draw(self, canvas, tag):
+        # check if picture is to be drawn
+        if not self.show:
+            return
         # determine pic movement coordinates, either 2d or 3d coordinates
         # get move coordinates, either 2d or 3d coordinates
         if len(self.pic_move_coord) == 2:
@@ -240,9 +248,9 @@ class Picture:
             self.move_picture()
             self.room_state.move("picture",self.unique_id)
             self.draw(canvas,self.unique_id)
-            if self.trigger_object_draw != None:
-                (name,unique_id) = self.trigger_object_draw
-                ContextManager().get_room().triggerObjectDraw(name,unique_id)
+        if self.trigger_object_draw != None:
+            (name,unique_id) = self.trigger_object_draw
+            ContextManager().get_room().triggerObjectDraw(name,unique_id)
 
     def move_picture(self):
         if self.movement_vector==None:

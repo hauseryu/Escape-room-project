@@ -35,6 +35,10 @@ check_safe_open = [
     [action.check_object_state,"safe","safe1","OPEN"] 
 ]
 
+check_drawer_open = [
+    [action.check_object_state,"picture","picture2","OPEN"] # bedside table drawer is open
+]
+
 check_metal_cassette_open = [
     [action.check_object_state,"metal_cassette","metal_cassette1","opened"] 
 ]
@@ -147,6 +151,14 @@ lift_boy_appears = [
             590,531,207,102, # original: 755x1507 -> 590,320
             None, 
             None ], 
+]
+
+open_bedside_table_drawer = [
+    [action.play_sound,"open_rusty_drawer.wav"],
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.show_picture,"picture2"],
+    [action.show_picture,"picture6"],
+    [action.set_object_state,"picture","picture2","OPEN"] # set the drawer to open
 ]
 
 game_over = [

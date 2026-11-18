@@ -64,6 +64,17 @@ def figure_appears(action_mgr,figure,image_name,x_xoord,y_coord,width,height,
     figure.draw_image(ContextManager().get_canvas())
     action_mgr.execute_next_action()
 
+def show_picture(action_mgr,unique_id):
+    print(f"[DEBUG] Show picture: {unique_id}")
+    room = ContextManager().get_room()
+    pictures = room.getObjectList("picture")
+    for picture in pictures:
+        if picture.unique_id == unique_id:
+            picture.show = True
+            picture.draw(ContextManager().get_canvas(),"picture")
+            break
+    action_mgr.execute_next_action()
+
 def figure_disappears(action_mgr,figure):
     print(f"[DEBUG] Person disappears: {figure}")
     obj = ContextManager().get_room().get_figure(figure)

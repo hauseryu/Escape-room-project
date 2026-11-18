@@ -107,6 +107,7 @@ class Room(tkinter.Frame):
         self.metal_cassette = []
         self.diamond = []
         self.coin = []
+        self.magnet = []
         self.hotel_door = []
         self.pillar = []
         self.reception_desk = []
@@ -120,7 +121,7 @@ class Room(tkinter.Frame):
             door.is_open = False        
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room,next_room=False): # start_room
+    def init_room(self,game_client,room_data = room_data.hotel_floor1,next_room=False): # start_room
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
@@ -316,6 +317,14 @@ class Room(tkinter.Frame):
                 if obj!=None:
                     self.coin.append(obj)
         except KeyError: pass
+        # create magnet
+        try:
+            for index,magnet in enumerate(self.room_data["magnet"]):
+                obj = InventoryItem.create("magnet",room_data,index, # orig size: 219, 108
+                                    self.inventory,self.room_state, resize_room=(54, 27), resize_inventory=(40, 80))
+                if obj!=None:
+                    self.magnet.append(obj)
+        except KeyError: pass
         # create benchs
         try:
             for index,bench in enumerate(self.room_data["bench"]):
@@ -454,7 +463,11 @@ class Room(tkinter.Frame):
             window.draw_sky(self.canvas_area, window_corners)
             graphics.draw(self.canvas_area,window.window_coordinates,shift_coordinates=window.shift_coordinates)
 
-        # draw the pictures
+        # draw the safes (should be behind the pictures, so that the player can see the picture first)
+        for safe in self.safe:
+            safe.draw(self.canvas_area)
+
+        # draw the pictures (after the safes, so that the player can see the picture first)
         for picture in self.picture:
             picture.draw(self.canvas_area, tag="picture")
 
@@ -490,10 +503,6 @@ class Room(tkinter.Frame):
         for wardrobe in self.wardrobe:
             wardrobe.draw(self.canvas_area)
 
-        # draw the safes
-        for safe in self.safe:
-            safe.draw(self.canvas_area)
-
         # draw the clocks
         for clock in self.clock:
             clock.draw()
@@ -521,6 +530,10 @@ class Room(tkinter.Frame):
         # draw the coin
         for coin in self.coin:
             coin.draw(self.canvas_area)
+
+        # draw the magnet
+        for magnet in self.magnet:
+            magnet.draw(self.canvas_area)            
 
         # draw the benchs
         for bench in self.bench:
@@ -648,6 +661,7 @@ class Room(tkinter.Frame):
         elif object.name == "poker": object_list = self.poker
         elif object.name == "diamond": object_list = self.diamond
         elif object.name == "coin": object_list = self.coin
+        elif object.name == "magnet": object_list = self.magnet
         for index,item in enumerate(object_list):
             if item == object:
                 del object_list[index]

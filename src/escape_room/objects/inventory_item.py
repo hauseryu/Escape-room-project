@@ -26,7 +26,8 @@ class InventoryItem:
             "water_glass": ("water_glass.png", (x-5.0, y-1.0, z-3.0),(40, 80)),
             "poker": ("poker.png", (x-4, y-0, z-3.0),(40, 80)),
             "diamond": ("diamond.png", (x-3.78, y-0.37, z-3.5),(40, 80)),
-            "coin": ("gold_coin.png", (x-0.5, y-1.25, z-5.0),(40, 80))
+            "coin": ("gold_coin.png", (x-0.5, y-1.25, z-5.0),(40, 80)),
+            "magnet": ("magnet.png", (x-0.5, y-1.25, z-5.0),(40, 80))
         }
         image = map_name_to_attributes[name][0]
 

@@ -423,41 +423,59 @@ hotel_room_10 = {
         "room_name": "hotel_room_10",
         "room_coordinates": "hotel_room",
         "room": (0,0,0), #front: corner left bottom (x/y/z coordinates)
+        "door": [
+                 [(0, 0, 0), "brown", "left", "door1", 
+                  True, True, True, "","door1"], # door1: player door, can be opened
+                ],
+        "safe": [[(7.0, 1.3, 2.0),"key1", "picture1", "safe1"] # safe 1, contains key1, unique name is safe1, associated picture is picture 1
+                ],
+        "magnet": [{"coord": (-5.2,1.43,4),"unique_id": "magnet1", 
+                    "check_action_draw": "check_drawer_open"}, 
+                  ],                
         "picture": [
                  {"coord":(0,2,4),"image": "bedside_table.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture1", "pic_move_coord": (-0.3,0.7,4), 
                   "pic_resize": (113,118), # original size 793, 826
-                  "draw_frame": False},                                                      
+                  "draw_frame": False, "action_sequence": "open_bedside_table_drawer", "is_clickable": True,
+                  "trigger_object_draw": ("magnet","magnet1")},                                                      
+                 {"coord":(0,2,4),"image": "bedside_table_drawer_open.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture2", "pic_move_coord": (-0.3,0.7,4), 
+                  "pic_resize": (113,118), # original size 793, 826
+                  "draw_frame": False, "show": False},
                  {"coord":(0,2,4),"image": "bedside_lamp.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (-0.3,1.7,4), 
+                  "direction": "front","unique_id": "picture3", "pic_move_coord": (-0.3,1.7,4), 
                   "pic_resize": (84,130), # original size 591, 912
                   "draw_frame": False},                                                      
                  {"coord":(4,2,4),"image": "bedside_table.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (4.3,0.7,4), 
+                  "direction": "front","unique_id": "picture4", "pic_move_coord": (4.3,0.7,4), 
                   "pic_resize": (113,118), # original size 793, 826
                   "draw_frame": False},                                                      
                  {"coord":(0,2,4),"image": "bedside_lamp.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (4.3,1.7,4), 
+                  "direction": "front","unique_id": "picture5", "pic_move_coord": (4.3,1.7,4), 
                   "pic_resize": (84,130), # original size 591, 912
                   "draw_frame": False},                                                      
                  {"coord":(0,2,4),"image": "hotel_bed.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0,2,4), 
+                  "direction": "front","unique_id": "picture6", "pic_move_coord": (0,2,4), 
                   "pic_resize": (512,341), # original size 1536, 1024
                   "draw_frame": False},                                                      
                  {"coord":(0,2,4),"image": "window_with_curtains.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (5,3,2), 
+                  "direction": "front","unique_id": "picture7", "pic_move_coord": (5,3,2), 
                   "pic_resize": (341,512), # original size 1024, 1536
                   "draw_frame": False},                                                      
                  {"coord":(-2,0,3),"image": "carpet.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (0,0,2), 
+                  "direction": "front","unique_id": "picture8", "pic_move_coord": (0,0,2), 
                   "pic_resize": (1650,328), # original size 2484, 495
                   "draw_frame": False},                                                      
                  {"coord":(-2,0,3),"image": "hotel_table.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (6.6,0.6,3.3), 
+                  "direction": "front","unique_id": "picture9", "pic_move_coord": (6.6,0.6,3.3), 
                   "pic_resize": (332,274), # original size 897, 742
                   "draw_frame": False},                                                      
+                 {"coord":(-2,0,3),"image": "painting_flower_fruits.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture10", "pic_move_coord": (6.92, 1.7, 2.0), 
+                  "pic_resize": (163,139), # original size 245, 209
+                  "draw_frame": False},                                                      
                  {"coord":(-2,0,3),"image": "hotel_chair.png", "is_riddle": False,  
-                  "direction": "front","unique_id": "picture1", "pic_move_coord": (9.7,1,3.8), 
+                  "direction": "front","unique_id": "picture11", "pic_move_coord": (9.7,1,3.8), 
                   "pic_resize": (237,395), # original size 594, 988
                   "draw_frame": False},                                                      
                 ]              
