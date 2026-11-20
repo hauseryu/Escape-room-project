@@ -40,6 +40,8 @@ class RoomState():
             "hotel_door": {},
             "coin": {},
             "lift_door": {},
+            "book": {},
+            "key_shelf": {},
         } }) # add initial entry for the named room
 
     # when entering room, the current room is remembered

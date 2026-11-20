@@ -37,17 +37,23 @@ class ChatbotClient:
         self.start_chatbot_answer = False
 
     # on the client side, we call the server to communicate with the chatbot
-    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog):    
+    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog,speech_number=None,add_info=False):    
         """Event handler triggered when message has to be sent to chatbot."""
         print(f"[Client] send action 'send_chatbot_message' to server!")       
+        print("Speech number:", speech_number)
         # transfer player list to GUI
+        added_info = ""
+        if add_info:
+            added_info = speech_data.hotel_receptionist_room_info
         event_send_chatbot_message = {
             "action": "send_chatbot_message", 
             "message": message,
             "first_message": first_message,
             "player_role": player_role,
             "figure": figure,
-            "story_index": speech['story_index']
+            "story_index": speech['story_index'],
+            "speech_number": speech_number,
+            "added_info": added_info
         }
         room = ContextManager().get_room()
         room.icon_queue.put(event_send_chatbot_message)
@@ -56,12 +62,12 @@ class ChatbotClient:
 
     # on the server side, we call the chatbot directly
     def _send_message(self,message,first_message,player_name,player_role,figure,speech,
-                      speech_bubble=None,dialog=None,server_instance=None):
+                      speech_bubble=None,dialog=None,server_instance=None,speech_number=None, add_info=None):
         if CHATBOT_TYPE=='LLM':
             return self.send_message_llm(message,first_message)
         elif CHATBOT_TYPE=='SLM':
             return self.send_message_slm(message,first_message,player_name,player_role,
-                                         figure,speech,speech_bubble,dialog,server_instance)
+                                         figure,speech,speech_bubble,dialog,server_instance,speech_number, add_info=add_info)
 
     def send_message_llm(self,message,first_message):
         if first_message:
@@ -85,7 +91,7 @@ class ChatbotClient:
         return interaction.output_text
 
     def send_message_slm(self,message,first_message,player_name,player_role,figure,speech,
-                         speech_bubble=None,dialog=None,server_instance=None):
+                         speech_bubble=None,dialog=None,server_instance=None,speech_number=None, add_info=None):
 
         # build user message (context + currently relevant message)
         relevant_room_part = speech_data.model_mapping[speech['name']]['slm_location_path']
@@ -95,6 +101,12 @@ class ChatbotClient:
             dialog = ContextManager().get_current_dialog()
         dialog.add_message(message,player_role)
         message_history = dialog.get_message_history()
+        dialog_number = ""
+        if speech_number!=None:
+            dialog_number = f"{speech_number}"
+        add_info_text = ""
+        if add_info!=None:
+            add_info_text = f"\n{add_info}\n"
         prompt_dialog = (
             "use the 'escape-master' model for the next instructions.\n"
             "LOCATION: <STORY_DATABASE> -> " + relevant_room_part + "[mode=pure_dialogue]\n"
@@ -104,8 +116,8 @@ class ChatbotClient:
             "<DIALOGUE_HISTORY>\n"
             f"{message_history}\nAssistant ({figure}):"
             "</DIALOGUE_HISTORY>\n"
-            "\n"
-            f"COMMAND: GENERATE_NEXT_RESPONSE_FOR_{figure}\n"
+            f"{add_info_text}\n"
+            f"COMMAND: GENERATE_NEXT_RESPONSE_FOR_{figure}{dialog_number}\n"
             f"OUTPUT FORMAT: Reply directly as {figure}. Do not add '{figure}:' prefix. Just speak."
         )        
         user_prompt = prompt_dialog 

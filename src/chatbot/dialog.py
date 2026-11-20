@@ -4,6 +4,8 @@ from google.genai import types
 from google.genai import errors
 from src.chatbot.dialog_information import general_information, information_zone, information_character
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
+from src.escape_room.objects.speech_data import hotel_receptionist_room_info
 
 class Dialog():
     def __init__(self):
@@ -12,7 +14,7 @@ class Dialog():
         self.chat_id = None
         self.messages = []
 
-    def talk_with_npc(self, player_role, figure, player_message, speech, speech_bubble):
+    def talk_with_npc(self, player_role, figure, player_message, speech, speech_bubble, speech_number=None, add_info=False):
         chatbot_type = self.client.get_chatbot_type()
         if chatbot_type=='LLM':
             zone_id = speech.model_mapping[speech['name']]['information_zone']
@@ -23,8 +25,8 @@ class Dialog():
             else:
                 message = player_role + " says: " + player_message
         elif chatbot_type=='SLM':
-            message = "User (" + player_role + "): " + player_message
-        output_text = self.client.send_message(message,self.first_message,player_role,figure,speech,speech_bubble,self)
+            message = "User (" + player_role + "): " + player_message            
+        output_text = self.client.send_message(message,self.first_message,player_role,figure,speech,speech_bubble,self,speech_number,add_info)
         return output_text
 
     def reset_dialog(self):

@@ -80,13 +80,16 @@ class EscapeServer():
                     player_role = game_data.get("player_role") # role of player (like Sherlock Holmes)
                     figure = game_data.get("figure") # dialog partner
                     story_index = game_data.get("story_index") # speech data, index to the story
+                    speech_number = game_data.get("speech_number") # speech data, number of the speech
+                    add_info = game_data.get("added_info") # additional information for the chatbot
                     print(f"[DEBUG] Server [action: {action}] received from player {player_name}, message: {message}")
 
                     # send message to chatbot client
                     chatbot_client = ContextManager().get_chatbot_client()
                     speech = speech_data.story_list[story_index]
                     chatbot_client._send_message(message,first_message,player_name,player_role,figure,speech,
-                                                 speech_bubble=None,dialog=None,server_instance=self)
+                                                 speech_bubble=None,dialog=None,server_instance=self,speech_number=speech_number,
+                                                 add_info=add_info)
 
                 # SCENARIO: passing over message to all players ("send_chat_message_simple")
                 elif action == "send_chatbot_message_simple":
