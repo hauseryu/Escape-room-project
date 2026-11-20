@@ -45,7 +45,7 @@ class Figure():
         # safeguard: check if pixel_x and pixel_y are within the image dimensions
         if not (0 <= pixel_x < img_w and 0 <= pixel_y < img_h):
             return
-        
+
         # evaluate generic action sequence
         if self.action_sequence_generic!=None:            
             ContextManager().get_action_manager().execute_action_sequence(self.action_sequence_generic)

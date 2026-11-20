@@ -19,12 +19,21 @@ story_hotel_portier = {
                     'story_index': 1
 }
 
+story_hotel_portier_thanks = {
+                    'text': f"""
+                    Dear sir, thanks a lot for your generosity. \n I see you are a real gentleman...
+                    Please go ahead and enter our hotel.
+                    """,
+                    'name': 'story_hotel_portier_thanks',
+                    'story_index': 2
+}
+
 story_lift_boy = {
                     'text': f"""
                     Dear sir, which floor do you want to go to?
                     """,
                     'name': 'story_lift_boy',
-                    'story_index': 2
+                    'story_index': 3
 }
 
 choices_story_lift_boy = [

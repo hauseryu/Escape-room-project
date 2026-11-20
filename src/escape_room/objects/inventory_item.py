@@ -11,13 +11,29 @@ from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 
 class InventoryItem:
     # normal constructor should not be called directly => see below create method
-    def __init__(self, name, room_data, index, image, inventory, 
+    def __init__(self, name, room_data, index, inventory, 
                  room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
-                 resize_room = None, resize_inventory = None, unique_identifier = None, object_owner = None):
+                 resize_room = None, resize_inventory = None, unique_identifier = None, object_owner = None,
+                 resize_inventory_flag = False):
+        # determine image & shift coordinates based on object name
+        if room_data != None and index != None:
+            (x,y,z) = room_data[name][index]["coord"] # get object coordinates (first element in list)
+        else:
+            (x,y,z) = (0,0,0)
+                    
+        map_name_to_attributes = {
+            "key": ("key_transparent.png", (x-6.5, y-0.78, z-3.0),(50, 100)),
+            "revolver": ("revolver.png", (x-6.5, y-0.78, z-3.0),(40, 80)),
+            "magnifier": ("magnifier.png", (x-6.5, y-0.78, z-3.0),(40, 80)),
+            "water_glass": ("water_glass.png", (x-5.0, y-1.0, z-3.0),(40, 80)),
+            "poker": ("poker.png", (x-4, y-0, z-3.0),(40, 80)),
+            "diamond": ("diamond.png", (x-3.78, y-0.37, z-3.5),(40, 80)),
+            "coin": ("gold_coin.png", (x-0.5, y-1.25, z-5.0),(40, 80))
+        }
+        image = map_name_to_attributes[name][0]
 
         # evaluate room data, if given
         if room_data != None and index != None:
-            (x,y,z) = room_data[name][index]["coord"] # get object coordinates (first element in list)
             unique_id = room_data[name][index]["unique_id"] # unique identifier for the key
             room_placement = True
             # key
@@ -51,15 +67,22 @@ class InventoryItem:
             if name == "book":
                 image = "book.png"
                 shift_coordinates = (x-6.5,y-0.78,z-3.0)
+
+            shift_coordinates = map_name_to_attributes[name][1]
             self.object_owner = ""
             try:
                 self.check_action_draw = room_data[name][index]["check_action_draw"] # get action that checks preconditions for drawing
             except:
                 self.check_action_draw = None
+            try:
+                self.allow_transfer = room_data[name][index]["allow_transfer"] # get action that checks preconditions for drawing
+            except:
+                self.allow_transfer = False
 
         else: # in case magnifier is not created from room data
             self.object_owner = object_owner
             self.check_action_draw = None
+            self.allow_transfer = False
 
         # set attributes
         self.canvas = None
@@ -72,12 +95,14 @@ class InventoryItem:
         self.room_state = room_state
         self.resize_room_tuple = resize_room if resize_room else None
         self.resize_inventory_tuple = resize_inventory if resize_inventory else None
+        if resize_inventory_flag:
+            self.resize_inventory_tuple = map_name_to_attributes[name][2]
         self.image_path = ContextManager.get_image_path().joinpath(image)
         self.sound_path = ContextManager.get_sound_path().joinpath(sound) if sound else None
 
     # class method create has to be used to create objects, if based on preconditions
     @classmethod
-    def create(cls, name, room_data, index, image, inventory, 
+    def create(cls, name, room_data, index, inventory, 
                 room_state, unique_id="", shift_coordinates=(0, 0, 0), room_placement=False, sound=None, 
                 resize_room = None, resize_inventory = None):
         unique_id = room_data[name][index]["unique_id"] # unique identifier for the object
@@ -99,7 +124,7 @@ class InventoryItem:
             if not create_allowed:
                 return None
         # ok, object can be created
-        return cls(name, room_data, index, image, inventory, room_state, unique_id, 
+        return cls(name, room_data, index, inventory, room_state, unique_id, 
                     shift_coordinates, room_placement, sound, resize_room, resize_inventory)
 
     def draw(self, canvas):

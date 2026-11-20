@@ -1,4 +1,5 @@
 import tkinter as tk
+from src.escape_room.application.context_manager import ContextManager
 
 class PlayerPanel(tk.Frame):
     """A subarea container to display game player statuses horizontally."""
@@ -108,11 +109,23 @@ class PlayerPanel(tk.Frame):
 
     def on_player_icon_click(self, event, player_name):
         """Event handler triggered when any player icon is clicked."""
-        print(f"Game Event: Player icon clicked! Target: {player_name}")       
+        print(f"Game Event: Player icon clicked! Target: {player_name}")  
+        # check if transfer is allowed for the current player
+        inventory = ContextManager().get_inventory()     
+        sel_object = inventory.getSelectedObject()
+        # something selected?
+        if sel_object == (None,None,None):
+            print(f"[GUI Event] No inventory item selected for transfer.")
+            return
+        obj_data = inventory.getObject(sel_object[0],sel_object[1],sel_object[2])
+        obj_ref = obj_data[1]
+        if not obj_ref.allow_transfer:
+            print(f"[GUI Event] Inventory item {sel_object[1]} cannot be transferred.")
+            return
         # transfer player list to GUI
         event_send_inventory = {
             "action": "send_inventory", 
-            "inventory": "key",
+            "inventory": sel_object[0], # type of object to be transferred
             "player_name": player_name
         }
         self.icon_queue.put(event_send_inventory)

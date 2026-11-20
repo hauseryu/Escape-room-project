@@ -123,7 +123,7 @@ def inventory_item_appears(action_mgr,name,unique_id,image,resize_room=None,resi
     room_state = ContextManager().get_room_state()
     for index,inventory_item in enumerate(room_data[name]):
         if inventory_item["unique_id"] == unique_id:
-            obj = InventoryItem(name,room_data,index,image,inventory,room_state,
+            obj = InventoryItem(name,room_data,index,inventory,room_state,
                                 resize_room=resize_room,resize_inventory=resize_inventory)  
             obj.object_owner = player_name
     if obj != None:
@@ -132,44 +132,41 @@ def inventory_item_appears(action_mgr,name,unique_id,image,resize_room=None,resi
 
 def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     inventory = ContextManager().get_inventory()
+    if inventory.inventoryIsFull():
+        print("[DEBUG] Inventory is full. Cannot add item.")
+        action_mgr.execute_next_action()
+        return
     room_state = ContextManager().get_room_state()
     canvas = ContextManager().get_canvas()
     if object_owner == None:
         object_owner = ContextManager().get_player_name()
     # select attributes depending on item type
     if name=="magnifier": 
-        image="magnifier.png"
         obj = InventoryItem("magnifier",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_inventory=(100, 50))    
     if name=="key": 
-        image="key_transparent.png"
         obj = InventoryItem("key",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             sound="grab_key.wav", object_owner = object_owner, resize_inventory=(100, 50)) 
     
     if name=="diamond": 
-        image="diamond.png"
         obj = InventoryItem("diamond",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, 
                             resize_room=(30, 50), resize_inventory=(50, 70))  
     if name=="revolver": 
-        image="revolver.png"
         obj = InventoryItem("revolver",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_inventory=(100, 50))
     if name=="water_glass": 
-        image="water_glass.png"
         obj = InventoryItem("water_glass",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_room=(50, 100), 
-                            resize_inventory=(40, 80))
-        
+                            resize_inventory=(40, 80))       
     if name=="poker": 
-        image="poker.png"
         obj = InventoryItem("poker",None,None,
-                            image,inventory,room_state, unique_id=unique_id, 
+                            inventory,room_state, unique_id=unique_id, 
                             object_owner = object_owner, resize_room=(70, 130), 
                             resize_inventory=(40, 80))    
 
@@ -182,6 +179,17 @@ def put_item_in_inventory(action_mgr,name,unique_id, object_owner=None):
     
     inventory.addObject(name,unique_id, object_owner,obj)
     obj.draw(canvas)
+    action_mgr.execute_next_action()
+
+def remove_selected_item_from_inventory(action_mgr):
+    inventory = ContextManager().get_inventory()
+    canvas = ContextManager().get_canvas()
+    (name,unique_id,object_owner) = inventory.getSelectedObject()
+    (_,object_ref,_) = inventory.getObject(name,unique_id,object_owner)
+    canvas.delete(object_ref.obj_id)
+    canvas.delete(object_ref.selection_id)
+    inventory.delObject(name,unique_id,object_owner)
+    inventory.redraw_inventory()
     action_mgr.execute_next_action()
 
 def play_sound(action_mgr,sound):
