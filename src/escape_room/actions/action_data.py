@@ -68,7 +68,8 @@ hotel_receptionist_talk = [
         "hotel_receptionist_give_guestbook","End Dialog",True,None,None,
                  None,1], 
     [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist2, "Sherlock Holmes",None,
-     "End Dialog",True,None,None,None,2]
+     "End Dialog",True,None,None,None,2,True,speech_data.guests_room_numbers[3]],
+     [action.set_object_state,"key_shelf","key_shelf1","active"],
 ]
 
 hotel_receptionist_give_guestbook = [

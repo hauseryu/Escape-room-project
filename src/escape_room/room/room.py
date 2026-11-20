@@ -120,7 +120,7 @@ class Room(tkinter.Frame):
             door.is_open = False        
 
     # initialize room with all relevant settings
-    def init_room(self,game_client,room_data = room_data.start_room,next_room=False): # start_room
+    def init_room(self,game_client,room_data = room_data.hotel_lobby,next_room=False): # start_room
         if not next_room:
             self.player_name = None
             self.player_icon_number = None
@@ -357,7 +357,7 @@ class Room(tkinter.Frame):
         # create key shelf
         try:
             for index,key_shelf in enumerate(self.room_data["key_shelf"]):
-                obj = KeyShelf(room_data,index)
+                obj = KeyShelf(room_data,index,self.room_state)
                 self.key_shelf.append(obj)
         except KeyError: pass
         # create lift door

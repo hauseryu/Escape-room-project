@@ -1,3 +1,5 @@
+import random
+
 story_mortimer_jackson = { 
                     'text': f"""
                     Mr. Holmes! Please help me!
@@ -102,3 +104,20 @@ guest_book_content = [
     From a guest from Birmingham
     """
 ]
+
+room_numbers = [10, 11, 12, 13,
+                   20, 21, 22, 23,
+                   30, 31, 32, 33, 
+                   40, 41, 42, 43,
+                   50, 51, 52, 53]
+
+guests_room_numbers = random.sample(room_numbers, 4)
+
+hotel_receptionist_room_info = f"""
+[GAMESTATE: They might ask about the guests from the guestbook and their room numbers. You are allowed to share this information. The room numbers are as follows:
+Anne and John from Liverpool who wrote at the 1st March, 1879: room number {guests_room_numbers[0]}
+The guest who wrote at the 15th March, 1879: room number {guests_room_numbers[1]}
+The family from Manchester that wrote at the 7th April, 1879: room number {guests_room_numbers[2]}
+The guest from Birmingham who wrote at the 19th April, 1879: room number {guests_room_numbers[3]}]
+"""
+

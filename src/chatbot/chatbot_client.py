@@ -37,11 +37,14 @@ class ChatbotClient:
         self.start_chatbot_answer = False
 
     # on the client side, we call the server to communicate with the chatbot
-    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog,speech_number=None):    
+    def send_message(self,message,first_message,player_role,figure,speech,speech_bubble,dialog,speech_number=None,add_info=False):    
         """Event handler triggered when message has to be sent to chatbot."""
         print(f"[Client] send action 'send_chatbot_message' to server!")       
         print("Speech number:", speech_number)
         # transfer player list to GUI
+        added_info = ""
+        if add_info:
+            added_info = speech_data.hotel_receptionist_room_info
         event_send_chatbot_message = {
             "action": "send_chatbot_message", 
             "message": message,
@@ -49,7 +52,8 @@ class ChatbotClient:
             "player_role": player_role,
             "figure": figure,
             "story_index": speech['story_index'],
-            "speech_number": speech_number
+            "speech_number": speech_number,
+            "added_info": added_info
         }
         room = ContextManager().get_room()
         room.icon_queue.put(event_send_chatbot_message)

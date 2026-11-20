@@ -136,6 +136,7 @@ class EscapeClient:
                 "figure": event_data.get("figure"),
                 "story_index": event_data.get("story_index"),
                 "speech_number": event_data.get("speech_number"),
+                "added_info": event_data.get("added_info"),
             }
         elif action_type == "send_chatbot_message_simple":
             payload = {
