@@ -65,8 +65,11 @@ lift_boy_talk = [
 hotel_receptionist_talk = [
     [action.skip_actions_if_false,1,action.check_inventory_contains,"book","book1"],
     [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist1, "Sherlock Holmes", 
-        "hotel_receptionist_give_guestbook"], 
-    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist2, "Sherlock Holmes"]
+        "hotel_receptionist_give_guestbook","End Dialog",True,None,None,
+                 None,1], 
+    [action.figure_talks,"Hotel_Receptionist",speech_data.story_hotel_receptionist2, "Sherlock Holmes",None,
+     "End Dialog",True,None,None,None,2,True,speech_data.guests_room_numbers[3]],
+     [action.set_object_state,"key_shelf","key_shelf1","active"],
 ]
 
 hotel_receptionist_give_guestbook = [
@@ -127,7 +130,10 @@ hotel_portier_appears = [
 
 hotel_portier_receive_coin = [
     [action.stop_sequence_conditionally,action.check_is_selected_inventory,"coin","coin1"],
-    [action.set_object_state,"hotel_door","hotel_door1","active"]
+    [action.set_object_state,"hotel_door","hotel_door1","active"],
+    [action.remove_selected_item_from_inventory],
+    [action.figure_talks,"Hotel_portier",speech_data.story_hotel_portier_thanks, "Sherlock Holmes", None,
+        None,False] # no button text, no entry field, 
 ]
 
 call_mrs_hudson = [

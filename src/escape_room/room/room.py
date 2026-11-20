@@ -80,6 +80,7 @@ class Room(tkinter.Frame):
         self.room_state = RoomState()
         ContextManager().set_room_state(self.room_state)
         self.reset_objects()
+        self.set_lift_floor = None
 
     # reset objects to initial state
     def reset_objects(self):
@@ -220,7 +221,7 @@ class Room(tkinter.Frame):
         try: 
             for index,key in enumerate(self.room_data["key"]):        
                 obj = InventoryItem.create("key",room_data,index,
-                                    "key_transparent.png",self.inventory,self.room_state,
+                                    self.inventory,self.room_state,
                                     sound="grab_key.wav")
                 if obj!=None:
                     self.key.append(obj)
@@ -266,7 +267,7 @@ class Room(tkinter.Frame):
         try:
             for index,diamond in enumerate(self.room_data["diamond"]):
                 obj = InventoryItem.create("diamond",room_data,index,
-                                    "diamond.png",self.inventory,self.room_state, resize_room=(30, 50), resize_inventory=(50, 70))
+                                    self.inventory,self.room_state, resize_room=(30, 50), resize_inventory=(50, 70))
                 if obj!=None:
                     self.diamond.append(obj)
         except KeyError: pass
@@ -280,7 +281,7 @@ class Room(tkinter.Frame):
         try:
             for index,revolver in enumerate(self.room_data["revolver"]):    
                 obj = InventoryItem.create("revolver",room_data,index,
-                                    "revolver.png",self.inventory,self.room_state, resize_inventory=(50, 25))
+                                    self.inventory,self.room_state, resize_inventory=(50, 25))
                 if obj!=None:
                     self.revolver.append(obj)
         except KeyError: pass
@@ -288,7 +289,7 @@ class Room(tkinter.Frame):
         try:
             for index,magnifier in enumerate(self.room_data["magnifier"]):
                 obj = InventoryItem.create("magnifier",room_data,index,
-                                    "magnifier.png",self.inventory,self.room_state, resize_inventory=(100, 50))
+                                    self.inventory,self.room_state, resize_inventory=(100, 50))
                 if obj!=None:
                     self.magnifier.append(obj)
         except KeyError: pass
@@ -304,7 +305,7 @@ class Room(tkinter.Frame):
         try:
             for index,water_glass in enumerate(self.room_data["water_glass"]):
                 obj = InventoryItem.create("water_glass",room_data,index,
-                                    "water_glass.png",self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
+                                    self.inventory,self.room_state, resize_room=(50, 100), resize_inventory=(40, 80))
                 if obj!=None:
                     self.water_glass.append(obj)
         except KeyError: pass
@@ -312,7 +313,7 @@ class Room(tkinter.Frame):
         try:
             for index,poker in enumerate(self.room_data["poker"]):
                 obj = InventoryItem.create("poker",room_data,index,
-                                    "poker.png",self.inventory,self.room_state, resize_room=(70, 130), resize_inventory=(40, 80))
+                                    self.inventory,self.room_state, resize_room=(70, 130), resize_inventory=(40, 80))
                 if obj!=None:
                     self.poker.append(obj)
         except KeyError: pass
@@ -320,7 +321,7 @@ class Room(tkinter.Frame):
         try:
             for index,coin in enumerate(self.room_data["coin"]):
                 obj = InventoryItem.create("coin",room_data,index,
-                                    "gold_coin.png",self.inventory,self.room_state, resize_room=(101, 75), resize_inventory=(40, 80))
+                                    self.inventory,self.room_state, resize_room=(101, 75), resize_inventory=(40, 80))
                 if obj!=None:
                     self.coin.append(obj)
         except KeyError: pass
@@ -357,7 +358,7 @@ class Room(tkinter.Frame):
         # create key shelf
         try:
             for index,key_shelf in enumerate(self.room_data["key_shelf"]):
-                obj = KeyShelf(room_data,index)
+                obj = KeyShelf(room_data,index,self.room_state)
                 self.key_shelf.append(obj)
         except KeyError: pass
         # create lift door
@@ -369,7 +370,8 @@ class Room(tkinter.Frame):
         # create lift 
         try:
             for index,lift in enumerate(self.room_data["lift"]):
-                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback)
+                obj = Lift(room_data,index,self.room_state,next_room_callback=self.next_room_callback,
+                           set_lift_floor=self.set_lift_floor)
                 self.lift.append(obj)
         except KeyError: pass
 
@@ -613,9 +615,10 @@ class Room(tkinter.Frame):
                     self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
                 break
 
-    def next_room_callback(self,next_room,exec_room_switch=False):
+    def next_room_callback(self,next_room,exec_room_switch=False,set_lift_floor=None):
         self.goto_next_room = True
         self.next_room = next_room
+        self.set_lift_floor = set_lift_floor
         if exec_room_switch:
             self.canvas_area.after(1000, self.execute_room_switch) # wait 1 second before entering next room...
 
@@ -716,11 +719,13 @@ class Room(tkinter.Frame):
                     owner = event_data.get("owner")
                     print(f"[GUI Event] event-based passing of inventory {inventory},",
                            f"owner {owner} from player {player}")
-                    key = InventoryItem("key","key_transparent.png",self.inventory,self.room_state)
-                    key.object_owner = owner
-                    self.inventory.addObject("key",object_id,key.object_owner,key)
+
+                    object = InventoryItem(inventory,None,None,self.inventory,self.room_state,
+                                        unique_id=object_id,resize_inventory_flag=True)
+                    object.object_owner = owner
+                    self.inventory.addObject(inventory,object_id,object.object_owner,object)
                     # draw the key and inventory
-                    key.draw(self.canvas_area) # draw key into inventory
+                    object.draw(self.canvas_area) # draw key into inventory
 
                 elif event_type == "chatbot_answer":
                     text = event_data.get("message")

@@ -193,7 +193,7 @@ def clicked(event,tag,object,canvas,world_coordinates,arc_coordinates=None):
         object.clicked(event,tag,object,canvas,world_coordinates,arc_coordinates)
     if tag == "safe" or tag == "wardrobe" or tag == "bench" or tag == "chair" or \
         tag == "table" or tag == "hotel_door" or tag == "lift_button" or tag == "lift_door" or \
-        tag == "elevator_gate":
+        tag == "elevator_gate" or tag == "correct_room_number":
         object.clicked(event,tag,object,canvas,world_coordinates)
 
 

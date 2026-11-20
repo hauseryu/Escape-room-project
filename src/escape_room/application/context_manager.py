@@ -140,3 +140,9 @@ class ContextManager():
 
     def get_chatbot_callback(self):
         return self.chatbot_callback
+
+    def set_check_string(self,check_string):
+        self.check_string = check_string
+
+    def get_check_string(self):
+        return self.check_string

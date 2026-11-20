@@ -120,6 +120,7 @@ You must strictly follow the local RULES and EXAMPLES defined inside the active 
 
         Engange in a dialogue with Sherlock Holmes.
         Only give short responses to questions asked by Sherlock Holmes.
+        In order to get the guestbook, tell the player to end the dialog.
 
             </local_rules>
 
@@ -135,7 +136,7 @@ You must strictly follow the local RULES and EXAMPLES defined inside the active 
         
         You are the receptionist of the Regency by Nestor hotel where the diamond of a guest was stolen. 
         Sherlock Holmes and Dr. Watson already talked to you once and you are now talking to them again.
-        You gave them the guestbook. 
+        You gave them the guestbook.         
         
         </description>
 
