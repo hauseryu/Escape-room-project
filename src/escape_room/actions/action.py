@@ -210,6 +210,13 @@ def set_object_state(action_mgr,object,unique_id,value):
     room_state.set_state_object(object,unique_id,value)
     action_mgr.execute_next_action()
 
+def set_object_state_complex(action_mgr,object,unique_id):
+    room_state = ContextManager().get_room_state()
+    current_state = room_state.get_state_object(object,unique_id)
+    # complex logic to determine the new state based on the current state
+    # room_state.set_state_object(object,unique_id,value)
+    action_mgr.execute_next_action()
+
 def stop_sequence_conditionally(action_mgr,*condition): # this stops the whole action sequence if the condition doesn't hold
     result = condition[0](action_mgr,*condition[1:])
     if result:
