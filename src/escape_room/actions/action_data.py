@@ -161,6 +161,12 @@ open_bedside_table_drawer = [
     [action.set_object_state,"picture","picture2","OPEN"] # set the drawer to open
 ]
 
+unlock_picture = [
+    [action.play_sound,"mechanics_creak.wav"],
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.set_object_state_complex,"picture","picture10"] # unlock picture (complex action)
+]
+
 game_over = [
     [action.game_over]
 ]
