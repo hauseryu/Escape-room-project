@@ -306,6 +306,9 @@ class SpeechBubble:
         self.draw_bubble(canvas)
 
     def add_word_to_text_area(self,word):
+        if ContextManager().get_check_string() != None:
+            if ContextManager().get_check_string() == word:
+                ContextManager().get_room_state().set_state_object("key_shelf", "key_shelf1", "active")
         canvas = ContextManager().get_canvas()
         canvas.insert(self.text_area, "end", word)
         canvas.yview_moveto(1.0)

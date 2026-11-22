@@ -1,8 +1,10 @@
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application import globals
+from src.escape_room.objects import speech_data
+import random
 
 class KeyShelf():
-    def __init__(self, room_data, index):
+    def __init__(self, room_data, index,room_state):
 
         # evaluate room data
         (x,y,z) = room_data["key_shelf"][index][0] # get key shelf coordinates (first element in list)
@@ -10,6 +12,19 @@ class KeyShelf():
         self.index = index
         self.room_data = room_data
         self.shift_coordinates = (x-2.5,y-1.5,z-10)
+        self.room_state = room_state
+        self.room_numbers = [10, 11, 12, 13,
+                   20, 21, 22, 23,
+                   30, 31, 32, 33, 
+                   40, 41, 42, 43,
+                   50, 51, 52, 53]
+        draw_indexes = [22, 23, 24, 25,
+                        18, 19, 20, 21,
+                        14, 15, 16, 17,
+                        10, 11, 12, 13,
+                        6, 7, 8, 9]    
+        index = self.room_numbers.index(speech_data.guests_room_numbers[3])
+        self.draw_index = draw_indexes[index]
 
         self.key_shelf_coordinates = [
             # 1. Rückseite
@@ -30,31 +45,31 @@ class KeyShelf():
             # 6. Vorderseite
             ["#4A2A1A", (2.5, 1.5, 9.5), (7.5, 1.5, 9.5), (7.5, 3, 9.5), (2.5, 3, 9.5)],
 
-            # 7. Türchen Reihe 1 (unten)
+            # 7. Türchen Reihe unten, 50 - 53
             ["#A8754D", (2.65, 1.62, 9.48), (3.70, 1.62, 9.48), (3.70, 1.86, 9.48), (2.65, 1.86, 9.48)],
             ["#A8754D", (3.85, 1.62, 9.48), (4.90, 1.62, 9.48), (4.90, 1.86, 9.48), (3.85, 1.86, 9.48)],
             ["#A8754D", (5.10, 1.62, 9.48), (6.15, 1.62, 9.48), (6.15, 1.86, 9.48), (5.10, 1.86, 9.48)],
             ["#A8754D", (6.30, 1.62, 9.48), (7.35, 1.62, 9.48), (7.35, 1.86, 9.48), (6.30, 1.86, 9.48)],
 
-            # 8. Türchen Reihe 2
+            # 8. Türchen Reihe, 40 - 43
             ["#A8754D", (2.65, 1.89, 9.48), (3.70, 1.89, 9.48), (3.70, 2.13, 9.48), (2.65, 2.13, 9.48)],
             ["#A8754D", (3.85, 1.89, 9.48), (4.90, 1.89, 9.48), (4.90, 2.13, 9.48), (3.85, 2.13, 9.48)],
             ["#A8754D", (5.10, 1.89, 9.48), (6.15, 1.89, 9.48), (6.15, 2.13, 9.48), (5.10, 2.13, 9.48)],
             ["#A8754D", (6.30, 1.89, 9.48), (7.35, 1.89, 9.48), (7.35, 2.13, 9.48), (6.30, 2.13, 9.48)],
 
-            # 9. Türchen Reihe 3
+            # 9. Türchen Reihe, 30 - 33
             ["#A8754D", (2.65, 2.16, 9.48), (3.70, 2.16, 9.48), (3.70, 2.40, 9.48), (2.65, 2.40, 9.48)],
             ["#A8754D", (3.85, 2.16, 9.48), (4.90, 2.16, 9.48), (4.90, 2.40, 9.48), (3.85, 2.40, 9.48)],
             ["#A8754D", (5.10, 2.16, 9.48), (6.15, 2.16, 9.48), (6.15, 2.40, 9.48), (5.10, 2.40, 9.48)],
             ["#A8754D", (6.30, 2.16, 9.48), (7.35, 2.16, 9.48), (7.35, 2.40, 9.48), (6.30, 2.40, 9.48)],
 
-            # 10. Türchen Reihe 4
+            # 10. Türchen Reihe, 20 - 23
             ["#A8754D", (2.65, 2.43, 9.48), (3.70, 2.43, 9.48), (3.70, 2.67, 9.48), (2.65, 2.67, 9.48)],
             ["#A8754D", (3.85, 2.43, 9.48), (4.90, 2.43, 9.48), (4.90, 2.67, 9.48), (3.85, 2.67, 9.48)],
             ["#A8754D", (5.10, 2.43, 9.48), (6.15, 2.43, 9.48), (6.15, 2.67, 9.48), (5.10, 2.67, 9.48)],
             ["#A8754D", (6.30, 2.43, 9.48), (7.35, 2.43, 9.48), (7.35, 2.67, 9.48), (6.30, 2.67, 9.48)],
 
-            # 11. Türchen Reihe 5 (oben)
+            # 11. Türchen Reihe oben, 10 - 13
             ["#A8754D", (2.65, 2.70, 9.48), (3.70, 2.70, 9.48), (3.70, 2.94, 9.48), (2.65, 2.94, 9.48)],
             ["#A8754D", (3.85, 2.70, 9.48), (4.90, 2.70, 9.48), (4.90, 2.94, 9.48), (3.85, 2.94, 9.48)],
             ["#A8754D", (5.10, 2.70, 9.48), (6.15, 2.70, 9.48), (6.15, 2.94, 9.48), (5.10, 2.94, 9.48)],
@@ -64,14 +79,11 @@ class KeyShelf():
     def draw(self, canvas):
         # draw outline
         graphics.draw(canvas,self.key_shelf_coordinates,shift_coordinates=self.shift_coordinates)
-        numbers = [10, 11, 12, 13,
-                   20, 21, 22, 23,
-                   30, 31, 32, 33, 
-                   40, 41, 42, 43,
-                   50, 51, 52, 53]
+        graphics.draw(canvas,[self.key_shelf_coordinates[self.draw_index]],shift_coordinates=self.shift_coordinates,tag="correct_room_number")
+        
         for row in range(5):
             for col in range(4):
-                number = numbers[row * 4 + col]
+                number = self.room_numbers[row * 4 + col]
 
                 x = [3.175, 4.375, 5.625, 6.825][col]
                 y = 2.82 - row * 0.27
@@ -86,3 +98,10 @@ class KeyShelf():
                     fill="#F5D7A1",
                     font=("Arial", 10, "bold")
                 )
+
+    def clicked(self, event, tag, object, canvas, world_coordinates):
+        if self.room_state.get_state_object("key_shelf","key_shelf1") == "active":
+            normal_color = "#A8754D"
+            self.key_shelf_coordinates[self.draw_index][0] = "#777877"
+            graphics.draw(canvas,[self.key_shelf_coordinates[self.draw_index]],shift_coordinates=self.shift_coordinates)
+            

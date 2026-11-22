@@ -6,6 +6,8 @@ from PIL import Image, ImageTk, ImageOps
 from src.escape_room.application import globals
 from src.escape_room.gui_utilities import graphics
 from src.escape_room.application.context_manager import ContextManager
+from src.escape_room.objects import speech_data
+from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 
 class InventoryItem:
     # normal constructor should not be called directly => see below create method
@@ -27,7 +29,8 @@ class InventoryItem:
             "poker": ("poker.png", (x-4, y-0, z-3.0),(40, 80)),
             "diamond": ("diamond.png", (x-3.78, y-0.37, z-3.5),(40, 80)),
             "coin": ("gold_coin.png", (x-0.5, y-1.25, z-5.0),(40, 80)),
-            "magnet": ("magnet.png", (x-0.5, y-1.25, z-5.0),(40, 80))
+            "magnet": ("magnet.png", (x-0.5, y-1.25, z-5.0),(40, 80)),
+            "book": ("book.png", (x-6.5, y-0.78, z-3.0),(50, 75))
         }
         image = map_name_to_attributes[name][0]
 
@@ -35,6 +38,38 @@ class InventoryItem:
         if room_data != None and index != None:
             unique_id = room_data[name][index]["unique_id"] # unique identifier for the key
             room_placement = True
+            # key
+            if name=="key":
+                image = "key_transparent.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # revolver
+            if name=="revolver":
+                image = "revolver.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)    
+            # magnifier        
+            if name == "magnifier":
+                image = "magnifier.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)   
+            # water glass
+            if name == "water_glass":
+                image = "water_glass.png"
+                shift_coordinates = (x-5.0,y-1.0,z-3.0)  
+            # poker
+            if name == "poker":
+                image = "poker.png"
+                shift_coordinates = (x-4,y-0,z-3.0)
+            # diamond
+            if name == "diamond":
+                image = "diamond.png"
+                shift_coordinates = (x-3.78,y-0.37,z-3.5)                          
+            # coin
+            if name == "coin": 
+                image = "gold_coin.png" # original size of picture: 201, 152
+                shift_coordinates = (x-0.5,y-1.25,z-5.0)        
+            if name == "book":
+                image = "book.png"
+                shift_coordinates = (x-6.5,y-0.78,z-3.0)
+
             shift_coordinates = map_name_to_attributes[name][1]
             self.object_owner = ""
             try:
@@ -176,6 +211,9 @@ class InventoryItem:
             ContextManager().get_room().removeObject(self)
         else:
             self.inventory.selectObject(self.name, self.unique_id, self.object_owner)
+            if self.name == "book":
+                book_display = SpeechBubble(speech_data.guest_book_content)
+                book_display.show_bubble(self.canvas)
         self.draw(self.canvas)
 
     def _show_tooltip(self, event, x, y, text, tooltip_data):
