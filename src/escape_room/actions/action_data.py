@@ -177,15 +177,23 @@ open_bedside_table_drawer = [
 ]
 
 unlock_picture = [
+    [action.stop_sequence_conditionally,action.check_is_selected_inventory,"magnet","magnet1"],    
+    [action.set_object_state_complex,"picture","picture10","opened","closed","picture","picture13",
+     [(98,45,111,56),(118,59,137,73),(49,84,55,90),(86,74,100,85),(30,34,46,49)]], # unlock picture (complex action)
+    [action.stop_sequence_conditionally,action.check_object_state,"picture","picture10","opened"],
     [action.play_sound,"mechanics_creak.wav"],
     [action.time_elapse,1], # 1 hour to pass until postman disappears
-    [action.set_object_state_complex,"picture","picture10"] # unlock picture (complex action)
+    [action.stop_sequence_conditionally,action.check_object_state,"picture","picture13",{0:"opened",1:"opened",2:"opened",3:"opened",4:"opened"}],
+    [action.play_sound,"long_creak.wav"],
+    [action.hide_picture,"picture10"], # hide painting
+    [action.show_picture,"picture14"], # show open painting
 ]
 
 close_window_curtains = [
     [action.play_sound,"curtain_closing.wav"],
     [action.time_elapse,1], # 1 hour to pass until postman disappears
     [action.show_picture,"picture12"], # close curtains (show roman blind closed picture)
+    [action.show_picture,"picture13"], # close curtains (show roman blind closed picture)
     [action.darken_room,"gray75"], # darken the room to 50% brightness
     [action.set_dark_mode_picture,"picture12"],
     [action.set_object_state,"picture","picture7","closed"] # set the window curtains to closed
@@ -195,6 +203,7 @@ open_window_curtains = [
     [action.play_sound,"curtain_closing.wav"],
     [action.time_elapse,1], # 1 hour to pass until postman disappears
     [action.hide_picture,"picture12"], # close curtains (show roman blind closed picture)
+    [action.hide_picture,"picture13"], # close curtains (show roman blind closed picture)
     [action.lighten_room], # lighten the room
     [action.set_object_state,"picture","picture7","open"] # set the window curtains to closed
 ]

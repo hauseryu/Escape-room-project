@@ -239,12 +239,26 @@ def set_object_state(action_mgr,object,unique_id,value):
     room_state.set_state_object(object,unique_id,value)
     action_mgr.execute_next_action()
 
-def set_object_state_complex(action_mgr,object,unique_id):
+def set_object_state_complex(action_mgr,object,unique_id,value,value2,object2,unique_id2,activation_areas):
     room_state = ContextManager().get_room_state()
-    current_state = room_state.get_state_object(object,unique_id)
+    room_state.set_state_object(object, unique_id, value2)
+    current_state2 = room_state.get_state_object(object2,unique_id2)
+    if current_state2 == None:
+        current_state2 = {}
     event_data = parameter_container.get("event_data")
-    # complex logic to determine the new state based on the current state
-    # room_state.set_state_object(object,unique_id,value)
+    img_coords = parameter_container.get("img_coords")
+    if event_data != None and img_coords != None:
+        click_x = img_coords[0]
+        click_y = img_coords[1]
+        for index, area in enumerate(activation_areas):
+            if current_state2.get(index) == value:
+                continue
+            x1, y1, x2, y2 = area
+            if x1 <= click_x <= x2 and y1 <= click_y <= y2:
+                room_state.set_state_object(object, unique_id, value)
+                current_state2[index] = value
+                room_state.set_state_object(object2, unique_id2, current_state2)
+                break
     action_mgr.execute_next_action()
 
 def stop_sequence_conditionally(action_mgr,*condition): # this stops the whole action sequence if the condition doesn't hold

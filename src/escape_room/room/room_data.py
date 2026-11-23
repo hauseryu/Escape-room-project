@@ -479,6 +479,14 @@ hotel_room_10 = {
                   "direction": "front","unique_id": "picture10", "pic_move_coord": (6.92, 1.7, 2.0), 
                   "pic_resize": (163,139), # original size 245, 209
                   "draw_frame": False, "is_clickable": True, "action_sequence": "unlock_picture"},                                                      
+                 {"coord":(-2,0,3),"image": "painting_flower_fruits_hints.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture13", "pic_move_coord": (6.92, 1.7, 2.0), 
+                  "pic_resize": (163,139), # original size 245, 209
+                  "draw_frame": False, "show": False},                                                      
+                 {"coord":(-2,0,3),"image": "painting_flower_fruits_open.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture14", "pic_move_coord": (1750, 550), 
+                  "pic_resize": (54,239), # original size 54, 239
+                  "draw_frame": False, "show": False},                                                      
                  {"coord":(-2,0,3),"image": "hotel_chair.png", "is_riddle": False,  
                   "direction": "front","unique_id": "picture11", "pic_move_coord": (9.7,1,3.8), 
                   "pic_resize": (237,395), # original size 594, 988

@@ -259,6 +259,10 @@ class Picture:
         elif self.action_sequence!=None:
             print("[DEBUG] execute action sequence of picture!")
             ContextManager().get_action_manager().set_param_container("event_data",event)
+            img_x, img_y = canvas.coords(self.image_id)
+            rel_x = event.x - img_x
+            rel_y = event.y - img_y            
+            ContextManager().get_action_manager().set_param_container("img_coords", (rel_x, rel_y))
             ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
         elif self.movement_vector!=None:
             if self.room_state.object_is_moved("picture",self.unique_id): # check if object is already moved
