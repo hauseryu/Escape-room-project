@@ -1,4 +1,4 @@
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageEnhance
 from chatbot.riddle_generator import generate_riddle
 from src.escape_room.gui_utilities.speech_bubble import SpeechBubble
 from src.escape_room.gui_utilities import graphics
@@ -63,6 +63,10 @@ class Picture:
             show = room_data["picture"][index]["show"]
         except:
             show = True            
+        try:
+            clickable_in_dark = room_data["picture"][index]["clickable_in_dark"]
+        except:
+            clickable_in_dark = False
         shift_coordinates = (x-5.05,y-2.35,z-4.0)            
 
         # set attributes
@@ -82,7 +86,7 @@ class Picture:
         self.trigger_object_draw = trigger_object_draw
         self.action_sequence = action_sequence
         self.show = show
-
+        self.clickable_in_dark = clickable_in_dark
         if self.draw_frame:
             if self.direction == "front":
                 self.coordinates_frame = [
@@ -200,15 +204,21 @@ class Picture:
         
         image = Image.open(self.image_location)        
 
-        if self.pic_resize == None:
-            self.foto_image = ImageTk.PhotoImage(image, master=canvas)
-        else:
-            (image_width,image_height) = self.pic_resize
-            resized_image = image.resize((image_width, image_height), Image.Resampling.LANCZOS)
-            
-            # 2. Das skalierte Bild an ImageTk übergeben
-            self.foto_image = ImageTk.PhotoImage(resized_image, master=canvas)
-        
+        if self.pic_resize is not None:
+            image_width, image_height = self.pic_resize
+            image = image.resize((image_width, image_height), Image.Resampling.LANCZOS)
+
+        # create normal picture (light is on)
+        self.foto_image = ImageTk.PhotoImage(image, master=canvas)
+
+        # create dark picture (light is off, corresponds to stipple="gray50" in tkinter)
+        if self.clickable_in_dark:
+            r, g, b, alpha = image.convert("RGBA").split()
+            rgb_dark = ImageEnhance.Brightness(Image.merge("RGB", (r, g, b))).enhance(0.25)
+            r_d, g_d, b_d = rgb_dark.split()
+            dark_image = Image.merge("RGBA", (r_d, g_d, b_d, alpha))
+            self.foto_image_dark = ImageTk.PhotoImage(dark_image, master=canvas)
+
         # position image on canvas 
         if self.is_riddle:
             self.image_id = canvas.create_image(x1, y1, anchor="nw", tags=self.unique_id, image=self.foto_image)
@@ -222,6 +232,14 @@ class Picture:
                 "<Button-1>", 
                 lambda event: self.on_key_click(event)
             )            
+
+    def set_dark_mode(self, is_dark):
+        canvas = ContextManager().get_canvas()
+        if is_dark:
+            canvas.itemconfigure(self.image_id, image=self.foto_image_dark)
+            canvas.tag_raise(self.image_id)  # put in front of the "bubble" rectangle
+        else:
+            canvas.itemconfigure(self.image_id, image=self.foto_image)
 
     def on_key_click(self, event):
         print("[DEBUG] Picture clicked!")
@@ -240,6 +258,7 @@ class Picture:
             self.speech_bubble.show_bubble(canvas)        
         elif self.action_sequence!=None:
             print("[DEBUG] execute action sequence of picture!")
+            ContextManager().get_action_manager().set_param_container("event_data",event)
             ContextManager().get_action_manager().execute_action_sequence(self.action_sequence)
         elif self.movement_vector!=None:
             if self.room_state.object_is_moved("picture",self.unique_id): # check if object is already moved

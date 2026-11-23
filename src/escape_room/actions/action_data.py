@@ -182,6 +182,23 @@ unlock_picture = [
     [action.set_object_state_complex,"picture","picture10"] # unlock picture (complex action)
 ]
 
+close_window_curtains = [
+    [action.play_sound,"curtain_closing.wav"],
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.show_picture,"picture12"], # close curtains (show roman blind closed picture)
+    [action.darken_room,"gray75"], # darken the room to 50% brightness
+    [action.set_dark_mode_picture,"picture12"],
+    [action.set_object_state,"picture","picture7","closed"] # set the window curtains to closed
+]
+
+open_window_curtains = [
+    [action.play_sound,"curtain_closing.wav"],
+    [action.time_elapse,1], # 1 hour to pass until postman disappears
+    [action.hide_picture,"picture12"], # close curtains (show roman blind closed picture)
+    [action.lighten_room], # lighten the room
+    [action.set_object_state,"picture","picture7","open"] # set the window curtains to closed
+]
+
 game_over = [
     [action.game_over]
 ]

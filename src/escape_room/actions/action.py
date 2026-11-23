@@ -75,6 +75,28 @@ def show_picture(action_mgr,unique_id):
             break
     action_mgr.execute_next_action()
 
+def hide_picture(action_mgr,unique_id):
+    print(f"[DEBUG] Hide picture: {unique_id}")
+    room = ContextManager().get_room()
+    pictures = room.getObjectList("picture")
+    for picture in pictures:
+        if picture.unique_id == unique_id:
+            picture.show = False
+            canvas = ContextManager().get_canvas()
+            canvas.delete(picture.unique_id)
+            break
+    action_mgr.execute_next_action()
+
+def set_dark_mode_picture(action_mgr,unique_id):
+    print(f"[DEBUG] Set dark mode picture: {unique_id}")
+    room = ContextManager().get_room()
+    pictures = room.getObjectList("picture")
+    for picture in pictures:
+        if picture.unique_id == unique_id:
+            picture.set_dark_mode(True)
+            break
+    action_mgr.execute_next_action()
+
 def figure_disappears(action_mgr,figure):
     print(f"[DEBUG] Person disappears: {figure}")
     obj = ContextManager().get_room().get_figure(figure)
@@ -220,6 +242,7 @@ def set_object_state(action_mgr,object,unique_id,value):
 def set_object_state_complex(action_mgr,object,unique_id):
     room_state = ContextManager().get_room_state()
     current_state = room_state.get_state_object(object,unique_id)
+    event_data = parameter_container.get("event_data")
     # complex logic to determine the new state based on the current state
     # room_state.set_state_object(object,unique_id,value)
     action_mgr.execute_next_action()
@@ -233,6 +256,26 @@ def skip_actions_if_false(action_mgr,number=1,*condition):
     result = condition[0](action_mgr,*condition[1:])
     if not result:
         action_mgr.skip_actions(number)
+    action_mgr.execute_next_action()
+
+def darken_room(action_mgr,brightness="gray50"):
+    canvas = ContextManager().get_canvas()
+    w = canvas.winfo_width()
+    h = canvas.winfo_height()
+    canvas.create_rectangle(
+        0,
+        0,
+        w,
+        h,
+        fill="black",
+        stipple=brightness,
+        tags="bubble"
+    )
+    action_mgr.execute_next_action()
+
+def lighten_room(action_mgr):
+    canvas = ContextManager().get_canvas()
+    canvas.delete("bubble")
     action_mgr.execute_next_action()
 
 # helper functions
@@ -386,3 +429,6 @@ class ActionManager():
     def skip_actions(self,number):
         for counter in range(number):
             self.action_sequence.pop(0)
+
+    def set_param_container(self,key,value):
+        parameter_container[key] = value
