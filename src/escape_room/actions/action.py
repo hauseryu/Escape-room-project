@@ -259,6 +259,8 @@ def set_object_state_complex(action_mgr,object,unique_id,value,value2,object2,un
                 current_state2[index] = value
                 room_state.set_state_object(object2, unique_id2, current_state2)
                 break
+            else:
+                break # if the click is not in any activation area, we do not change the state
     action_mgr.execute_next_action()
 
 def stop_sequence_conditionally(action_mgr,*condition): # this stops the whole action sequence if the condition doesn't hold

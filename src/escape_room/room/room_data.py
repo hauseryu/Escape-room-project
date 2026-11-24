@@ -491,6 +491,18 @@ hotel_room_10 = {
                   "direction": "front","unique_id": "picture11", "pic_move_coord": (9.7,1,3.8), 
                   "pic_resize": (237,395), # original size 594, 988
                   "draw_frame": False},                                                      
+                 {"coord":(-2,0,3),"image": "unlocking_hints.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture15", "pic_move_coord": (1240, 550), 
+                  "pic_resize": (50,35), # original size 186, 132
+                  "draw_frame": False, "is_clickable": True, "action_sequence": "show_picture_hints"},                                                      
+                 {"coord":(-2,0,3),"image": "magnifying_glass_big.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture16", "pic_move_coord": (1070, 430), 
+                  "pic_resize": (500,550), # original size 1223, 1286
+                  "draw_frame": False, "show": False, "is_clickable": True, "action_sequence": "hide_picture_hints"},                                                      
+                 {"coord":(-2,0,3),"image": "unlocking_hints.png", "is_riddle": False,  
+                  "direction": "front","unique_id": "picture17", "pic_move_coord": (1180, 500), 
+                  "pic_resize": (186,132), # original size 186, 132
+                  "draw_frame": False, "show": False},                                                      
                 ]              
 }
 
